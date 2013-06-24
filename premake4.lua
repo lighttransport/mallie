@@ -4,6 +4,12 @@ newoption {
    description = "Use OpenMP."
 }
 
+-- MPI
+newoption {
+   trigger     = "with-mpi",
+   description = "Use MPI."
+}
+
 -- SDL
 newoption {
    trigger     = "with-sdl",
@@ -12,6 +18,7 @@ newoption {
 
 sources = {
    "main.cc",
+   "mmm_io.cc",
    }
 
 newaction {
@@ -59,6 +66,11 @@ solution "MallieSolution"
          if _OPTIONS['with-openmp'] then
             buildoptions { "-fopenmp" }
             linkoptions { "-fopenmp" }
+         end
+
+         -- gcc mpi
+         if _OPTIONS['with-mpi'] then
+            defines { 'WITH_MPI' }
          end
 
       -- Windows specific
