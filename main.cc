@@ -11,7 +11,9 @@
 #include <mpi.h>
 #endif
 
+#include "picojson.h"
 #include "mmm_io.h"
+#include "timerutil.h"
 
 int
 main(

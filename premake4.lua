@@ -113,9 +113,9 @@ solution "MallieSolution"
       configuration "Debug"
          defines { "DEBUG" } -- -DDEBUG
          flags { "Symbols" }
-         targetname "marie_debug"
+         targetname "mallie_debug"
 
       configuration "Release"
          defines { "NDEBUG" }
          flags { "Symbols", "Optimize", "EnableSSE2" }
-         targetname "marie"
+         targetname "mallie"
