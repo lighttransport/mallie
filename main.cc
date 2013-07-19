@@ -22,8 +22,12 @@ main(
 {
   printf("[Mallie] version: %s\n", MALLIE_VERSION);
 
+  mallie::timerutil t;
+  t.start();
   printf("[Mallie] Begin\n");
+  t.end();
   printf("[Mallie] End\n");
+  printf("[Mallie] Elapsed: %d sec(s)\n", (int)t.sec());
   return EXIT_SUCCESS;
 }
  
