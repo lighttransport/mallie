@@ -1,4 +1,5 @@
 {
     "obj_filename" : "teapot.obj",
+    "material_filename" : "teapot.material.json",
     "dummy" : 0
 }

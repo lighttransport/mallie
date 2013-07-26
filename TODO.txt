@@ -1,3 +1,5 @@
 - Render
 - Spectrum
 - Shader
+- Bidir path tracer
+- Pmap

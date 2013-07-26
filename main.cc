@@ -11,23 +11,147 @@
 #include <mpi.h>
 #endif
 
+#ifdef ENABLE_SDL
+#include <SDL.h>
+#include "main_sdl.h"
+#endif
+
+#include <fstream>
+
 #include "picojson.h"
+#include "render.h"
 #include "mmm_io.h"
 #include "timerutil.h"
+#include "main_console.h"
+
+namespace {
+
+bool
+LoadJSONConfig(
+  mallie::RenderConfig& config, // [out]
+  const std::string& filename)
+{
+  std::ifstream is(filename.c_str());
+
+  if (!is) {
+    std::cerr << "File not found: " << filename << std::endl;
+    return false;
+  }
+
+  picojson::value v;
+  std::string err = picojson::parse(v, is);
+  if (!err.empty()) {
+    std::cout << err << std::endl;
+    return false;
+  }
+
+  if (v.get("obj_filename").is<std::string>()) {
+    config.obj_filename = v.get("obj_filename").get<std::string>();
+  }
+
+  if (v.get("material_filename").is<std::string>()) {
+    config.material_filename = v.get("material_filename").get<std::string>();
+  }
+
+  if (v.get("num_passes").is<double>()) {
+    config.num_passes = (int)v.get("num_passes").get<double>();
+  }
+
+  if (v.get("num_photons").is<double>()) {
+    config.num_photons = (int)v.get("num_photons").get<double>();
+  }
+
+  if (v.get("eye").is<picojson::array>()) {
+    assert(v.get("eye").get<picojson::array>().size() == 3);
+    config.eye[0] = v.get("eye").get(0).get<double>();
+    config.eye[1] = v.get("eye").get(1).get<double>();
+    config.eye[2] = v.get("eye").get(2).get<double>();
+  }
+
+  if (v.get("up").is<picojson::array>()) {
+    assert(v.get("up").get<picojson::array>().size() == 3);
+    config.up[0] = v.get("up").get(0).get<double>();
+    config.up[1] = v.get("up").get(1).get<double>();
+    config.up[2] = v.get("up").get(2).get<double>();
+  }
+
+  if (v.get("lookat").is<picojson::array>()) {
+    assert(v.get("lookat").get<picojson::array>().size() == 3);
+    config.lookat[0] = v.get("lookat").get(0).get<double>();
+    config.lookat[1] = v.get("lookat").get(1).get<double>();
+    config.lookat[2] = v.get("lookat").get(2).get<double>();
+  }
+
+  if (v.get("fov").is<double>()) {
+    config.fov = v.get("fov").get<double>();
+  }
+
+  if (v.get("resolution").is<picojson::array>()) {
+    assert(v.get("resolution").get<picojson::array>().size() == 2);
+    config.width = v.get("resolution").get(0).get<double>();
+    config.height = v.get("resolution").get(1).get<double>();
+  }
+}
+
+}
 
 int
 main(
   int argc,
   char **argv)
 {
-  printf("[Mallie] version: %s\n", MALLIE_VERSION);
+
+  if (argc > 1) {
+    if (strcmp(argv[1], "--help") == 0) {
+      printf("Usage: mallie <config.json>\n");
+      exit(1);
+    }
+  }
+
+#ifdef WITH_MPI
+  int rank;
+  int nnodes;
+  MPI_Init(&argc, &argv);
+  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+  MPI_Comm_size(MPI_COMM_WORLD, &nnodes);
+#endif
+  printf("[Mallie] Version: %s\n", MALLIE_VERSION);
+
+  // Load config
+  std::string config_filename("config.json");
+  if (argc > 1) {
+    config_filename = std::string(argv[1]);
+  }
+  printf("[Mallie] Config file: %s\n", config_filename.c_str());
+  mallie::RenderConfig config;
+  bool ret = LoadJSONConfig(config, config_filename);
+  assert(ret);
 
   mallie::timerutil t;
   t.start();
   printf("[Mallie] Begin\n");
+
+#ifdef ENABLE_SDL
+  // SDL_Init() must be defined in main()
+  SDL_Init(SDL_INIT_VIDEO|SDL_INIT_TIMER);
+  DoMainSDL(config);
+#else
+
+  DoMainConsole(config);
+#endif
+
   t.end();
   printf("[Mallie] End\n");
   printf("[Mallie] Elapsed: %d sec(s)\n", (int)t.sec());
+
+#ifdef WITH_MPI
+  MPI_Finalize();
+#endif
+
+#ifdef ENABLE_SDL
+  SDL_Quit();
+#endif
+
   return EXIT_SUCCESS;
 }
  

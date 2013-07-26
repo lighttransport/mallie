@@ -1,5 +1,6 @@
 #include "main_sdl.h"
 
+#include <cassert>
 #include <vector>
 #include <cassert>
 #include <iostream>
@@ -15,6 +16,7 @@
 #include "trackball.h"
 #include "camera.h"
 #include "timerutil.h"
+#include "render.h"
 
 #define PIXELSTEP_COARSE  (8)
 
@@ -290,85 +292,6 @@ CheckSDLEvent()
   return false;
 }
 
-void Render(
-  std::vector<float>& image,  // RGB
-  const RenderConfig& config,
-  int step)
-{
-  int width = config.width;
-  int height = config.height;
-
-  Camera camera(gEye, gLookat, gUp);
-  camera.BuildCameraFrame(gOrigin, gCorner, gDu, gDv, gFov, gCurrQuat, gWidth, gHeight);
-  //printf("[Mallie] origin = %f, %f, %f\n", gOrigin[0], gOrigin[1], gOrigin[2]);
-  //printf("[Mallie] corner = %f, %f, %f\n", gCorner[0], gCorner[1], gCorner[2]);
-  //printf("[Mallie] du     = %f, %f, %f\n", gDu[0], gDu[1], gDu[2]);
-  //printf("[Mallie] dv     = %f, %f, %f\n", gDv[0], gDv[1], gDv[2]);
-
-  assert(image.size() >= 3 * width * height);
-  //memset(&image.at(0), 0, sizeof(float) * width * height * 3);
-
-  mallie::timerutil t;
-  mallie::timerutil tEventTimer;
-
-  t.start();
-  tEventTimer.start();
-
-  //
-  // Clear background with gradation.
-  //
-#if 0
-  for (int y = 0; y < height; y++) {
-    float col0[3] = {0.0f, 0.0f, 0.1f};
-    float col1[3] = {0.0f, 0.0f, 0.3f};
-    float t = (float)y / (float)height;
-
-    float col[3];
-    col[0] = t * col0[0] + (1.0f - t) * col1[0];
-    col[1] = t * col0[1] + (1.0f - t) * col1[1];
-    col[2] = t * col0[2] + (1.0f - t) * col1[2];
-    for (int x = 0; x < width; x++) {
-      image[3*(y*width+x)+0] = col[0];
-      image[3*(y*width+x)+1] = col[1];
-      image[3*(y*width+x)+2] = col[2];
-    }
-
-  }
-#endif
-
-  #pragma omp parallel for schedule(dynamic, 1)
-  for (int y = 0; y < height; y+=step) {
-
-    if ((y % 100) == 0) {
-      printf("\r[Mallie] Render %d of %d", y, height);
-      fflush(stdout);
-    }
-
-    assert(0); // @todo
- 
-    // block fill
-    if (step > 1) {
-      for (int x = 0; x < width; x += step) {
-        for (int v = 0; v < step; v++) {
-            for (int u = 0; u < step; u++) {
-                for (int k = 0; k < 3; k++) {
-                    image[((y+v) * width * 3 + (x+u) * 3) + k] = image[3*(y*width+x)+k];
-                }
-            }
-        }
-      }
-    }
-
-  }
-
-  t.end();
-
-  double fps = 1000.0 / (double)t.msec();
-  printf("\r[Mallie] Render time: %f sec(s) | %f fps", (double)t.msec() / 1000.0, fps);
-  fflush(stdout);
-
-}
-
 static void
 Init(
   const RenderConfig& config)
@@ -440,16 +363,17 @@ DoMainSDL(
     }
 
     SDL_Delay(33);
-    Render(gImage, config, gRenderPixelStep);
+    Render(config, gImage, gEye, gLookat, gUp, gCurrQuat, gRenderPixelStep);
+
     if (!gRenderInteractive) {
       gRenderPixelStep >>= 1;
       if (gRenderPixelStep < 1) {
         gRenderPixelStep = 1;
       }
     }
+
     Display(gSurface, gImage, config.width, config.height);
   }
-
 
 }
 

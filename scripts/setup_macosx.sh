@@ -1,6 +1,6 @@
 #!/bin/bash
 
-flags='--with-openmp'
+flags='--with-sdl --with-openmp'
 
 ./tools/macosx/premake4 ${flags} gmake
 

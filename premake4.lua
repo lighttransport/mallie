@@ -18,7 +18,17 @@ newoption {
 
 sources = {
    "main.cc",
+   "main_console.cc",
+   "main_sdl.cc",
    "mmm_io.cc",
+   "render.cc",
+   "camera.cc",
+   "matrix.cc",
+   "trackball.cc",
+   "importers/tiny_obj_loader.cc",
+   "importers/mesh_loader.cc",
+   "bvh_accel.cc",
+   "scene.cc",
    }
 
 newaction {
@@ -73,25 +83,26 @@ solution "MallieSolution"
             defines { 'WITH_MPI' }
          end
 
-      -- Windows specific
+      -- Windows general
+      configuration { "windows" }
+
+         includedirs { "./compat" } -- stdint
+
+	 if _OPTIONS['with-sdl'] then
+            defines { 'ENABLE_SDL' }
+            includedirs { "extlibs/windows/SDL/msvc/SDL-1.2.15/include" }
+            links { "SDL", "SDLmain" }
+            libdirs { "extlibs/windows/SDL/msvc/SDL-1.2.15/lib/x64" }
+         end
+
+         defines { 'NOMINMAX', '_LARGEFILE_SOURCE', '_FILE_OFFSET_BITS=64' }
+
+      -- Windows + gmake specific
       configuration { "windows", "gmake" }
 
          defines { '__STDC_CONSTANT_MACROS', '__STDC_LIMIT_MACROS' } -- c99
 
          links { "stdc++", "msvcrt", "ws2_32", "winmm" }
-
-      -- Windows specific
-      configuration { "windows", "vs2008", "x64" }
-
-         includedirs { "./compat" }
-
-         defines { 'NOMINMAX', '_LARGEFILE_SOURCE', '_FILE_OFFSET_BITS=64' }
-
-      configuration { "windows", "vs2008", "x32" }
-
-      	includedirs { "./compat" }
-
-         defines { 'NOMINMAX', '_LARGEFILE_SOURCE', '_FILE_OFFSET_BITS=64' }
 
       -- Linux specific
       configuration {"linux", "gmake"}
@@ -104,11 +115,6 @@ solution "MallieSolution"
          end
 
          linkoptions { "-pthread" }
-
-      -- Solaris specific
-      if (os.is("solaris")) then
-         -- todo
-      end
 
       configuration "Debug"
          defines { "DEBUG" } -- -DDEBUG

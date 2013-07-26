@@ -18,6 +18,7 @@ struct RenderConfig {
   int   num_photons;  // # of photon to shoot per pass.
 
   std::string obj_filename;
+  std::string material_filename;
 
   RenderConfig() :
     fov(45.0),
@@ -39,9 +40,14 @@ struct RenderConfig {
   
 };
 
-void Render(
+extern void Render(
   const RenderConfig& config,
-  std::vector<float>& image);   // out image
+  std::vector<float>& image,   // out image
+  float eye[3], 
+  float lookat[3], 
+  float up[3], 
+  float quat[4],
+  int   step);
  
 }
 

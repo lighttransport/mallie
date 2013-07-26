@@ -1,0 +1,17 @@
+.gitignore
+Makefile
+Mallie.make
+Mallie.vcxproj
+Mallie.vcxproj.filters
+Mallie.vcxproj.user
+MallieSolution.sdf
+MallieSolution.sln
+MallieSolution.v11.suo
+mallie
+mallie_debug.exe
+mallie_debug.idb
+mallie_debug.ilk
+mallie_debug.pdb
+obj/
+r/
+*~
