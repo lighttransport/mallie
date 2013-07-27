@@ -16,6 +16,12 @@
 #include "main_sdl.h"
 #endif
 
+#if defined(__APPLE__)
+#include <sys/sysctl.h>
+#include <sys/types.h>
+#include <unistd.h>     // usleep
+#endif
+
 #include <fstream>
 
 #include "picojson.h"
@@ -159,6 +165,12 @@ LoadJSONConfig(
     config.width = v.get("resolution").get(0).get<double>();
     config.height = v.get("resolution").get(1).get<double>();
   }
+
+  if (v.get("num_passes").is<double>()) {
+    config.num_passes = (int)v.get("num_passes").get<double>();
+  }
+
+  return true;
 }
 
 }
@@ -175,6 +187,10 @@ main(
       exit(1);
     }
   }
+
+#ifdef _OPENMP
+  printf("[Mallie] OpenMP : Detected (Max # of threads = %d\n", omp_get_max_threads());
+#endif
 
 #ifdef WITH_MPI
   int rank;
@@ -216,6 +232,7 @@ main(
   t.end();
   printf("[Mallie] End\n");
   printf("[Mallie] Elapsed: %d sec(s)\n", (int)t.sec());
+  fflush(stdout);
 
 #ifdef WITH_MPI
   MPI_Finalize();

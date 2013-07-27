@@ -11,13 +11,15 @@ Scene
 {
   public:
     Scene() {};
-    ~Scene() {};
+    ~Scene();
 
     bool Init(const std::string& objFilename,
               const std::string& materialFilename,
               double sceneScale = 1.0);
 
-    const bool Trace(Intersection& isect, const Ray& ray) const;
+    bool Trace(Intersection& isect, Ray& ray);
+
+    void BoundingBox(real3& bmin, real3& bmax);
 
   protected:
     

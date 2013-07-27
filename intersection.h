@@ -10,6 +10,10 @@ typedef struct
     real            v;
     unsigned int    faceID;
 
+    unsigned int    f0;
+    unsigned int    f1;
+    unsigned int    f2;
+
     real3           position;
     real3           geometricNormal;
     real3           normal;

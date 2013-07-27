@@ -21,14 +21,21 @@ struct real3 {
     real3 operator+(const real3 &f2) const {
         return real3(x+f2.x, y+f2.y, z+f2.z);
     }
+    real3& operator+=(const real3 &f2) {
+        x += f2.x; y += f2.y; z += f2.z;
+    }
     real3 operator/(const real3 &f2) const {
         return real3(x/f2.x, y/f2.y, z/f2.z);
     }
     real operator[](int i) const { return (&x)[i]; }
     real &operator[](int i) { return (&x)[i]; }
 
+    real3 neg() {
+      return real3(-x, -y, -z);
+    }
+
     real length() {
-      return x*x+y*y+z*z;
+      return sqrt(x*x+y*y+z*z);
     }
 
     void normalize() {
@@ -44,6 +51,10 @@ struct real3 {
     real x, y, z;
     //real pad;  // for alignment 
 };
+
+inline  real3 operator*(real f, const real3& v) {
+  return real3(v.x*f, v.y*f, v.z*f);
+}
 
 struct Ray
 {

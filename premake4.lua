@@ -29,6 +29,7 @@ sources = {
    "importers/mesh_loader.cc",
    "bvh_accel.cc",
    "scene.cc",
+   "jpge.cc"
    }
 
 newaction {

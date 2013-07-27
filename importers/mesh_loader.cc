@@ -41,6 +41,7 @@ MeshLoader::LoadObj(
   mesh.numVertices  = numVertices;
   mesh.vertices = new real[numVertices * 3];
   mesh.faces    = new unsigned int[numFaces * 3];
+  mesh.materialIDs = new unsigned int[numFaces];
 
   size_t vertexIdxOffset = 0;
   size_t faceIdxOffset = 0;

@@ -13,8 +13,8 @@
 
 #include "bvh_accel.h"
 
-#define ENABLE_TRACE_PRINT  (1)
-#define ENABLE_DEBUG_PRINT  (1)
+#define ENABLE_TRACE_PRINT  (0)
+#define ENABLE_DEBUG_PRINT  (0)
 
 #define trace(f, ...) { if (ENABLE_TRACE_PRINT) printf(f, __VA_ARGS__); }
 
@@ -642,8 +642,8 @@ inline real3 vcross(real3 a, real3 b)
 {
   real3 c;
   c[0] = a[1] * b[2] - a[2] * b[1];
-  c[1] = a[1] * b[2] - a[2] * b[1];
-  c[2] = a[1] * b[2] - a[2] * b[1];
+  c[1] = a[2] * b[0] - a[0] * b[2];
+  c[2] = a[0] * b[1] - a[1] * b[0];
   return c;
 }
 
@@ -657,9 +657,9 @@ TriangleIsect(
   real&  tInOut,
   real&  uOut,
   real&  vOut,
-  real*  v0,
-  real*  v1,
-  real*  v2,
+  const real3& v0,
+  const real3& v1,
+  const real3& v2,
   const real3& rayOrg,
   const real3& rayDir)
 {
@@ -710,7 +710,6 @@ TestLeafNode(
   const Mesh* mesh,
   const Ray& ray)
 {
-
   bool hit = false;
 
   unsigned int numTriangles = node.data[0];
@@ -718,15 +717,38 @@ TestLeafNode(
 
   real t = isect.t; // current hit distance
 
+  real3 rayOrg;
+  rayOrg[0] = ray.org[0];
+  rayOrg[1] = ray.org[1];
+  rayOrg[2] = ray.org[2];
+
+  real3 rayDir;
+  rayDir[0] = ray.dir[0];
+  rayDir[1] = ray.dir[1];
+  rayDir[2] = ray.dir[2];
+
   for (unsigned int i = 0; i < numTriangles; i++) {
     int faceIdx = indices[i+offset];
 
-    real* v0;
-    real* v1;
-    real* v2;
+    int f0 = mesh->faces[3*faceIdx+0];
+    int f1 = mesh->faces[3*faceIdx+1];
+    int f2 = mesh->faces[3*faceIdx+2];
+
+    real3 v0, v1, v2;
+    v0[0] = mesh->vertices[3*f0+0];
+    v0[1] = mesh->vertices[3*f0+1];
+    v0[2] = mesh->vertices[3*f0+2];
+
+    v1[0] = mesh->vertices[3*f1+0];
+    v1[1] = mesh->vertices[3*f1+1];
+    v1[2] = mesh->vertices[3*f1+2];
+
+    v2[0] = mesh->vertices[3*f2+0];
+    v2[1] = mesh->vertices[3*f2+1];
+    v2[2] = mesh->vertices[3*f2+2];
 
     real u, v;
-    if (TriangleIsect(t, u, v, v0, v1, v2, ray.org, ray.dir)) {
+    if (TriangleIsect(t, u, v, v0, v1, v2, rayOrg, rayDir)) {
       // Update isect state
       isect.t = t;
       isect.u = u;
@@ -737,6 +759,46 @@ TestLeafNode(
   }
 
   return hit;
+}
+
+void
+BuildIntersection(
+  Intersection& isect,
+  const Mesh* mesh,
+  Ray& ray)
+{
+  // face index
+  const unsigned int * faces = mesh->faces;
+  const float* vertices = mesh->vertices;
+  isect.f0 = faces[3*isect.faceID+0];
+  isect.f1 = faces[3*isect.faceID+1];
+  isect.f2 = faces[3*isect.faceID+2];
+
+  real3 p0, p1, p2;
+  p0[0] = vertices[3*isect.f0+0];
+  p0[1] = vertices[3*isect.f0+1];
+  p0[2] = vertices[3*isect.f0+2];
+  p1[0] = vertices[3*isect.f1+0];
+  p1[1] = vertices[3*isect.f1+1];
+  p1[2] = vertices[3*isect.f1+2];
+  p2[0] = vertices[3*isect.f2+0];
+  p2[1] = vertices[3*isect.f2+1];
+  p2[2] = vertices[3*isect.f2+2];
+
+  // calc shading point.
+  isect.position[0] = ray.org[0] + isect.t * ray.dir[0];
+  isect.position[1] = ray.org[1] + isect.t * ray.dir[1];
+  isect.position[2] = ray.org[2] + isect.t * ray.dir[2];
+
+  // calc geometric normal.
+  real3 p10 = p1 - p0;
+  real3 p20 = p2 - p0;
+  real3 n   = vcross(p10, p20);
+  n.normalize();
+        
+  isect.geometricNormal = n;
+  isect.normal          = n;
+
 }
 
 } // namespace
@@ -755,6 +817,29 @@ BVHAccel::Traverse(
 
   bool ret = false;
 
+  // Init isect info as no hit
+  isect.t = hitT;
+  isect.u = 0.0;
+  isect.v = 0.0;
+  isect.faceID = -1;
+
+
+  int dirSign[3];
+  dirSign[0] = ray.dir[0] < 0.0 ? 1 : 0;
+  dirSign[1] = ray.dir[1] < 0.0 ? 1 : 0;
+  dirSign[2] = ray.dir[2] < 0.0 ? 1 : 0;
+
+  // @fixme { Check edge case; i.e., 1/0 }
+  real3 rayInvDir;
+  rayInvDir[0] = 1.0 / ray.dir[0];
+  rayInvDir[1] = 1.0 / ray.dir[1];
+  rayInvDir[2] = 1.0 / ray.dir[2];
+
+  real3 rayOrg;
+  rayOrg[0] = ray.org[0];
+  rayOrg[1] = ray.org[1];
+  rayOrg[2] = ray.org[2];
+
   real minT, maxT;
   while (nodeStackIndex >= 0) {
     int index = nodeStack[nodeStackIndex];
@@ -762,26 +847,41 @@ BVHAccel::Traverse(
 
     nodeStackIndex--;
 
+    bool hit = IntersectRayAABB(minT, maxT, hitT,
+                node.bmin, node.bmax,
+                rayOrg, rayInvDir, dirSign);
+
     if (node.flag == 0) { // branch node
 
-      int orderNear = ray.dirSign[node.axis];
-      int orderFar  = 1 - orderNear;
+      if (hit) {
 
-      // Traverse near first.
-      nodeStack[++nodeStackIndex] = node.data[orderFar];
-      nodeStack[++nodeStackIndex] = node.data[orderNear];
+        int orderNear = dirSign[node.axis];
+        int orderFar  = 1 - orderNear;
+
+        // Traverse near first.
+        nodeStack[++nodeStackIndex] = node.data[orderFar];
+        nodeStack[++nodeStackIndex] = node.data[orderNear];
+
+      }
 
     } else { // leaf node
 
-      if (TestLeafNode(isect, node, indices_, mesh, ray)) {
-        hitT = isect.t;
-      } 
+      if (hit) {
+        if (TestLeafNode(isect, node, indices_, mesh, ray)) {
+          hitT = isect.t;
+        } 
+      }
 
     }
   }
 
   assert(nodeStackIndex < kMaxStackDepth);
 
-  return (isect.t < std::numeric_limits<real>::max());
+  if (isect.t < std::numeric_limits<real>::max()) {
+    BuildIntersection(isect, mesh, ray);
+    return true;
+  }
+
+  return false;
 }
 

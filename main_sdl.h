@@ -5,7 +5,7 @@
 
 namespace mallie {
 
-void DoMainSDL(const Scene& scene, const RenderConfig& config);
+void DoMainSDL(Scene& scene, const RenderConfig& config);
 
 }
 

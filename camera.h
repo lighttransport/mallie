@@ -2,6 +2,7 @@
 #define __MALLIE_CAMERA_H__
 
 #include <string>
+#include "common.h"
 
 namespace mallie {
 
@@ -17,9 +18,19 @@ class Camera
 
   void BuildCameraFrame(float origin[3], float corner[3], float u[3], float v[3], float fov, float quat[4], int width, int height);
 
+  Ray GenerateRay(double u, double v) const;
+
   float eye_[3];
   float up_[3];
   float lookat_[3];
+
+  // In world space
+  double origin_[3];
+  double corner_[3];
+  double du_[3];
+  double dv_[3];
+  double fov_;
+
 };
 
 }   // namespace liina

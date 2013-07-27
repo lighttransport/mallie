@@ -7,6 +7,13 @@
 
 namespace mallie {
 
+Scene::~Scene()
+{
+  delete [] mesh_.vertices;
+  delete [] mesh_.faces;
+  delete [] mesh_.materialIDs;
+}
+
 bool
 Scene::Init(
   const std::string& objFilename,
@@ -50,12 +57,29 @@ Scene::Init(
   return true;
 }
 
-const bool
+bool
 Scene::Trace(
   Intersection& isect,
-  const Ray& ray) const
+  Ray& ray)
 {
-  return false;
+  return accel_.Traverse(isect, &mesh_, ray);
+}
+
+void
+Scene::BoundingBox(
+  real3& bmin,
+  real3& bmax)
+{
+  const std::vector<BVHNode>& nodes = accel_.GetNodes();
+  assert(nodes.size() > 0);
+
+  bmin[0] = nodes[0].bmin[0];
+  bmin[1] = nodes[0].bmin[1];
+  bmin[2] = nodes[0].bmin[2];
+
+  bmax[0] = nodes[0].bmax[0];
+  bmax[1] = nodes[0].bmax[1];
+  bmax[2] = nodes[0].bmax[2];
 }
 
 } // namespace

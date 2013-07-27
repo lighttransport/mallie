@@ -49,7 +49,7 @@ struct RenderConfig {
 };
 
 extern void Render(
-  const Scene& scene,
+  Scene& scene,
   const RenderConfig& config,
   std::vector<float>& image,   // out image
   float eye[3], 

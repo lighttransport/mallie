@@ -48,7 +48,7 @@ HDRToLDR(
 
 void
 DoMainConsole(
-  const Scene& scene,
+  Scene& scene,
   const RenderConfig& config)
 {
   printf("[Mallie] Console mode\n");

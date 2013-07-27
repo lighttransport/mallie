@@ -48,12 +48,34 @@ static float gTransferOffset = 0.0f;
 
 // Progressive render param
 static int   gRenderPixelStep = PIXELSTEP_COARSE;
+static int   gRenderPasses = 1;
 
 int gWidth = 256;
 int gHeight = 256;
 SDL_Surface* gSurface = NULL;
 std::vector<float> gImage;
+std::vector<float> gFramebuffer;  // HDR framebuffer
 RenderConfig gRenderConfig;
+
+static void
+AccumImage(
+  std::vector<float>& dst,
+  const std::vector<float>& src)
+{
+  assert(dst.size() == src.size());
+  for (size_t i = 0; i < src.size(); i++) {
+    dst[i] += src[i];
+  } 
+}
+  
+static void
+ClearImage(
+  std::vector<float>& img)
+{
+  for (size_t i = 0; i < img.size(); i++) {
+    img[i] = 0.0f;
+  } 
+}
 
 inline unsigned char fclamp(float x)
 {
@@ -99,12 +121,14 @@ void HandleMouseButton(SDL_Event e)
         gViewChanged = true;
         gMouseButton = 0;
         gRenderInteractive = false;
+        gRenderPasses = 1;
     } else if (e.type == SDL_MOUSEBUTTONDOWN) {
 
         gMouseX = e.motion.x;
         gMouseY = e.motion.y;
         gMouseMoving = true;
         gRenderInteractive = true;
+        gRenderPasses = 1;
         gRenderPixelStep = PIXELSTEP_COARSE;
 
         if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(1)) {
@@ -131,6 +155,7 @@ void HandleMouseMotion(SDL_Event e)
       gViewChanged = true;
       gNeedRedraw = true;
       gRenderInteractive = true;
+      gRenderPasses = 1;
 
       if (gCtrlPressed || (gMouseButton == 3)) {
 
@@ -171,19 +196,22 @@ void HandleMouseMotion(SDL_Event e)
     gMouseY = e.motion.y;
 }
 
-void HandleKey(SDL_Event e)
+bool HandleKey(SDL_Event e)
 {
   if (e.type == SDL_KEYUP) {
-      gShiftPressed = false;
-      gCtrlPressed = false;
-      gRenderInteractive = false;
+    gShiftPressed = false;
+    gCtrlPressed = false;
+    gRenderInteractive = false;
+    gRenderPasses = 1;
   } else if (e.type == SDL_KEYDOWN) {
     gRenderInteractive = true;
+    gRenderPasses = 1;
     gRenderPixelStep = PIXELSTEP_COARSE;
     switch (e.key.keysym.sym) {
       case SDLK_ESCAPE:
       case 'q':
-        exit(-1);
+        //exit(-1);
+        return true;
         break;
       case SDLK_SPACE:
           // reset rotation
@@ -227,11 +255,14 @@ void HandleKey(SDL_Event e)
           break;
     }
   }
+
+  return false;
 }
 
 void Display(
   SDL_Surface* surface,
   const std::vector<float>& image,
+  int passes,
   int width,
   int height)
 {
@@ -239,6 +270,7 @@ void Display(
 
   // ARGB
   unsigned char* data = (unsigned char*)surface->pixels;
+  float scale = 1.0f / (float)passes;
   for (int y = 0; y < height; y++) {
     for (int x = 0; x < width; x++) {
 
@@ -249,15 +281,15 @@ void Display(
 
 #ifdef __APPLE__
       // ARGB
-      data[4*(y*width+x)+1] = fclamp(image[3*(y*width+x)+0]);
-      data[4*(y*width+x)+2] = fclamp(image[3*(y*width+x)+1]);
-      data[4*(y*width+x)+3] = fclamp(image[3*(y*width+x)+2]);
+      data[4*(y*width+x)+1] = fclamp(scale * image[3*(y*width+x)+0]);
+      data[4*(y*width+x)+2] = fclamp(scale * image[3*(y*width+x)+1]);
+      data[4*(y*width+x)+3] = fclamp(scale * image[3*(y*width+x)+2]);
       data[4*(y*width+x)+0] = 255;
 #else
       // BGRA?
-      data[4*(y*width+x)+2] = fclamp(image[3*(y*width+x)+0]);
-      data[4*(y*width+x)+1] = fclamp(image[3*(y*width+x)+1]);
-      data[4*(y*width+x)+0] = fclamp(image[3*(y*width+x)+2]);
+      data[4*(y*width+x)+2] = fclamp(scale * image[3*(y*width+x)+0]);
+      data[4*(y*width+x)+1] = fclamp(scale * image[3*(y*width+x)+1]);
+      data[4*(y*width+x)+0] = fclamp(scale * image[3*(y*width+x)+2]);
       data[4*(y*width+x)+3] = 255;
 #endif
     }
@@ -325,7 +357,7 @@ Init(
 
 void
 DoMainSDL(
-  const Scene& scene,
+  Scene& scene,
   const RenderConfig& config)
 {
   printf("[Mallie] SDL window mode.\n");
@@ -334,6 +366,9 @@ DoMainSDL(
   gHeight = config.height;
 
   gSurface = SDL_SetVideoMode(config.width, config.height, 32, SDL_SWSURFACE);
+
+  gFramebuffer.resize(gWidth * gHeight * 3); // RGB
+  ClearImage(gFramebuffer);
 
   gImage.resize(gWidth * gHeight * 3); // RGB
 
@@ -351,7 +386,7 @@ DoMainSDL(
           break;
         case SDL_KEYDOWN:
         case SDL_KEYUP:
-          HandleKey(event);
+          done = HandleKey(event);
           break;
         case SDL_MOUSEBUTTONDOWN:
         case SDL_MOUSEBUTTONUP:
@@ -363,19 +398,53 @@ DoMainSDL(
       }
     }
 
-    SDL_Delay(33);
+    if (done) { break; }
+
+    //SDL_Delay(33);
+
+    if ((gRenderPasses >= config.num_passes)) {
+      //printf("Render finished\n");
+      // render finished
+      //Display(gSurface, gFramebuffer, gRenderPasses, config.width, config.height);
+      continue;
+    }
+      
     Render(scene, config, gImage, gEye, gLookat, gUp, gCurrQuat, gRenderPixelStep);
+
+    // Always clar framebuffer for intermediate result
+    if (gRenderPixelStep > 1) {
+      ClearImage(gFramebuffer);
+    }
+
+    AccumImage(gFramebuffer, gImage);
+
+    Display(gSurface, gFramebuffer, gRenderPasses, config.width, config.height);
+
+    //printf("step = %d, interactive = %d\n", gRenderPixelStep, gRenderInteractive);
+
+    // Increment render pass.
+    if (!gRenderInteractive && gRenderPixelStep == 1) {
+      gRenderPasses++;
+    }
 
     if (!gRenderInteractive) {
       gRenderPixelStep >>= 1;
+
+      if (gRenderPixelStep == 1) {
+        ClearImage(gFramebuffer);
+      }
+
       if (gRenderPixelStep < 1) {
         gRenderPixelStep = 1;
       }
+    } else {
+      gRenderPasses = 1;
     }
+    
 
-    Display(gSurface, gImage, config.width, config.height);
   }
 
+  printf("\n");
 }
 
 }
@@ -384,7 +453,7 @@ namespace mallie {
 
 void
 DoMainSDL(
-  const Scene& scene,
+  Scene& scene,
   const RenderConfig& config)
 {
   assert(0);

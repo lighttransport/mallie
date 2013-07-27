@@ -8,8 +8,9 @@ typedef struct
 {
   size_t        numVertices;
   size_t        numFaces;
-  real*         vertices;       ///< [xyz] * numVertices
-  unsigned int* faces;          ///< triangle x numFaces 
+  real*         vertices;       /// [xyz] * numVertices
+  unsigned int* faces;          /// triangle x numFaces 
+  unsigned int* materialIDs;    /// index x numFaces
 } Mesh;
 
 #endif  // __MESH_H__

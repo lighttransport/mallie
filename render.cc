@@ -5,6 +5,8 @@
 #include "timerutil.h"
 #include "scene.h"
 
+
+
 #ifdef _WIN32
 #define THREAD_TLS __declspec(thread)
 #else // Assume gcc-like compiler
@@ -12,6 +14,11 @@
 #endif
 
 namespace mallie {
+
+const double kFar = 1.0e+30;
+const double kEPS = 1.0e-3;
+const int    kMaxPathLength = 16;
+const int    kMinPathLength = 2;
 
 struct PathVertex
 {
@@ -36,6 +43,113 @@ inline double randomreal(void) {
   return w*(1.0/4294967296.0);
 }
 
+
+inline real3 vcross(real3 a, real3 b) {
+  real3 c;
+  c[0] = a[1] * b[2] - a[2] * b[1];
+  c[1] = a[2] * b[0] - a[0] * b[2];
+  c[2] = a[0] * b[1] - a[1] * b[0];
+  return c;
+}
+
+static void
+GenerateBasis(
+  real3&        tangent,
+  real3&        binormal,
+  const real3&  normal)
+{
+  // Find the minor axis of the vector
+  int i;
+  int index = -1;
+  double minval = 1.0e+6;
+  double val = 0;
+
+  for (int i = 0; i < 3; i++) {
+    val = fabsf(normal[i]);
+    if (val < minval) {
+      minval = val;
+      index  = i;
+    }
+  }
+
+  if (index == 0) {
+
+    tangent.x = 0.0;
+    tangent.y = -normal.z;
+    tangent.z = normal.y;
+    tangent.normalize();
+
+    binormal = vcross(tangent, normal);
+    binormal.normalize();
+
+  } else if (index == 1) {
+
+    tangent.x = -normal.z;
+    tangent.y = 0.0;
+    tangent.z = normal.x;
+    tangent.normalize();
+
+    binormal = vcross(tangent, normal);
+    binormal.normalize();
+
+  } else {
+
+    tangent.x = -normal.y;
+    tangent.y = normal.x;
+    tangent.z = 0.0;
+    tangent.normalize();
+
+    binormal = vcross(tangent, normal);
+    binormal.normalize();
+  }
+
+}
+
+// Importance sample diffuse BRDF.
+double
+SampleDiffuseIS(
+  real3& dir,
+  const real3& normal)
+{
+  real3 tangent, binormal;
+
+  GenerateBasis(tangent, binormal, normal);
+
+  double theta = acos(sqrt(1.0 - randomreal()));
+  double phi   = 2.0 * M_PI * randomreal();
+
+  double cosTheta = cos(theta);
+
+  /* D = T*cos(phi)*sin(theta) + B*sin(phi)*sin(theta) + N*cos(theta) */
+  double cos_theta = cos(theta);
+  real3 T  = tangent * cos(phi) * sin(theta);
+  real3 B  = binormal * sin(phi) * sin(theta);
+  real3 N  = normal * (cos_theta);
+
+  dir = T + B + N;
+
+  return cos_theta; // PDF = weight
+}
+
+// Mis power (1 for balance heuristic)
+double Mis(double aPdf)
+{
+    return aPdf;
+}
+
+// Mis weight for 2 pdfs
+double Mis2(
+    double aSamplePdf,
+    double aOtherPdf)
+{
+    return Mis(aSamplePdf) / (Mis(aSamplePdf) + Mis(aOtherPdf));
+}
+
+inline double vdot(real3 a, real3 b)
+{
+  return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+}
+
 void GenEyePath(
   const Scene& scene,
   int x,
@@ -47,22 +161,122 @@ void GenEyePath(
 
 }
 
-void GenLightPath(
+void TraceRay(
   const Scene& scene,
+  Ray& ray)
+{
+
+}
+
+void GenLightPath(
+  Scene& scene,
   int numPhotons)
 {
   std::vector<Path> paths;
 
+  real3 lightPos = real3(0.0, 20.0, 0.0);
+  real3 lightDir = real3(0.0, -1.0, 0.0);
+
   for (int i = 0; i < numPhotons; i++) {
     Path path;
+
+    Ray ray;
+
+    real3 dir = lightDir;
+    dir.normalize();
+      
+    ray.dir = dir;
+    ray.org = lightPos;
+
+    Intersection isect;
+    bool hit = scene.Trace(isect, ray);
+
     paths.push_back(path);
   }
+}
+
+
+real3
+PathTrace(
+  Scene& scene,
+  const Camera& camera,
+  const RenderConfig& config,
+  std::vector<float>& image,  // RGB
+  int px, int py,
+  int step)
+{
+  //
+  // 1. Sample eye(E0)
+  //
+  float u = randomreal() - 0.5;
+  float v = randomreal() - 0.5;
+
+  Ray ray = camera.GenerateRay(px+u+step/2.0f, py+v+step/2.0f);
+
+  Intersection isect;
+  isect.t = kFar; 
+
+  real3         throughput;
+  real3         radiance = real3(0.0, 0.0, 0.0);
+  unsigned int  pathLength = 1;
+  bool          lastSpecular = true;
+  double        lastPdfW = 1.0;
+
+  for (;; ++pathLength) {
+    bool hit = scene.Trace(isect, ray);
+    if (!hit) {
+
+      if (pathLength < kMinPathLength) {
+        // eye -> background hit.
+        break;
+      }
+    
+      // Hit background.
+      real3 kd = real3(0.5, 0.5, 0.5);
+      radiance += kd / real3(pathLength, pathLength, pathLength);
+    }
+
+    if (pathLength >= kMaxPathLength) {
+      break;
+    }
+
+    real3 hitP = ray.org + isect.t * ray.dir;
+
+    // 2. Next event estimation
+    {
+
+    }
+
+    // 3. Continue path tracing.
+    {
+      double r = randomreal();
+      real3 sampledDir;
+      
+      // faceforward.
+      real3 n = isect.normal;
+      double ndoti = vdot(isect.normal, ray.dir.neg());
+      if (ndoti < 0.0) {
+        n = n.neg();
+      }
+      double pdf = SampleDiffuseIS(sampledDir, n);
+
+      //throughput *= factor * (cosThetaOut / pdf);
+
+      ray.org = hitP + kEPS * sampledDir;
+      ray.dir = sampledDir;
+
+      isect.t = kFar;
+    }
+
+  }
+
+  return radiance;
 }
 
 }
 
 void Render(
-  const Scene& scene,
+  Scene& scene,
   const RenderConfig& config,
   std::vector<float>& image,  // RGB
   float eye[3], 
@@ -107,26 +321,32 @@ void Render(
 
     for (int x = 0; x < width; x++) {
 
-      float u = randomreal();
-      float v = randomreal();
+#if 1
+      real3 radiance = PathTrace(scene, camera, config, image, x, y, step);
 
-      Ray ray;
+      image[3*(y*width+x)+0] = radiance[0];
+      image[3*(y*width+x)+1] = radiance[1];
+      image[3*(y*width+x)+2] = radiance[2];
 
-      real3 dir;
-      dir[0] = (corner[0] + (x + u + step/2.0f) * du[0] + ((height - y - 1) - v + step/2.0f) * dv[0]) - eye[0];
-      dir[1] = (corner[1] + (x + u + step/2.0f) * du[1] + ((height - y - 1) - v + step/2.0f) * dv[1]) - eye[1];
-      dir[2] = (corner[2] + (x + u + step/2.0f) * du[2] + ((height - y - 1) - v + step/2.0f) * dv[2]) - eye[2];
-      dir.normalize();
-      
-      ray.dir = dir;
-      ray.org = eye;
+#else
+      float u = randomreal() - 0.5;
+      float v = randomreal() - 0.5;
+
+      Ray ray = camera.GenerateRay(x+u+step/2.0f, y+v+step/2.0f);
 
       Intersection isect;
       bool hit = scene.Trace(isect, ray);
-      
-      image[3*(y*width+x)+0] = x / (float)width;
-      image[3*(y*width+x)+1] = y / (float)height;
-      image[3*(y*width+x)+2] = 0.0;
+
+      if (hit) {
+
+        double dotNI = fabs(vdot(isect.normal, ray.dir.neg()));
+
+        image[3*(y*width+x)+0] = isect.normal[0];
+        image[3*(y*width+x)+1] = isect.normal[1];
+        image[3*(y*width+x)+2] = isect.normal[2];
+      }
+#endif
+
     }
 
     // block fill

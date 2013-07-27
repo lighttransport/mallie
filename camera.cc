@@ -142,6 +142,46 @@ Camera::BuildCameraFrame(
     origin[1] = eye1[1];
     origin[2] = eye1[2];
 
+    // Store intermediate
+    origin_[0] = origin[0];
+    origin_[1] = origin[1];
+    origin_[2] = origin[2];
+
+    corner_[0] = corner[0];
+    corner_[1] = corner[1];
+    corner_[2] = corner[2];
+
+    du_[0] = u[0];
+    du_[1] = u[1];
+    du_[2] = u[2];
+
+    dv_[0] = v[0];
+    dv_[1] = v[1];
+    dv_[2] = v[2];
+
+    fov_ = fov;
+  
   }
 
+}
+
+Ray
+Camera::GenerateRay(double u, double v) const {
+  real3 dir;
+
+  dir[0] = (corner_[0] + u * du_[0] + v * dv_[0]) - origin_[0];
+  dir[1] = (corner_[1] + u * du_[1] + v * dv_[1]) - origin_[1];
+  dir[2] = (corner_[2] + u * du_[2] + v * dv_[2]) - origin_[2];
+  dir.normalize();
+
+  real3 org;
+  org[0] = origin_[0];
+  org[1] = origin_[1];
+  org[2] = origin_[2];
+
+  Ray ray;
+  ray.org = org;
+  ray.dir = dir;
+
+  return ray;
 }
