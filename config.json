@@ -1,5 +1,7 @@
 {
     "obj_filename" : "teapot.obj",
     "material_filename" : "teapot.material.json",
+    "scene_scale" : 0.1,
+    "plane" : true,
     "dummy" : 0
 }

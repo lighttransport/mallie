@@ -23,8 +23,68 @@
 #include "mmm_io.h"
 #include "timerutil.h"
 #include "main_console.h"
+#include "scene.h"
 
 namespace {
+
+static int GetNumCPUs()
+{
+    int cpus = 0;
+
+#ifdef _WIN32
+    SYSTEM_INFO info;
+
+    GetSystemInfo(&info);
+
+    if (info.dwNumberOfProcessors > 1) {
+        cpus = info.dwNumberOfProcessors;
+    }
+#elif defined(__APPLE__) /* OS X */
+    int    mib[2], rc;
+    size_t len;
+
+    mib[0] = CTL_HW;
+    mib[1] = HW_NCPU;
+    len    = sizeof(cpus);
+    rc     = sysctl(mib, 2, &cpus, &len, NULL, 0);
+
+#elif defined(__linux__)  /* linux */
+    FILE* fp;
+    char  buf[1024];
+
+    fp = fopen("/proc/cpuinfo", "r");
+    if (!fp)
+        return 0;
+
+    while (!feof(fp)) {
+        fgets(buf, 1023, fp);
+        if (strncasecmp("ht", buf, strlen("ht")) == 0) {
+            /* Hyper Thread */
+            cpus++;
+        } else if (strncasecmp("processor", buf, strlen("processor")) == 0) {
+            /* Pysical CPU processor */
+            cpus++;
+        }
+    }
+   
+    fclose(fp);
+
+#endif // ifdef _WIN32
+
+    if (cpus < 1) {
+        cpus = 1;
+    }
+
+    return cpus;
+} 
+
+bool
+InitScene(
+  mallie::Scene& scene,
+  mallie::RenderConfig& config)
+{
+  return scene.Init(config.obj_filename, config.material_filename, config.scene_scale);
+}
 
 bool
 LoadJSONConfig(
@@ -51,6 +111,14 @@ LoadJSONConfig(
 
   if (v.get("material_filename").is<std::string>()) {
     config.material_filename = v.get("material_filename").get<std::string>();
+  }
+
+  if (v.get("scene_scale").is<double>()) {
+    config.scene_scale = v.get("scene_scale").get<double>();
+  }
+
+  if (v.get("plane").is<bool>()) {
+    config.plane = v.get("plane").get<bool>();
   }
 
   if (v.get("num_passes").is<double>()) {
@@ -116,6 +184,7 @@ main(
   MPI_Comm_size(MPI_COMM_WORLD, &nnodes);
 #endif
   printf("[Mallie] Version: %s\n", MALLIE_VERSION);
+  printf("[Mallie] # of CPUs: %d\n", GetNumCPUs());
 
   // Load config
   std::string config_filename("config.json");
@@ -127,6 +196,10 @@ main(
   bool ret = LoadJSONConfig(config, config_filename);
   assert(ret);
 
+  mallie::Scene scene;
+  ret = InitScene(scene, config);
+  assert(ret);
+
   mallie::timerutil t;
   t.start();
   printf("[Mallie] Begin\n");
@@ -134,10 +207,10 @@ main(
 #ifdef ENABLE_SDL
   // SDL_Init() must be defined in main()
   SDL_Init(SDL_INIT_VIDEO|SDL_INIT_TIMER);
-  DoMainSDL(config);
+  DoMainSDL(scene, config);
 #else
 
-  DoMainConsole(config);
+  DoMainConsole(scene, config);
 #endif
 
   t.end();

@@ -5,7 +5,7 @@
 
 namespace mallie {
 
-void DoMainConsole(const RenderConfig& config);
+void DoMainConsole(const Scene& scene, const RenderConfig& config);
 
 }
 

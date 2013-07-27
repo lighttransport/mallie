@@ -1,6 +1,8 @@
 #ifndef __COMMON_H__
 #define __COMMON_H__
 
+#include <cmath>
+
 //typedef double real;
 typedef float real;
 
@@ -24,6 +26,20 @@ struct real3 {
     }
     real operator[](int i) const { return (&x)[i]; }
     real &operator[](int i) { return (&x)[i]; }
+
+    real length() {
+      return x*x+y*y+z*z;
+    }
+
+    void normalize() {
+      real len = length();
+      if (fabs(len) > 1.0e-6) {
+        real inv_len = 1.0 / len;
+        x *= inv_len;
+        y *= inv_len;
+        z *= inv_len;
+      }
+    }
 
     real x, y, z;
     //real pad;  // for alignment 

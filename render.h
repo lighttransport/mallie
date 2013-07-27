@@ -4,6 +4,8 @@
 #include <vector>
 #include <string>
 
+#include "scene.h"
+
 namespace mallie {
 
 struct RenderConfig {
@@ -13,6 +15,10 @@ struct RenderConfig {
   float eye[3];
   float lookat[3];
   float up[3];
+
+  double scene_scale;
+
+  bool   plane;       // Infinite plane for debugging purpose
 
   int   num_passes;
   int   num_photons;  // # of photon to shoot per pass.
@@ -24,6 +30,8 @@ struct RenderConfig {
     fov(45.0),
     width(512),
     height(512),
+    scene_scale(1.0),
+    plane(false),
     num_passes(10),
     num_photons(10000) {
 
@@ -41,6 +49,7 @@ struct RenderConfig {
 };
 
 extern void Render(
+  const Scene& scene,
   const RenderConfig& config,
   std::vector<float>& image,   // out image
   float eye[3], 

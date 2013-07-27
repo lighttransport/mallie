@@ -5,23 +5,24 @@
 #include "scene.h"
 #include "timerutil.h"
 
+namespace mallie {
+
 bool
 Scene::Init(
-  const std::string& objFilename)
+  const std::string& objFilename,
+  const std::string& materialFilename,
+  double sceneScale)
 {
-  Mesh mesh;
-  bool ret = MeshLoader::LoadObj(mesh, objFilename.c_str());
+  bool ret = MeshLoader::LoadObj(mesh_, objFilename.c_str());
   if (!ret) {
     printf("[Mallie] Failed to load .obj file [ %s ]\n", objFilename.c_str());
     return false;
   }
 
-  float scale = 1.0; // @todo
-
-  for (size_t i = 0; i < mesh.numVertices; i++) {
-    mesh.vertices[3*i+0] *= scale;
-    mesh.vertices[3*i+1] *= scale;
-    mesh.vertices[3*i+2] *= scale;
+  for (size_t i = 0; i < mesh_.numVertices; i++) {
+    mesh_.vertices[3*i+0] *= sceneScale;
+    mesh_.vertices[3*i+1] *= sceneScale;
+    mesh_.vertices[3*i+2] *= sceneScale;
   }
 
   mallie::timerutil t;
@@ -33,7 +34,7 @@ Scene::Init(
   printf("    # of leaf primitives: %d\n", options.minLeafPrimitives);
   printf("    SAH binsize         : %d\n", options.binSize);
 
-  ret = accel_.Build(&mesh, options);
+  ret = accel_.Build(&mesh_, options);
   assert(ret);
 
   t.end();
@@ -48,3 +49,13 @@ Scene::Init(
 
   return true;
 }
+
+const bool
+Scene::Trace(
+  Intersection& isect,
+  const Ray& ray) const
+{
+  return false;
+}
+
+} // namespace

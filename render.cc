@@ -62,6 +62,7 @@ void GenLightPath(
 }
 
 void Render(
+  const Scene& scene,
   const RenderConfig& config,
   std::vector<float>& image,  // RGB
   float eye[3], 
@@ -105,6 +106,24 @@ void Render(
     }
 
     for (int x = 0; x < width; x++) {
+
+      float u = randomreal();
+      float v = randomreal();
+
+      Ray ray;
+
+      real3 dir;
+      dir[0] = (corner[0] + (x + u + step/2.0f) * du[0] + ((height - y - 1) - v + step/2.0f) * dv[0]) - eye[0];
+      dir[1] = (corner[1] + (x + u + step/2.0f) * du[1] + ((height - y - 1) - v + step/2.0f) * dv[1]) - eye[1];
+      dir[2] = (corner[2] + (x + u + step/2.0f) * du[2] + ((height - y - 1) - v + step/2.0f) * dv[2]) - eye[2];
+      dir.normalize();
+      
+      ray.dir = dir;
+      ray.org = eye;
+
+      Intersection isect;
+      bool hit = scene.Trace(isect, ray);
+      
       image[3*(y*width+x)+0] = x / (float)width;
       image[3*(y*width+x)+1] = y / (float)height;
       image[3*(y*width+x)+2] = 0.0;

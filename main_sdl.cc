@@ -325,6 +325,7 @@ Init(
 
 void
 DoMainSDL(
+  const Scene& scene,
   const RenderConfig& config)
 {
   printf("[Mallie] SDL window mode.\n");
@@ -363,7 +364,7 @@ DoMainSDL(
     }
 
     SDL_Delay(33);
-    Render(config, gImage, gEye, gLookat, gUp, gCurrQuat, gRenderPixelStep);
+    Render(scene, config, gImage, gEye, gLookat, gUp, gCurrQuat, gRenderPixelStep);
 
     if (!gRenderInteractive) {
       gRenderPixelStep >>= 1;
@@ -383,6 +384,7 @@ namespace mallie {
 
 void
 DoMainSDL(
+  const Scene& scene,
   const RenderConfig& config)
 {
   assert(0);
