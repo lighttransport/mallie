@@ -114,6 +114,12 @@ solution "MallieSolution"
             linkoptions { "-fopenmp" }
          end
 
+         if _OPTIONS['with-sdl'] then
+            defines { 'ENABLE_SDL' }
+            buildoptions { "`sdl-config --cflags`" }
+            linkoptions { "`sdl-config --libs`" }
+         end
+
          linkoptions { "-pthread" }
 
       configuration "Debug"
