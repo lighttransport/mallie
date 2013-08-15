@@ -29,6 +29,7 @@ sources = {
    "importers/mesh_loader.cc",
    "bvh_accel.cc",
    "scene.cc",
+   "spectrum.cc",
    "jpge.cc"
    }
 
@@ -68,9 +69,9 @@ solution "MallieSolution"
          -- SDL
          if _OPTIONS['with-sdl'] then
             defines { 'ENABLE_SDL' }
-            buildoptions { "`sdl-config --cflags`" }
+            buildoptions { "`sdl2-config --cflags`" }
             buildoptions { "-msse2" }
-            linkoptions { "`sdl-config --libs`" }
+            linkoptions { "`sdl2-config --libs`" }
          end
 
          -- gcc openmp
@@ -117,8 +118,8 @@ solution "MallieSolution"
 
          if _OPTIONS['with-sdl'] then
             defines { 'ENABLE_SDL' }
-            buildoptions { "`sdl-config --cflags`" }
-            linkoptions { "`sdl-config --libs`" }
+            buildoptions { "`sdl2-config --cflags`" }
+            linkoptions { "`sdl2-config --libs`" }
          end
 
          linkoptions { "-pthread" }

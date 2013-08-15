@@ -1,6 +1,8 @@
 #ifndef __MALLIE_SCENE_H__
 #define __MALLIE_SCENE_H__
 
+#include <cassert>
+
 #include "bvh_accel.h"
 #include "material.h"
 
@@ -20,6 +22,13 @@ Scene
     bool Trace(Intersection& isect, Ray& ray);
 
     void BoundingBox(real3& bmin, real3& bmax);
+
+    real3 GetBackgroundRadiance(real3& dir);
+
+    const Material& GetMaterial(int matID) const {
+      assert(matID < materials_.size());
+      return materials_[matID];
+    }
 
   protected:
     

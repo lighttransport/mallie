@@ -82,4 +82,12 @@ Scene::BoundingBox(
   bmax[2] = nodes[0].bmax[2];
 }
 
+real3
+Scene::GetBackgroundRadiance(
+  real3& dir)
+{
+  // Constant dome light
+  return real3(0.75, 0.75, 0.75);
+}
+
 } // namespace

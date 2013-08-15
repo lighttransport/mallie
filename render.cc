@@ -43,15 +43,6 @@ inline double randomreal(void) {
   return w*(1.0/4294967296.0);
 }
 
-
-inline real3 vcross(real3 a, real3 b) {
-  real3 c;
-  c[0] = a[1] * b[2] - a[2] * b[1];
-  c[1] = a[2] * b[0] - a[0] * b[2];
-  c[2] = a[0] * b[1] - a[1] * b[0];
-  return c;
-}
-
 static void
 GenerateBasis(
   real3&        tangent,
@@ -143,11 +134,6 @@ double Mis2(
     double aOtherPdf)
 {
     return Mis(aSamplePdf) / (Mis(aSamplePdf) + Mis(aOtherPdf));
-}
-
-inline double vdot(real3 a, real3 b)
-{
-  return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
 }
 
 void GenEyePath(

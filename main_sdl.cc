@@ -11,7 +11,7 @@
 #include <omp.h>
 #endif
 
-#include <SDL.h>
+#include <SDL.h> // SDL2
 
 #include "trackball.h"
 #include "camera.h"
@@ -52,7 +52,12 @@ static int   gRenderPasses = 1;
 
 int gWidth = 256;
 int gHeight = 256;
+
+//SDL_Surface* gSurface = NULL;
+SDL_Window* gWindow = NULL;
 SDL_Surface* gSurface = NULL;
+SDL_Renderer* gSDLRenderer = NULL;
+
 std::vector<float> gImage;
 std::vector<float> gFramebuffer;  // HDR framebuffer
 RenderConfig gRenderConfig;
@@ -266,6 +271,9 @@ void Display(
   int width,
   int height)
 {
+  SDL_SetRenderDrawColor(gSDLRenderer, 0, 0, 0, 255);
+  SDL_RenderClear(gSDLRenderer);
+
   SDL_LockSurface(surface);
 
   // ARGB
@@ -280,11 +288,11 @@ void Display(
       col[2] = 127;
 
 #ifdef __APPLE__
-      // ARGB
-      data[4*(y*width+x)+1] = fclamp(scale * image[3*(y*width+x)+0]);
-      data[4*(y*width+x)+2] = fclamp(scale * image[3*(y*width+x)+1]);
-      data[4*(y*width+x)+3] = fclamp(scale * image[3*(y*width+x)+2]);
-      data[4*(y*width+x)+0] = 255;
+      // RGBA
+      data[4*(y*width+x)+0] = fclamp(scale * image[3*(y*width+x)+0]);
+      data[4*(y*width+x)+1] = fclamp(scale * image[3*(y*width+x)+1]);
+      data[4*(y*width+x)+2] = fclamp(scale * image[3*(y*width+x)+2]);
+      data[4*(y*width+x)+3] = 255;
 #else
       // BGRA?
       data[4*(y*width+x)+2] = fclamp(scale * image[3*(y*width+x)+0]);
@@ -296,7 +304,7 @@ void Display(
   }
 
   SDL_UnlockSurface(surface);
-  SDL_Flip(surface);
+  SDL_RenderPresent(gSDLRenderer);
 }
 
 Uint32 TimeLeft(int interval)
@@ -318,7 +326,8 @@ CheckSDLEvent()
 {
   SDL_Event event;
   SDL_PumpEvents();
-  if (SDL_PeepEvents(&event, 1, SDL_PEEKEVENT, SDL_EVENTMASK (SDL_MOUSEBUTTONDOWN) | SDL_EVENTMASK(SDL_KEYDOWN)) > 0) {
+  //if (SDL_PeepEvents(&event, 1, SDL_PEEKEVENT, SDL_EVENTMASK (SDL_MOUSEBUTTONDOWN) | SDL_EVENTMASK(SDL_KEYDOWN)) > 0) {
+  if (SDL_PeepEvents(&event, 1, SDL_PEEKEVENT, SDL_MOUSEBUTTONDOWN | SDL_KEYDOWN, SDL_MOUSEBUTTONDOWN | SDL_KEYDOWN) > 0) {
     return true;
   }
   return false;
@@ -365,7 +374,23 @@ DoMainSDL(
   gWidth = config.width;
   gHeight = config.height;
 
-  gSurface = SDL_SetVideoMode(config.width, config.height, 32, SDL_SWSURFACE);
+  gWindow = SDL_CreateWindow("Mallie", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, gWidth, gHeight, 0);
+  if (!gWindow) {
+    printf("SDL err: %s\n", SDL_GetError());
+    exit(1);
+  }
+
+  gSDLRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_SOFTWARE);
+  if (!gSDLRenderer) {
+    printf("SDL err: %s\n", SDL_GetError());
+    exit(1);
+  }
+
+  gSurface = SDL_GetWindowSurface(gWindow);
+  if (!gSurface) {
+    printf("SDL err: %s\n", SDL_GetError());
+    exit(1);
+  }
 
   gFramebuffer.resize(gWidth * gHeight * 3); // RGB
   ClearImage(gFramebuffer);
@@ -396,6 +421,8 @@ DoMainSDL(
           HandleMouseMotion(event);
           break;
       }
+
+      if (done) { break; }
     }
 
     if (done) { break; }

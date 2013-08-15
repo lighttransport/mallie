@@ -1,8 +1,9 @@
 {
     "obj_filename" : "cornellbox_suzanne.obj",
     "material_filename" : "teapot.material.json",
+    "resolution" : [256, 256],
     "scene_scale" : 1.0,
-    "num_passes" : 100,
+    "num_passes" : 1000,
     "plane" : true,
     "eye" : [0, 5, 10],
     "lookat" : [0, 5, 0],
