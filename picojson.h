@@ -475,7 +475,7 @@ namespace picojson {
 	s.push_back(ch);
       }
     }
-    return false;
+    //return false;
   }
   
   template <typename Iter> inline bool _parse_array(value& out, input<Iter>& in) {

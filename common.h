@@ -23,6 +23,7 @@ struct real3 {
     }
     real3& operator+=(const real3 &f2) {
         x += f2.x; y += f2.y; z += f2.z;
+        return (*this);
     }
     real3 operator/(const real3 &f2) const {
         return real3(x/f2.x, y/f2.y, z/f2.z);

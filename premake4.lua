@@ -117,11 +117,12 @@ solution "MallieSolution"
          defines { '__STDC_CONSTANT_MACROS', '__STDC_LIMIT_MACROS' } -- c99
 
          if _OPTIONS['cross-k'] then
-            buildoptions { "-KPIC" }
+            buildoptions { "-Xg -KPIC" } -- gcc compat, position independet code.
 
             -- fj openmp
             if _OPTIONS['with-openmp'] then
                buildoptions { "-Kopenmp" }
+               linkoptions { "-Kopenmp" }
             end
          else
             -- gcc openmp
@@ -137,7 +138,9 @@ solution "MallieSolution"
             linkoptions { "`sdl2-config --libs`" }
          end
 
-         linkoptions { "-pthread" }
+         if not _OPTIONS['cross-k'] then
+            linkoptions { "-pthread" }
+         end
 
       configuration "Debug"
          defines { "DEBUG" } -- -DDEBUG
@@ -146,5 +149,10 @@ solution "MallieSolution"
 
       configuration "Release"
          defines { "NDEBUG" }
-         flags { "Symbols", "Optimize", "EnableSSE2" }
+         flags { "Symbols", "Optimize" }
+         if _OPTIONS['cross-k'] then
+            buildoptions { "-Kfast" }
+         else
+            flags { "EnableSSE2" }
+         end
          targetname "mallie"
