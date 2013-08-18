@@ -1,3 +1,9 @@
+-- K/FX100 cross compiling
+newoption {
+   trigger     = "cross-k",
+   description = "Cross compile for K/FX10."
+}
+
 -- OpenMP
 newoption {
    trigger     = "with-openmp",
@@ -97,13 +103,22 @@ solution "MallieSolution"
       configuration {"linux", "gmake"}
          defines { '__STDC_CONSTANT_MACROS', '__STDC_LIMIT_MACROS' } -- c99
 
-         -- gcc openmp
-         if _OPTIONS['with-openmp'] then
-            buildoptions { "-fopenmp" }
-            linkoptions { "-fopenmp" }
+         if _OPTIONS['cross-k'] then
+            buildoptions { "-KPIC" }
+
+            -- fj openmp
+            if _OPTIONS['with-openmp'] then
+               buildoptions { "-Kopenmp" }
+            end
+         else
+            -- gcc openmp
+            if _OPTIONS['with-openmp'] then
+               buildoptions { "-fopenmp" }
+               linkoptions { "-fopenmp" }
+            end
          end
 
-         linkoptions { "-pthread" }
+         -- linkoptions { "-pthread" }
 
       -- Solaris specific
       if (os.is("solaris")) then
