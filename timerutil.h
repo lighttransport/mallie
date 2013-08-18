@@ -28,8 +28,8 @@ namespace mallie {
 #ifdef _WIN32
 		typedef DWORD time_t;
 		
-		timer() {::timeBeginPeriod( 1 );}
-		~timer(){::timeEndPeriod(1);}
+		timerutil() {::timeBeginPeriod( 1 );}
+		~timerutil(){::timeEndPeriod(1);}
 			
 		void start(){t_[0] = ::timeGetTime();}
 		void end()  {t_[1] = ::timeGetTime();}
