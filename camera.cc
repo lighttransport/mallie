@@ -51,8 +51,8 @@ Camera::BuildCameraFrame(
 {
   float e[4][4];
   //printf("--in\n");
-  //printf("eye: %f, %f, %f\n", eye_[0], eye_[1], eye_[2]);
-  //printf("lookat: %f, %f, %f\n", lookat_[0], lookat_[1], lookat_[2]);
+  printf("eye: %f, %f, %f\n", eye_[0], eye_[1], eye_[2]);
+  printf("lookat: %f, %f, %f\n", lookat_[0], lookat_[1], lookat_[2]);
   //printf("up: %f, %f, %f\n", up_[0], up_[1], up_[2]);
   Matrix::LookAt(e, eye_, lookat_, up_);
   //printf("e ---\n");
@@ -63,25 +63,6 @@ Camera::BuildCameraFrame(
   //printf("m ---\n");
   //Matrix::Print(m);
 
-  Matrix::Inverse(r);
-  //printf("r ---\n");
-  //Matrix::Print(r);
-
-  float m[4][4];
-  //Matrix::Mult(m, e, r);
-  Matrix::Mult(m, r, e);
-  //printf("m ---\n");
-  //Matrix::Print(m);
-
-
-
-  float vzero[3] = {0.0f, 0.0f, 0.0f};
-  float eye1[3];
-  Matrix::MultV(eye1, m, vzero);
-  //printf("eye  = %f, %f, %f\n", eye_[0], eye_[1], eye_[2]);
-  //printf("eye1 = %f, %f, %f\n", eye1[0], eye1[1], eye1[2]);
-
-  // -z
   float lo[3];
   lo[0] = lookat_[0] - eye_[0];
   lo[1] = lookat_[1] - eye_[1];
@@ -91,8 +72,63 @@ Camera::BuildCameraFrame(
   float dir[3];
   dir[0] = 0.0;
   dir[1] = 0.0;
-  dir[2] = -dist;
+  dir[2] = dist;
+
+  Matrix::Inverse(r);
+  printf("r ---\n");
+  Matrix::Print(r);
+
+  float rr[4][4];
+  float re[4][4];
+  float zero[3] = {0.0f, 0.0f, 0.0f};
+  float localUp[3] = {0.0f, 1.0f, 0.0f};
+  Matrix::LookAt(re, dir, zero, localUp);
+
+  // translate
+  re[3][0] += 0.0; // lo[0];
+  re[3][1] += 0.0; //lo[1];
+  re[3][2] += (eye_[2] - dist);
+
+  // rot -> trans
+  //Matrix::Mult(rr, re, r);
+  Matrix::Mult(rr, r, re);
+
+  // trans -> rot
+  //Matrix::Mult(rr, r, re);
+  printf("re ---\n");
+  Matrix::Print(re);
+  printf("rr ---\n");
+  Matrix::Print(rr);
+
+  float m[4][4];
+  for (int j = 0; j < 4; j++) {
+    for (int i = 0; i < 4; i++) {
+      m[j][i] = rr[j][i];
+    }
+  }
+
+  // translate
+  //m[3][0] += 0.0; // lo[0];
+  //m[3][1] += 0.0; //lo[1];
+  //m[3][2] += (eye_[2] - dist);
+
+  //Matrix::Mult(m, e, rr);
+  //Matrix::Mult(m, e, rr);
+  //Matrix::Mult(m, r, e);
+  printf("m ---\n");
+  Matrix::Print(m);
+
+  //Matrix::Inverse(m);
+
+
+  float vzero[3] = {0.0f, 0.0f, 0.0f};
+  float eye1[3];
+  Matrix::MultV(eye1, m, vzero);
+  //printf("eye  = %f, %f, %f\n", eye_[0], eye_[1], eye_[2]);
+  //printf("eye1 = %f, %f, %f\n", eye1[0], eye1[1], eye1[2]);
+
   float lookat1[3];
+  dir[2] = -dir[2];
   Matrix::MultV(lookat1, m, dir);
   //printf("dist    = %f\n", dist);
   //printf("lookat1 = %f, %f, %f\n", lookat1[0], lookat1[1], lookat1[2]);
@@ -110,10 +146,37 @@ Camera::BuildCameraFrame(
   up1[2] -= eye1[2];
   //printf("up1(after) = %f, %f, %f\n", up1[0], up1[1], up1[2]);
 
+  // Use original up vector
+  up1[0] = up_[0];
+  up1[1] = up_[1];
+  up1[2] = up_[2];
+
+#if 0
+  float vdir[3];
+  vdir[0] = lookat1[0] - eye1[0];
+  vdir[1] = lookat1[1] - eye1[1];
+  vdir[2] = lookat1[2] - eye1[2];
+  double vlen = sqrt(vdir[0] * vdir[0] + vdir[1] * vdir[1] + vdir[2] * vdir[2]);
+  double inv_vlen = vlen;
+  if (vlen > 1.0e-30) {
+    inv_vlen = 1.0 / vlen;
+  }
+  vdir[0] *= inv_vlen;
+  vdir[1] *= inv_vlen;
+  vdir[2] *= inv_vlen;
+  double up_dot_dir = up1[0] * vdir[0] + up1[1] * vdir[1] + up1[2] * vdir[2];
+  if (std::abs(up_dot_dir) > 0.999) {
+    // flop y and z
+    float tmp = up1[1];
+    up1[1] = up1[2];
+    up1[2] = -tmp;
+  }
+#endif
+
 	//glrsSetCamera(&eye1[0], &lookat1[0], &up1[0], 45.0f);
-	//fprintf(stderr, "eye: %f %f %f\n", eye1[0], eye1[1], eye1[2]);
-	//fprintf(stderr, "lookat: %f %f %f\n", lookat1[0], lookat1[1], lookat1[2]);
-	//fprintf(stderr, "up: %f %f %f\n", up1[0], up1[1], up1[2]);
+	fprintf(stderr, "eye: %f %f %f\n", eye1[0], eye1[1], eye1[2]);
+	fprintf(stderr, "lookat: %f %f %f\n", lookat1[0], lookat1[1], lookat1[2]);
+	fprintf(stderr, "up: %f %f %f\n", up1[0], up1[1], up1[2]);
 	//fprintf(stderr, "quat: %f %f %f %f\n", quat[0], quat[1], quat[2], quat[3]);
 
   {

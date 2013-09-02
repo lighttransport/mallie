@@ -42,6 +42,7 @@ static float gScale = 0.1f;
 static float gPrevQuat[4] = {0.0f, 0.0f, 0.0f, 0.0f};
 static float gCurrQuat[4] = {0.0f, 0.0f, 0.0f, 0.0f};
 static float gInitQuat[4] = {0.0f, 0.0f, 0.0f, 1.0f};
+static float gRotate[3] = {0.0f, 0.0f, 0.0f};
 static float gOrigin[3], gCorner[3], gDu[3], gDv[3];
 static float gIntensity = 1.0f;
 static float gTransferOffset = 0.0f;
@@ -61,6 +62,60 @@ SDL_Renderer* gSDLRenderer = NULL;
 std::vector<float> gImage;
 std::vector<float> gFramebuffer;  // HDR framebuffer
 RenderConfig gRenderConfig;
+
+static void
+EulerToQuatRad(
+  float quat[4],
+  double x, double y, double z) // in radian. yaw, pitch, roll
+{
+  double rx = x;
+  double ry = y;
+  double rz = z;
+
+  double hx = 0.5 * rx;
+  double hy = 0.5 * ry;
+  double hz = 0.5 * rz;
+
+  double cosHx = cos(hx);
+  double cosHy = cos(hy);
+  double cosHz = cos(hz);
+
+  double sinHx = sin(hx);
+  double sinHy = sin(hy);
+  double sinHz = sin(hz);
+
+  quat[0] = cosHx * cosHy * cosHz + sinHx * sinHy * sinHz;
+  quat[1] = sinHx * cosHy * cosHz - cosHx * sinHy * sinHz;
+  quat[2] = cosHx * sinHy * cosHz + sinHx * cosHy * sinHz;
+  quat[3] = cosHx * cosHy * sinHz - sinHx * sinHy * cosHz;
+}
+
+static void
+EulerToQuatZYX(
+  float quat[4],
+  double x, double y, double z) // in radian. yaw, pitch, roll
+{
+  double rx = x;
+  double ry = y;
+  double rz = z;
+
+  double hx = 0.5 * rx;
+  double hy = 0.5 * ry;
+  double hz = 0.5 * rz;
+
+  double cosHx = cos(hx);
+  double cosHy = cos(hy);
+  double cosHz = cos(hz);
+
+  double sinHx = sin(hx);
+  double sinHy = sin(hy);
+  double sinHz = sin(hz);
+
+  quat[0] = cosHx * cosHy * cosHz + sinHx * sinHy * sinHz;
+  quat[1] = sinHx * cosHy * cosHz - cosHx * sinHy * sinHz;
+  quat[2] = cosHx * sinHy * cosHz + sinHx * cosHy * sinHz;
+  quat[3] = cosHx * cosHy * sinHz - sinHx * sinHy * cosHz;
+}
 
 static void
 AccumImage(
@@ -181,16 +236,30 @@ void HandleMouseMotion(SDL_Event e)
         //    0.0 * (2.0f * x - gWidth) / (float)gWidth,
         //    rotScale * (gHeight - 2.0f * y) / (float)gHeight);
 
-        trackball(gPrevQuat,
-            rotScale * (2.0f * gMouseX - gWidth) / (float)gWidth,
-            rotScale * (gHeight - 2.0f * gMouseY) / (float)gHeight,
-            rotScale * (2.0f * x - gWidth) / (float)gWidth,
-            rotScale * (gHeight - 2.0f * y) / (float)gHeight);
+        //trackball(gPrevQuat,
+        //    rotScale * (2.0f * gMouseX - gWidth) / (float)gWidth,
+        //    rotScale * (gHeight - 2.0f * gMouseY) / (float)gHeight,
+        //    rotScale * (2.0f * x - gWidth) / (float)gWidth,
+        //    rotScale * (gHeight - 2.0f * y) / (float)gHeight);
         //trackball(gPrevQuat,
         //    0.0f,
         //    rotScale * (gHeight - 2.0f * gMouseY) / (float)gHeight,
         //    0.0f,
         //    rotScale * (gHeight - 2.0f * y) / (float)gHeight);
+
+        double xx = (x - gMouseX) / (double)gWidth;
+        double yy = (y - gMouseY) / (double)gHeight;
+        double zz = 0.0;
+        //EulerToQuatRad(gPrevQuat, xx, yy, zz);
+        //printf("quat = %f, %f, %f, %f\n", gPrevQuat[0], gPrevQuat[1], gPrevQuat[2], gPrevQuat[3]);
+
+        double scale = M_PI * 2.0; // Heuristic value
+        gRotate[0] += scale * xx;
+        gRotate[1] += scale * yy;
+        // clamp
+        double eps = 1.0e-3;
+        if (gRotate[1] <= -(0.5*M_PI-eps)) gRotate[1] = -0.5*M_PI + eps;
+        if (gRotate[1] >=  (0.5*M_PI-eps)) gRotate[1] = 0.5*M_PI -eps;
 
         add_quats(gPrevQuat, gCurrQuat, gCurrQuat);
 
@@ -225,6 +294,7 @@ bool HandleKey(SDL_Event e)
           gEye[2] = gRenderConfig.eye[2];
           trackball(gCurrQuat, 0.0f, 0.0f, 0.0f, 0.0f);
           trackball(gPrevQuat, 0.0f, 0.0f, 0.0f, 0.0f);
+          gRotate[0] = gRotate[1] = gRotate[2] = 0.0f;
           gNeedRedraw = true;
           break;
       case 'i':
@@ -436,6 +506,11 @@ DoMainSDL(
       continue;
     }
       
+    // Use Euler rotation.
+    printf("rot = %f, %f, %f\n", 180*gRotate[0]/M_PI, 180*gRotate[1]/M_PI, 180*gRotate[2]/M_PI);
+    EulerToQuatRad(gCurrQuat, gRotate[2], gRotate[0], gRotate[1]+M_PI);
+    printf("quat = %f, %f, %f, %f\n", gCurrQuat[0], gCurrQuat[1], gCurrQuat[2], gCurrQuat[3]);
+
     Render(scene, config, gImage, gEye, gLookat, gUp, gCurrQuat, gRenderPixelStep);
 
     // Always clar framebuffer for intermediate result
