@@ -507,9 +507,9 @@ DoMainSDL(
     }
       
     // Use Euler rotation.
-    printf("rot = %f, %f, %f\n", 180*gRotate[0]/M_PI, 180*gRotate[1]/M_PI, 180*gRotate[2]/M_PI);
+    //printf("rot = %f, %f, %f\n", 180*gRotate[0]/M_PI, 180*gRotate[1]/M_PI, 180*gRotate[2]/M_PI);
     EulerToQuatRad(gCurrQuat, gRotate[2], gRotate[0], gRotate[1]+M_PI);
-    printf("quat = %f, %f, %f, %f\n", gCurrQuat[0], gCurrQuat[1], gCurrQuat[2], gCurrQuat[3]);
+    //printf("quat = %f, %f, %f, %f\n", gCurrQuat[0], gCurrQuat[1], gCurrQuat[2], gCurrQuat[3]);
 
     Render(scene, config, gImage, gEye, gLookat, gUp, gCurrQuat, gRenderPixelStep);
 

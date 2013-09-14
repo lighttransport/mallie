@@ -755,7 +755,7 @@ BuildIntersection(
 {
   // face index
   const unsigned int * faces = mesh->faces;
-  const float* vertices = mesh->vertices;
+  const real* vertices = mesh->vertices;
   isect.f0 = faces[3*isect.faceID+0];
   isect.f1 = faces[3*isect.faceID+1];
   isect.f2 = faces[3*isect.faceID+2];
@@ -784,7 +784,6 @@ BuildIntersection(
         
   isect.geometricNormal = n;
   isect.normal          = n;
-
 }
 
 } // namespace

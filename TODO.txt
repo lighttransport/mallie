@@ -2,4 +2,5 @@
 - Spectrum
 - Shader
 - Bidir path tracer
-- Pmap
+- Photon map
+-- PPM, SPPM, etc.

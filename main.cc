@@ -1,5 +1,6 @@
 #include <cstdio>
 #include <cstdlib>
+#include <iostream>
 
 #include "version.h"
 
@@ -24,7 +25,7 @@
 
 #include <fstream>
 
-#include "picojson.h"
+#include "parson.h" // deps/parson
 #include "render.h"
 #include "mmm_io.h"
 #include "timerutil.h"
@@ -97,6 +98,84 @@ LoadJSONConfig(
   mallie::RenderConfig& config, // [out]
   const std::string& filename)
 {
+#if 1
+  { // file check
+    std::ifstream is(filename.c_str());
+
+    if (!is) {
+      std::cerr << "File not found: " << filename << std::endl;
+      return false;
+    }
+  }
+
+  JSON_Value* root = json_parse_file(filename.c_str());
+  if (json_value_get_type(root) != JSONObject) {
+    return false;
+  }
+
+  JSON_Object* object = json_value_get_object(root);
+  if (json_value_get_type(json_object_dotget_value(object, "obj_filename")) == JSONString) {
+    config.obj_filename = json_object_dotget_string(object, "obj_filename");
+  }
+
+  if (json_value_get_type(json_object_dotget_value(object, "material_filename")) == JSONString) {
+    config.material_filename = json_object_dotget_string(object, "material_filename");
+  }
+
+  if (json_value_get_type(json_object_dotget_value(object, "scene_scale")) == JSONNumber) {
+    config.scene_scale = json_object_dotget_number(object, "scene_scale");
+  }
+
+  if (json_value_get_type(json_object_dotget_value(object, "eye")) == JSONArray) {
+    JSON_Array* array = json_object_dotget_array(object, "eye");
+    if (json_array_get_count(array) == 3) {
+      config.eye[0] = json_array_get_number(array, 0);
+      config.eye[1] = json_array_get_number(array, 1);
+      config.eye[2] = json_array_get_number(array, 2);
+    }
+  }
+
+  if (json_value_get_type(json_object_dotget_value(object, "up")) == JSONArray) {
+    JSON_Array* array = json_object_dotget_array(object, "up");
+    if (json_array_get_count(array) == 3) {
+      config.up[0] = json_array_get_number(array, 0);
+      config.up[1] = json_array_get_number(array, 1);
+      config.up[2] = json_array_get_number(array, 2);
+    }
+  }
+
+  if (json_value_get_type(json_object_dotget_value(object, "lookat")) == JSONArray) {
+    JSON_Array* array = json_object_dotget_array(object, "lookat");
+    if (json_array_get_count(array) == 3) {
+      config.lookat[0] = json_array_get_number(array, 0);
+      config.lookat[1] = json_array_get_number(array, 1);
+      config.lookat[2] = json_array_get_number(array, 2);
+    }
+  }
+
+  if (json_value_get_type(json_object_dotget_value(object, "resolution")) == JSONArray) {
+    JSON_Array* array = json_object_dotget_array(object, "resolution");
+    if (json_array_get_count(array) == 2) {
+      config.width= json_array_get_number(array, 0);
+      config.height = json_array_get_number(array, 1);
+    }
+  }
+
+  if (json_value_get_type(json_object_dotget_value(object, "num_passes")) == JSONNumber) {
+    config.num_passes = json_object_dotget_number(object, "num_passes");
+  }
+
+  if (json_value_get_type(json_object_dotget_value(object, "num_photons")) == JSONNumber) {
+    config.num_passes = json_object_dotget_number(object, "num_photons");
+  }
+
+  if (json_value_get_type(json_object_dotget_value(object, "plane")) == JSONBoolean) {
+    config.plane = json_object_dotget_boolean(object, "plane");
+  }
+
+  json_value_free(root);
+
+#else
   std::ifstream is(filename.c_str());
 
   if (!is) {
@@ -171,6 +250,7 @@ LoadJSONConfig(
   }
 
   return true;
+#endif
 }
 
 }
@@ -199,7 +279,14 @@ main(
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   MPI_Comm_size(MPI_COMM_WORLD, &nnodes);
 #endif
-  printf("[Mallie] Version: %s\n", MALLIE_VERSION);
+  printf("[Mallie] Version  : %s\n", MALLIE_VERSION);
+
+  if (sizeof(real) == 4) {
+    printf("[Mallie] Precision: 32bit float\n");
+  } else {
+    printf("[Mallie] Precision: 64bit double\n");
+  }
+
   printf("[Mallie] # of CPUs: %d\n", GetNumCPUs());
 
   // Load config

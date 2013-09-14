@@ -3,8 +3,8 @@
 
 #include <cmath>
 
-//typedef double real;
-typedef float real;
+typedef double real;
+//typedef float real;
 
 struct real3 {
     real3() { }

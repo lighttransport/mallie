@@ -36,7 +36,9 @@ sources = {
    "bvh_accel.cc",
    "scene.cc",
    "spectrum.cc",
-   "jpge.cc"
+   "jpge.cc",
+   "deps/parson/parson.c",
+   "tasksys.cc"
    }
 
 newaction {
@@ -64,7 +66,8 @@ solution "MallieSolution"
       files { sources }
 
       includedirs {
-         "./"
+         "./",
+         "deps/parson/",
       }
 
       -- MacOSX. Guess we use gcc.

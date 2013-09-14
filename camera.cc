@@ -51,8 +51,8 @@ Camera::BuildCameraFrame(
 {
   float e[4][4];
   //printf("--in\n");
-  printf("eye: %f, %f, %f\n", eye_[0], eye_[1], eye_[2]);
-  printf("lookat: %f, %f, %f\n", lookat_[0], lookat_[1], lookat_[2]);
+  //printf("eye: %f, %f, %f\n", eye_[0], eye_[1], eye_[2]);
+  //printf("lookat: %f, %f, %f\n", lookat_[0], lookat_[1], lookat_[2]);
   //printf("up: %f, %f, %f\n", up_[0], up_[1], up_[2]);
   Matrix::LookAt(e, eye_, lookat_, up_);
   //printf("e ---\n");
@@ -75,8 +75,8 @@ Camera::BuildCameraFrame(
   dir[2] = dist;
 
   Matrix::Inverse(r);
-  printf("r ---\n");
-  Matrix::Print(r);
+  //printf("r ---\n");
+  //Matrix::Print(r);
 
   float rr[4][4];
   float re[4][4];
@@ -95,10 +95,10 @@ Camera::BuildCameraFrame(
 
   // trans -> rot
   //Matrix::Mult(rr, r, re);
-  printf("re ---\n");
-  Matrix::Print(re);
-  printf("rr ---\n");
-  Matrix::Print(rr);
+  //printf("re ---\n");
+  //Matrix::Print(re);
+  //printf("rr ---\n");
+  //Matrix::Print(rr);
 
   float m[4][4];
   for (int j = 0; j < 4; j++) {
@@ -115,8 +115,8 @@ Camera::BuildCameraFrame(
   //Matrix::Mult(m, e, rr);
   //Matrix::Mult(m, e, rr);
   //Matrix::Mult(m, r, e);
-  printf("m ---\n");
-  Matrix::Print(m);
+  //printf("m ---\n");
+  //Matrix::Print(m);
 
   //Matrix::Inverse(m);
 
@@ -174,9 +174,9 @@ Camera::BuildCameraFrame(
 #endif
 
 	//glrsSetCamera(&eye1[0], &lookat1[0], &up1[0], 45.0f);
-	fprintf(stderr, "eye: %f %f %f\n", eye1[0], eye1[1], eye1[2]);
-	fprintf(stderr, "lookat: %f %f %f\n", lookat1[0], lookat1[1], lookat1[2]);
-	fprintf(stderr, "up: %f %f %f\n", up1[0], up1[1], up1[2]);
+	//fprintf(stderr, "eye: %f %f %f\n", eye1[0], eye1[1], eye1[2]);
+	//fprintf(stderr, "lookat: %f %f %f\n", lookat1[0], lookat1[1], lookat1[2]);
+	//fprintf(stderr, "up: %f %f %f\n", up1[0], up1[1], up1[2]);
 	//fprintf(stderr, "quat: %f %f %f %f\n", quat[0], quat[1], quat[2], quat[3]);
 
   {
