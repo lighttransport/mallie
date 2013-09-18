@@ -1,5 +1,6 @@
 #include <cstdio>
 #include <cstdlib>
+#include <cstring>
 #include <iostream>
 
 #include "version.h"
@@ -271,7 +272,7 @@ main(
   }
 
 #ifdef _OPENMP
-  printf("[Mallie] OpenMP : Detected (Max # of threads = %d\n", omp_get_max_threads());
+  printf("[Mallie] OpenMP Detected. Max # of threads = %d\n", omp_get_max_threads());
 #endif
 
 #ifdef WITH_MPI
