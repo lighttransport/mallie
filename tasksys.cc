@@ -101,6 +101,9 @@
 #if defined(__KNC__)
 #define ISPC_IS_KNC
 #endif
+#if defined(__sparcv9)
+#define ISPC_IS_SPARC
+#endif
 
 
 #define DBG(x) 
@@ -335,7 +338,7 @@ static inline void
 lMemFence() {
     // Windows atomic functions already contain the fence
     // KNC doesn't need the memory barrier
-#if !defined ISPC_IS_KNC && !defined ISPC_IS_WINDOWS
+#if !defined ISPC_IS_KNC && !defined ISPC_IS_WINDOWS && !defined ISPC_IS_SPARC
     __sync_synchronize();
 #endif
 }
@@ -344,6 +347,10 @@ static void *
 lAtomicCompareAndSwapPointer(void **v, void *newValue, void *oldValue) {
 #ifdef ISPC_IS_WINDOWS
     return InterlockedCompareExchangePointer(v, newValue, oldValue);
+#elif defined ISPC_IS_SPARC
+    // @todo
+    assert(0);
+    return NULL;
 #else
     void *result = __sync_val_compare_and_swap(v, oldValue, newValue);
     lMemFence();
@@ -355,6 +362,10 @@ static int32_t
 lAtomicCompareAndSwap32(volatile int32_t *v, int32_t newValue, int32_t oldValue) {
 #ifdef ISPC_IS_WINDOWS
     return InterlockedCompareExchange((volatile LONG *)v, newValue, oldValue);
+#elif defined ISPC_IS_SPARC
+    // @todo
+    assert(0);
+    return 0;
 #else
     int32_t result = __sync_val_compare_and_swap(v, oldValue, newValue);
     lMemFence();
@@ -366,6 +377,10 @@ static inline int32_t
 lAtomicAdd(volatile int32_t *v, int32_t delta) {
 #ifdef ISPC_IS_WINDOWS
     return InterlockedExchangeAdd((volatile LONG *)v, delta)+delta;
+#elif defined ISPC_IS_SPARC
+    // @todo
+    assert(0);
+    return 0;
 #else
     return __sync_fetch_and_add(v, delta);
 #endif

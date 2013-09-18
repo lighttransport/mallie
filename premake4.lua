@@ -154,7 +154,7 @@ solution "MallieSolution"
          defines { "NDEBUG" }
          flags { "Symbols", "Optimize" }
          if _OPTIONS['cross-k'] then
-            buildoptions { "-Kfast" }
+            -- pass buildoptions { "-Kfast" }
          else
             flags { "EnableSSE2" }
          end

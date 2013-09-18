@@ -175,6 +175,8 @@ LoadJSONConfig(
 
   json_value_free(root);
 
+  return true;
+
 #else
   std::ifstream is(filename.c_str());
 
