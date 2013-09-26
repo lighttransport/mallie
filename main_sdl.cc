@@ -17,6 +17,7 @@
 #include "camera.h"
 #include "timerutil.h"
 #include "render.h"
+#include "tinythread.h"
 
 #define PIXELSTEP_COARSE  (8)
 
@@ -51,6 +52,10 @@ static float gTransferOffset = 0.0f;
 static int   gRenderPixelStep = PIXELSTEP_COARSE;
 static int   gRenderPasses = 1;
 
+static tthread::mutex gRenderThreadMutex;
+static clock_t gRenderClock = 0;
+static bool gRenderQuit = false; // Only become true when we quit app.
+		
 int gWidth = 256;
 int gHeight = 256;
 
@@ -62,6 +67,12 @@ SDL_Renderer* gSDLRenderer = NULL;
 std::vector<float> gImage;
 std::vector<float> gFramebuffer;  // HDR framebuffer
 RenderConfig gRenderConfig;
+
+typedef struct
+{
+  Scene* scene;
+  const RenderConfig* config;
+} RenderContext;
 
 static void
 EulerToQuatRad(
@@ -374,7 +385,7 @@ void Display(
   }
 
   SDL_UnlockSurface(surface);
-  SDL_RenderPresent(gSDLRenderer);
+  //SDL_RenderPresent(gSDLRenderer);
 }
 
 Uint32 TimeLeft(int interval)
@@ -434,6 +445,109 @@ Init(
   //printf("[Mallie] up     = %f, %f, %f\n", gUp[0], gUp[1], gUp[2]);
 }
 
+clock_t GetCurrentRenderClock()
+{
+  clock_t clk;
+  tthread::lock_guard<tthread::mutex> guard(gRenderThreadMutex);
+  clk = gRenderClock;
+
+  return clk;
+}
+
+void NotifyRenderClock()
+{
+  tthread::lock_guard<tthread::mutex> guard(gRenderThreadMutex);
+  gRenderClock = clock();
+  return;
+}
+
+bool GetRenderQuitRequest()
+{
+  bool ret;
+  tthread::lock_guard<tthread::mutex> guard(gRenderThreadMutex);
+  ret = gRenderQuit;
+
+  return ret;
+}
+
+void NotifyRenderQuit()
+{
+  tthread::lock_guard<tthread::mutex> guard(gRenderThreadMutex);
+  gRenderQuit = true;
+  return;
+}
+
+void
+RenderThread(void* arg)
+{
+  RenderContext ctx = *(reinterpret_cast<RenderContext*>(arg));
+
+  clock_t prevRenderClock = 0;
+
+  while (!GetRenderQuitRequest()) {
+
+    clock_t currentRenderClock = GetCurrentRenderClock();
+    if ((gRenderPasses >= ctx.config->num_passes) && 
+        (currentRenderClock <= prevRenderClock)) {
+      usleep(1000*33);
+      continue;
+    }
+
+    if ((gRenderPasses >= ctx.config->num_passes)) {
+      //printf("Render finished\n");
+      // render finished
+      //Display(gSurface, gFramebuffer, gRenderPasses, config.width, config.height);
+      continue;
+    }
+      
+    // Use Euler rotation.
+    //printf("rot = %f, %f, %f\n", 180*gRotate[0]/M_PI, 180*gRotate[1]/M_PI, 180*gRotate[2]/M_PI);
+    EulerToQuatRad(gCurrQuat, gRotate[2], gRotate[0], gRotate[1]+M_PI);
+    //printf("quat = %f, %f, %f, %f\n", gCurrQuat[0], gCurrQuat[1], gCurrQuat[2], gCurrQuat[3]);
+
+    Render(*(ctx.scene), *(ctx.config), gImage, gEye, gLookat, gUp, gCurrQuat, gRenderPixelStep);
+
+    // Always clear framebuffer for intermediate result
+    //if (gRenderPixelStep > 1) {
+    if (gRenderPasses == 1) {
+      ClearImage(gFramebuffer);
+    }
+
+    AccumImage(gFramebuffer, gImage);
+
+    Display(gSurface, gFramebuffer, gRenderPasses, ctx.config->width, ctx.config->height);
+
+    //printf("step = %d, interactive = %d\n", gRenderPixelStep, gRenderInteractive);
+
+#if 0
+    // Increment render pass.
+    if (!gRenderInteractive && gRenderPixelStep == 1) {
+      gRenderPasses++;
+    }
+
+    if (!gRenderInteractive) {
+      gRenderPixelStep >>= 1;
+
+      if (gRenderPixelStep == 1) {
+        ClearImage(gFramebuffer);
+      }
+
+      if (gRenderPixelStep < 1) {
+        gRenderPixelStep = 1;
+      }
+    } else {
+      gRenderPasses = 1;
+    } 
+#else
+    gRenderPasses++;
+#endif
+
+    prevRenderClock = currentRenderClock;
+
+  }
+
+}
+
 void
 DoMainSDL(
   Scene& scene,
@@ -469,22 +583,32 @@ DoMainSDL(
 
   Init(config);
 
+  RenderContext renderCtx;
+  renderCtx.scene  = &scene;
+  renderCtx.config = &config;
+
+  tthread::thread renderThread(RenderThread, (void*)&renderCtx);
+
   SDL_Event event;
 
   bool done = false;
   while(!done) {
+
+    bool hasEvent = false;
 
     while(SDL_PollEvent(&event)) {
       switch(event.type) {
         case SDL_QUIT:
           done = true;
           break;
-        case SDL_KEYDOWN:
         case SDL_KEYUP:
+          hasEvent = true;
+        case SDL_KEYDOWN:
           done = HandleKey(event);
           break;
-        case SDL_MOUSEBUTTONDOWN:
         case SDL_MOUSEBUTTONUP:
+          hasEvent = true;
+        case SDL_MOUSEBUTTONDOWN:
           HandleMouseButton(event);
           break;
         case SDL_MOUSEMOTION:
@@ -493,12 +617,12 @@ DoMainSDL(
       }
 
       if (done) { break; }
+
     }
 
     if (done) { break; }
 
-    //SDL_Delay(33);
-
+#if 0
     if ((gRenderPasses >= config.num_passes)) {
       //printf("Render finished\n");
       // render finished
@@ -513,7 +637,7 @@ DoMainSDL(
 
     Render(scene, config, gImage, gEye, gLookat, gUp, gCurrQuat, gRenderPixelStep);
 
-    // Always clar framebuffer for intermediate result
+    // Always clear framebuffer for intermediate result
     if (gRenderPixelStep > 1) {
       ClearImage(gFramebuffer);
     }
@@ -542,11 +666,28 @@ DoMainSDL(
     } else {
       gRenderPasses = 1;
     }
+#else
+
+    if (hasEvent) {
+      NotifyRenderClock();
+    }
+
+    SDL_Delay(33);
+    SDL_RenderPresent(gSDLRenderer); // bitblit
+
+#endif
     
 
   }
 
+#if 1
+  NotifyRenderQuit();
+  //renderThread.detach();
+  renderThread.join();
+#endif
+
   printf("\n");
+  fflush(stdout); // for safety
 }
 
 }

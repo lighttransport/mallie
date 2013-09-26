@@ -300,10 +300,11 @@ inline int Ceil2Int(float val) {
 #ifdef NDEBUG
 #define Assert(expr) ((void)0)
 #else
-#define Assert(expr) \
-    ((expr) ? (void)0 : \
-        Severe("Assertion \"%s\" failed in %s, line %d", \
-               #expr, __FILE__, __LINE__))
+#define Assert(expr) assert(expr)
+//#define Assert(expr) \
+//    ((expr) ? (void)0 : \
+//        Severe("Assertion \"%s\" failed in %s, line %d", \
+//               #expr, __FILE__, __LINE__))
 #endif // NDEBUG
 inline bool Quadratic(float A, float B, float C, float *t0, float *t1) {
     // Find quadratic discriminant
