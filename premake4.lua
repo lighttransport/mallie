@@ -38,7 +38,8 @@ sources = {
    "spectrum.cc",
    "jpge.cc",
    "deps/parson/parson.c",
-   "tasksys.cc"
+   "tasksys.cc",
+   "deps/TinyThread++-1.1/source/tinythread.cpp",
    }
 
 newaction {
@@ -68,6 +69,7 @@ solution "MallieSolution"
       includedirs {
          "./",
          "deps/parson/",
+         "deps/TinyThread++-1.1/source/",
       }
 
       -- MacOSX. Guess we use gcc.
