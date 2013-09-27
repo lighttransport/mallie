@@ -1,7 +1,7 @@
--- K/FX100 cross compiling
+-- K/FX10 target
 newoption {
-   trigger     = "cross-k",
-   description = "Cross compile for K/FX10."
+   trigger     = "k",
+   description = "Compile for K/FX10."
 }
 
 -- OpenMP
@@ -119,7 +119,7 @@ solution "MallieSolution"
       configuration {"linux", "gmake"}
          defines { '__STDC_CONSTANT_MACROS', '__STDC_LIMIT_MACROS' } -- c99
 
-         if _OPTIONS['cross-k'] then
+         if _OPTIONS['k'] then
             buildoptions { "-Xg -KPIC" } -- gcc compat, position independet code.
 
             -- fj openmp
@@ -141,7 +141,7 @@ solution "MallieSolution"
             linkoptions { "`sdl2-config --libs`" }
          end
 
-         if not _OPTIONS['cross-k'] then
+         if not _OPTIONS['k'] then
             linkoptions { "-pthread" }
          end
 
@@ -153,7 +153,7 @@ solution "MallieSolution"
       configuration "Release"
          defines { "NDEBUG" }
          flags { "Symbols", "Optimize" }
-         if _OPTIONS['cross-k'] then
+         if _OPTIONS['k'] then
             -- pass buildoptions { "-Kfast" }
          else
             flags { "EnableSSE2" }
