@@ -8,6 +8,37 @@
 
 namespace mallie {
 
+typedef enum
+{
+  PRIMITIVE_POLYGON,
+} PrimitiveType;
+
+typedef struct 
+{
+  PrimitiveType type;
+  BVHAccel*     accel;
+} Primitive;
+
+//< Scene graph node class
+class
+Node
+{
+  public:
+    Node() {}
+    ~Node() {}
+
+    //< Recompute transform matrix(includes child nodes).
+    void UpdateTransform();
+
+  private:
+    double              xform_[16];               //< Transform of this node.
+    double              xformInverse_;            //< Inverse transform 
+    double              xformInverse33_;          //< Upper 3x3 of inverse transform 
+    double              xformInverseTranspose33_; //< Upper 3x3 of inverse transpose transform 
+    std::vector<Node*>  children_;                //< Children
+};
+
+//< Scene class. Usually only one instance of Scene class in rendering.
 class
 Scene
 {

@@ -9,12 +9,12 @@
 namespace mallie {
 
 struct RenderConfig {
-  float fov;
+  double fov;
   int   width;
   int   height;
-  float eye[3];
-  float lookat[3];
-  float up[3];
+  double eye[3];
+  double lookat[3];
+  double up[3];
 
   double scene_scale;
 
@@ -52,11 +52,11 @@ extern void Render(
   Scene& scene,
   const RenderConfig& config,
   std::vector<float>& image,   // out image
-  float eye[3], 
-  float lookat[3], 
-  float up[3], 
-  float quat[4],
-  int   step);
+  double eye[3], 
+  double lookat[3], 
+  double up[3], 
+  double quat[4],
+  int    step);
  
 }
 
