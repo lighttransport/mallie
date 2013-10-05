@@ -1,4 +1,7 @@
 #include "gtest/gtest.h"
+#include <stdint.h>
+
+#if defined(__sparc__)
 
 #define ASI_P "0x80"
 
@@ -24,7 +27,7 @@ SparcCompareAndSwapU64(
    return (ret == oldval);
 }
 
-TEST(AtomicTest, CAS64) {
+TEST(AtomicTest, Sparc_CAS64) {
 
   double a = 0.1;
   double b = 0.2;
@@ -45,3 +48,34 @@ TEST(AtomicTest, CAS64) {
   EXPECT_EQ(ret, 1);
 
 }
+#endif
+
+#if defined(__x86_64__)
+TEST(AtomicTest, x86_CAS64) {
+
+  double a = 0.1;
+  double b = 0.2;
+  double c = 0.3;
+
+  void* addr = &a;
+  void* oldaddr = &b;
+  void* newaddr = &c;
+  printf("addr(before) = %p\n", addr);
+  void* ret = __sync_val_compare_and_swap(&addr, reinterpret_cast<uintptr_t>(oldaddr), reinterpret_cast<uintptr_t>(newaddr));
+  printf("addr(after) = %p\n", addr);
+
+  EXPECT_EQ(ret, addr);
+  EXPECT_EQ(addr, &a);
+
+  addr = &a;
+  oldaddr = &a;
+  newaddr = &c;
+  printf("addr(before) = %p\n", addr);
+  ret = __sync_val_compare_and_swap(&addr, reinterpret_cast<uintptr_t>(oldaddr), reinterpret_cast<uintptr_t>(newaddr));
+  printf("addr(after) = %p\n", addr);
+  printf("ret = %p\n", ret);
+  EXPECT_NE(ret, addr);
+  EXPECT_EQ(ret, oldaddr);
+  EXPECT_EQ(addr, newaddr);
+}
+#endif
