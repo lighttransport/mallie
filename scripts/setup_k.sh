@@ -1,6 +1,6 @@
 #!/bin/sh
 
-flags="--cross-k --with-openmp"
+flags="--k --with-openmp"
 ./tools/linux/premake4 ${flags} gmake
 
 # change CC, CXX compiler to fccpx, FCCpx
