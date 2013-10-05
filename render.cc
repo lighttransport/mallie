@@ -265,17 +265,17 @@ void Render(
   Scene& scene,
   const RenderConfig& config,
   std::vector<float>& image,  // RGB
-  float eye[3], 
-  float lookat[3], 
-  float up[3], 
-  float quat[4],
+  double eye[3], 
+  double lookat[3], 
+  double up[3], 
+  double quat[4],
   int   step)
 {
   int width = config.width;
   int height = config.height;
-  float fov = config.fov;
+  double fov = config.fov;
 
-  float origin[3], corner[3], du[3], dv[3];
+  double origin[3], corner[3], du[3], dv[3];
   Camera camera(eye, lookat, up);
   camera.BuildCameraFrame(origin, corner, du, dv, fov, quat, width, height);
   //printf("[Mallie] origin = %f, %f, %f\n", gOrigin[0], gOrigin[1], gOrigin[2]);

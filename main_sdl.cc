@@ -35,18 +35,21 @@ static bool  gNeedRedraw = false;
 static bool  gShiftPressed = false;
 static bool  gCtrlPressed  = false;
 static bool  gLightEditing = false;
-static float gEye[3] = {0.0f, 0.0f, -5.0f};
-static float gUp[3] = {0.0f, 1.0f, 0.0f};
-static float gLookat[3] = {0.0f, 0.0f, 0.0f};
-static float gFov = 45.0f;
-static float gScale = 0.1f;
-static float gPrevQuat[4] = {0.0f, 0.0f, 0.0f, 0.0f};
-static float gCurrQuat[4] = {0.0f, 0.0f, 0.0f, 0.0f};
-static float gInitQuat[4] = {0.0f, 0.0f, 0.0f, 1.0f};
-static float gRotate[3] = {0.0f, 0.0f, 0.0f};
-static float gOrigin[3], gCorner[3], gDu[3], gDv[3];
-static float gIntensity = 1.0f;
-static float gTransferOffset = 0.0f;
+
+static double gEye[3] = {0.0, 0.0, -5.0};
+static double gUp[3] = {0.0, 1.0, 0.0};
+static double gLookat[3] = {0.0, 0.0, 0.0};
+static double gFov = 45.0;
+static double gScale = 0.1;
+static double gPrevQuat[4] = {0.0, 0.0, 0.0, 0.0};
+static double gCurrQuat[4] = {0.0, 0.0, 0.0, 0.0};
+static double gInitQuat[4] = {0.0, 0.0, 0.0, 1.0};
+
+static double gRotate[3] = {0.0f, 0.0f, 0.0f};
+static double gOrigin[3], gCorner[3], gDu[3], gDv[3];
+
+static double gIntensity = 1.0;
+static double gTransferOffset = 0.0;
 
 // Progressive render param
 static int   gRenderPixelStep = PIXELSTEP_COARSE;
@@ -76,7 +79,7 @@ typedef struct
 
 static void
 EulerToQuatRad(
-  float quat[4],
+  double quat[4],
   double x, double y, double z) // in radian. yaw, pitch, roll
 {
   double rx = x;
@@ -103,7 +106,7 @@ EulerToQuatRad(
 
 static void
 EulerToQuatZYX(
-  float quat[4],
+  double quat[4],
   double x, double y, double z) // in radian. yaw, pitch, roll
 {
   double rx = x;

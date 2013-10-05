@@ -16,6 +16,18 @@ newoption {
    description = "Use MPI."
 }
 
+-- Ptex
+newoption {
+   trigger     = "with-ptex",
+   description = "Use Ptex library."
+}
+
+-- FITS
+newoption {
+   trigger     = "with-cfitsio",
+   description = "Use C-binding of FITS IO."
+}
+
 -- SDL
 newoption {
    trigger     = "with-sdl",
@@ -39,6 +51,7 @@ sources = {
    "jpge.cc",
    "deps/parson/parson.c",
    "tasksys.cc",
+   "texture.cc",
    "deps/TinyThread++-1.1/source/tinythread.cpp",
    }
 
@@ -94,6 +107,14 @@ solution "MallieSolution"
          -- gcc mpi
          if _OPTIONS['with-mpi'] then
             defines { 'WITH_MPI' }
+         end
+
+         -- Ptex
+         if _OPTIONS['with-ptex'] then
+            defines { 'ENABLE_PTEX' }
+            includedirs { "/Users/syoyo/work/ptex/install/include" }
+            libdirs { "/Users/syoyo/work/ptex/install/lib" }
+            links   { "Ptex" }
          end
 
       -- Windows general
