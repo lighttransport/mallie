@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <iostream>
 
+#include <stdint.h>
 #include "version.h"
 
 #ifdef _OPENMP

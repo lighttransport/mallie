@@ -53,7 +53,17 @@ sources = {
    "tasksys.cc",
    "texture.cc",
    "deps/TinyThread++-1.1/source/tinythread.cpp",
-   }
+}
+
+test_sources = {
+   "test_atomic.cc"
+}
+
+gtest_sources = {
+   "deps/gtest-1.7.0/src/gtest-all.cc",
+   "deps/gtest-1.7.0/src/gtest_main.cc"
+}
+
 
 newaction {
    trigger     = "install",
@@ -189,15 +199,22 @@ solution "MallieSolution"
    project "MallieTest"
       kind "ConsoleApp"
       language "C++"
-      files { sources }
+      files { test_sources, gtest_sources }
 
       includedirs {
          "./",
          "deps/parson/",
          "deps/TinyThread++-1.1/source/",
+         "deps/gtest-1.7.0/include/",
+         "deps/gtest-1.7.0/",
       }
 
       defines { 'ENABLE_UNITTEST' }
+
+      -- for gtest
+      if _OPTIONS['k'] then
+         defines { 'GTEST_HAS_TR1_TUPLE=0' }
+      end
 
       -- MacOSX. Guess we use gcc.
       configuration { "macosx", "gmake" }
@@ -228,7 +245,7 @@ solution "MallieSolution"
 
          includedirs { "./compat" } -- stdint
 
-	 if _OPTIONS['with-sdl'] then
+         if _OPTIONS['with-sdl'] then
             defines { 'ENABLE_SDL' }
             includedirs { "extlibs/windows/SDL/msvc/SDL-1.2.15/include" }
             links { "SDL", "SDLmain" }
