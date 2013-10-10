@@ -56,7 +56,7 @@ sources = {
 }
 
 test_sources = {
-   "test_atomic.cc"
+   "test/cctest/test-atomic.cc"
 }
 
 gtest_sources = {
