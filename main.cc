@@ -1,5 +1,6 @@
 #include <cstdio>
 #include <cstdlib>
+#include <cstring>
 #include <iostream>
 
 #include <stdint.h>
@@ -272,7 +273,7 @@ main(
   }
 
 #ifdef _OPENMP
-  printf("[Mallie] OpenMP : Detected (Max # of threads = %d\n", omp_get_max_threads());
+  printf("[Mallie] OpenMP Detected. Max # of threads = %d\n", omp_get_max_threads());
 #endif
 
 #ifdef WITH_MPI
@@ -281,6 +282,7 @@ main(
   MPI_Init(&argc, &argv);
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   MPI_Comm_size(MPI_COMM_WORLD, &nnodes);
+  printf("[Mallie] MPI      : %d / %d\n", rank, nnodes);
 #endif
   printf("[Mallie] Version  : %s\n", MALLIE_VERSION);
 
