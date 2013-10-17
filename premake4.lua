@@ -133,6 +133,12 @@ solution "MallieSolution"
                buildoptions { "-fopenmp" }
                linkoptions { "-fopenmp" }
             end
+
+            -- gcc mpi
+            if _OPTIONS['with-mpi'] then
+               defines { 'WITH_MPI' }
+            end
+
          end
 
          if _OPTIONS['with-sdl'] then
