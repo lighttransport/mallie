@@ -48,10 +48,10 @@
  * first paramater.
  */
 void
-trackball(float q[4], float p1x, float p1y, float p2x, float p2y);
+trackball(double q[4], double p1x, double p1y, double p2x, double p2y);
 
 void
-negate_quat(float *q, float *qn);
+negate_quat(double *q, double *qn);
 
 /*
  * Given two quaternions, add them together to get a third quaternion.
@@ -62,14 +62,14 @@ negate_quat(float *q, float *qn);
  * over-written with the resulting new total rotation).
  */
 void
-add_quats(float *q1, float *q2, float *dest);
+add_quats(double *q1, double *q2, double *dest);
 
 /*
  * A useful function, builds a rotation matrix in Matrix based on
  * given quaternion.
  */
 void
-build_rotmatrix(float m[4][4], float q[4]);
+build_rotmatrix(double m[4][4], double q[4]);
 
 /*
  * This function computes a quaternion based on an axis (defined by
@@ -77,5 +77,5 @@ build_rotmatrix(float m[4][4], float q[4]);
  * expressed in radians.  The result is put into the third argument.
  */
 void
-axis_to_quat(float a[3], float phi, float q[4]);
+axis_to_quat(double a[3], double phi, double q[4]);
 

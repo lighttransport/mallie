@@ -31,6 +31,8 @@
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.  
 */
 
+/* Modified by LTE, Inc. */
+
 /*
   This file implements simple task systems that provide the three
   entrypoints used by ispc-generated to code to handle 'launch' and 'sync'
@@ -170,6 +172,86 @@
 #include <assert.h>
 #include <string.h>
 #include <algorithm>
+
+#ifdef ISPC_IS_SPARC
+
+/*
+ * On sparc v9, use casa and casxa (compare and swap) instructions.
+ */
+
+#define ASI_P "0x80"
+
+static inline void SparcMemoryBarrier()
+{
+  __asm__ __volatile__ ("membar	#StoreLoad" : : : "memory");
+}
+
+static inline void SparcAtomicIncrementU32(volatile uint32_t *__memory)
+{
+  uint32_t __tmp1, __tmp2;
+  __asm__ __volatile__(
+  "ld [%2], %0\\n\\t"
+  "1:\\n\\t"
+  "add %0, 1, %1\\n\\t"
+  "cas [%2], %0, %1\\n\\t"
+  "cmp %0, %1\\n\\t"
+  "bne,a,pn %%icc, 1b\\n\\t"
+  "  mov %1, %0"
+  : "=r" (__tmp1), "=r" (__tmp2)
+  : "r" (__memory)
+  : "cc");
+}
+
+static inline int
+SparcCompareAndSwapU32(
+  uint32_t *uval, uint32_t *uaddr,
+  uint32_t oldval, uint32_t newval)
+{
+  int ret = 0;
+
+  __asm__ __volatile__(
+  "\n1:   casa    [%4] %%asi, %3, %1\n"
+  "2:\n"
+  "       .section .fixup,#alloc,#execinstr\n"
+  "       .align  4\n"
+  "3:     sethi   %%hi(2b), %0\n"
+  "       jmpl    %0 + %%lo(2b), %%g0\n"
+  "       mov     %5, %0\n"
+  "       .previous\n"
+  "       .section __ex_table,\"a\"\n"
+  "       .align  4\n"
+  "       .word   1b, 3b\n"
+  "       .previous\n"
+  : "+r" (ret), "=r" (newval)
+  : "1" (newval), "r" (oldval), "r" (uaddr), "i" (-EFAULT)
+  : "memory");
+
+  *uval = newval;
+  return ret;
+}
+
+static inline int
+SparcCompareAndSwapU64(
+  volatile int64_t *addr,
+  int64_t oldval, int64_t newval)
+{
+    // From OpenMPI.
+
+    /* casa [reg(rs1)] %asi, reg(rs2), reg(rd)
+     *
+     * if (*(reg(rs1)) == reg(rs1) )
+     *    swap reg(rd), *(reg(rs1))
+     * else
+     *    reg(rd) = *(reg(rs1))
+     */
+   int64_t ret = newval;
+
+   __asm__ __volatile__("casxa [%1] " ASI_P ", %2, %0"
+                      : "+r" (ret)
+                      : "r" (addr), "r" (oldval));
+   return (ret == oldval);
+}
+#endif
 
 // Signature of ispc-generated 'task' functions
 typedef void (*TaskFuncType)(void *data, int threadIndex, int threadCount,
@@ -349,8 +431,9 @@ lAtomicCompareAndSwapPointer(void **v, void *newValue, void *oldValue) {
     return InterlockedCompareExchangePointer(v, newValue, oldValue);
 #elif defined ISPC_IS_SPARC
     // @todo
-    assert(0);
-    return NULL;
+    void* org = (*v);
+    int ret = SparcCompareAndSwapU64(reinterpret_cast<int64_t*>(v), reinterpret_cast<uintptr_t>(oldValue), reinterpret_cast<uintptr_t>(newValue));
+    return org;
 #else
     void *result = __sync_val_compare_and_swap(v, oldValue, newValue);
     lMemFence();

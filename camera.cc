@@ -8,28 +8,28 @@
 
 using namespace mallie;
 
-static inline float vdot(float a[3], float b[3]) {
+static inline double vdot(double a[3], double b[3]) {
   return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
 }
 
-static inline void vcross(float c[3], float a[3], float b[3]) {
+static inline double vcross(double c[3], double a[3], double b[3]) {
   c[0] = a[1] * b[2] - a[2] * b[1];
   c[1] = a[2] * b[0] - a[0] * b[2];
   c[2] = a[0] * b[1] - a[1] * b[0];
 }
 
-static inline float vlength(float v[3]) {
-  float len2 = vdot(v, v);
-  if (fabs(len2) > 1.0e-6f) {
-    return sqrtf(len2);
+static inline double vlength(double v[3]) {
+  double len2 = vdot(v, v);
+  if (std::abs(len2) > 1.0e-30) {
+    return sqrt(len2);
   }
-  return 0.0f;  
+  return 0.0;
 }
 
-static void vnormalize(float v[3]) {
+static void vnormalize(double v[3]) {
   float len = vlength(v);
-  if (fabs(len) > 1.0e-6f) {
-    float inv_len = 1.0f / len;
+  if (std::abs(len) > 1.0e-30) {
+    double inv_len = 1.0 / len;
     v[0] *= inv_len;
     v[1] *= inv_len;
     v[2] *= inv_len;
@@ -40,16 +40,16 @@ static void vnormalize(float v[3]) {
 
 void
 Camera::BuildCameraFrame(
-  float origin[3],
-  float corner[3],
-  float u[3],
-  float v[3],
-  float fov,
-  float quat[4],
+  double origin[3],
+  double corner[3],
+  double u[3],
+  double v[3],
+  double fov,
+  double quat[4],
   int width,
   int height)
 {
-  float e[4][4];
+  double e[4][4];
   //printf("--in\n");
   //printf("eye: %f, %f, %f\n", eye_[0], eye_[1], eye_[2]);
   //printf("lookat: %f, %f, %f\n", lookat_[0], lookat_[1], lookat_[2]);
@@ -58,18 +58,18 @@ Camera::BuildCameraFrame(
   //printf("e ---\n");
   //Matrix::Print(e);
 
-  float r[4][4];
+  double r[4][4];
   build_rotmatrix(r, quat);
   //printf("m ---\n");
   //Matrix::Print(m);
 
-  float lo[3];
+  double lo[3];
   lo[0] = lookat_[0] - eye_[0];
   lo[1] = lookat_[1] - eye_[1];
   lo[2] = lookat_[2] - eye_[2];
-  float dist = vlength(lo);
+  double dist = vlength(lo);
 
-  float dir[3];
+  double dir[3];
   dir[0] = 0.0;
   dir[1] = 0.0;
   dir[2] = dist;
@@ -78,10 +78,10 @@ Camera::BuildCameraFrame(
   //printf("r ---\n");
   //Matrix::Print(r);
 
-  float rr[4][4];
-  float re[4][4];
-  float zero[3] = {0.0f, 0.0f, 0.0f};
-  float localUp[3] = {0.0f, 1.0f, 0.0f};
+  double rr[4][4];
+  double re[4][4];
+  double zero[3] = {0.0f, 0.0f, 0.0f};
+  double localUp[3] = {0.0f, 1.0f, 0.0f};
   Matrix::LookAt(re, dir, zero, localUp);
 
   // translate
@@ -100,7 +100,7 @@ Camera::BuildCameraFrame(
   //printf("rr ---\n");
   //Matrix::Print(rr);
 
-  float m[4][4];
+  double m[4][4];
   for (int j = 0; j < 4; j++) {
     for (int i = 0; i < 4; i++) {
       m[j][i] = rr[j][i];
@@ -121,19 +121,19 @@ Camera::BuildCameraFrame(
   //Matrix::Inverse(m);
 
 
-  float vzero[3] = {0.0f, 0.0f, 0.0f};
-  float eye1[3];
+  double vzero[3] = {0.0f, 0.0f, 0.0f};
+  double eye1[3];
   Matrix::MultV(eye1, m, vzero);
   //printf("eye  = %f, %f, %f\n", eye_[0], eye_[1], eye_[2]);
   //printf("eye1 = %f, %f, %f\n", eye1[0], eye1[1], eye1[2]);
 
-  float lookat1[3];
+  double lookat1[3];
   dir[2] = -dir[2];
   Matrix::MultV(lookat1, m, dir);
   //printf("dist    = %f\n", dist);
   //printf("lookat1 = %f, %f, %f\n", lookat1[0], lookat1[1], lookat1[2]);
 
-  float up1[3];
+  double up1[3];
   //printf("up = %f, %f, %f\n", up[0], up[1], up[2]);
   //Matrix::Print(m);
   Matrix::MultV(up1, m, up_);
@@ -180,8 +180,8 @@ Camera::BuildCameraFrame(
 	//fprintf(stderr, "quat: %f %f %f %f\n", quat[0], quat[1], quat[2], quat[3]);
 
   {
-    float flen = (0.5f * (float)height / tanf(0.5f * (float)(fov * M_PI / 180.0f)));
-    float look1[3];
+    double flen = (0.5f * (double)height / tanf(0.5f * (double)(fov * M_PI / 180.0f)));
+    double look1[3];
     look1[0] = lookat1[0] - eye1[0];
     look1[1] = lookat1[1] - eye1[1];
     look1[2] = lookat1[2] - eye1[2];

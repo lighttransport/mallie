@@ -7,6 +7,12 @@
 
 namespace mallie {
 
+void
+Node::UpdateTransform()
+{
+
+}
+
 Scene::~Scene()
 {
   delete [] mesh_.vertices;

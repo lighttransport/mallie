@@ -1,7 +1,7 @@
--- K/FX100 cross compiling
+-- K/FX10 target
 newoption {
-   trigger     = "cross-k",
-   description = "Cross compile for K/FX10."
+   trigger     = "k",
+   description = "Compile for K/FX10."
 }
 
 -- OpenMP
@@ -14,6 +14,18 @@ newoption {
 newoption {
    trigger     = "with-mpi",
    description = "Use MPI."
+}
+
+-- Ptex
+newoption {
+   trigger     = "with-ptex",
+   description = "Use Ptex library."
+}
+
+-- FITS
+newoption {
+   trigger     = "with-cfitsio",
+   description = "Use C-binding of FITS IO."
 }
 
 -- SDL
@@ -38,8 +50,20 @@ sources = {
    "spectrum.cc",
    "jpge.cc",
    "deps/parson/parson.c",
-   "tasksys.cc"
-   }
+   "tasksys.cc",
+   "texture.cc",
+   "deps/TinyThread++-1.1/source/tinythread.cpp",
+}
+
+test_sources = {
+   "test/cctest/test-atomic.cc"
+}
+
+gtest_sources = {
+   "deps/gtest-1.7.0/src/gtest-all.cc",
+   "deps/gtest-1.7.0/src/gtest_main.cc"
+}
+
 
 newaction {
    trigger     = "install",
@@ -68,7 +92,135 @@ solution "MallieSolution"
       includedirs {
          "./",
          "deps/parson/",
+         "deps/TinyThread++-1.1/source/",
       }
+
+      -- MacOSX. Guess we use gcc.
+      configuration { "macosx", "gmake" }
+
+         defines { '_LARGEFILE_SOURCE', '_FILE_OFFSET_BITS=64' }
+
+         -- SDL
+         if _OPTIONS['with-sdl'] then
+            defines { 'ENABLE_SDL' }
+            buildoptions { "`sdl2-config --cflags`" }
+            buildoptions { "-msse2" }
+            linkoptions { "`sdl2-config --libs`" }
+         end
+
+         -- gcc openmp
+         if _OPTIONS['with-openmp'] then
+            buildoptions { "-fopenmp" }
+            linkoptions { "-fopenmp" }
+         end
+
+         -- gcc mpi
+         if _OPTIONS['with-mpi'] then
+            defines { 'WITH_MPI' }
+         end
+
+         -- Ptex
+         if _OPTIONS['with-ptex'] then
+            defines { 'ENABLE_PTEX' }
+            includedirs { "/Users/syoyo/work/ptex/install/include" }
+            libdirs { "/Users/syoyo/work/ptex/install/lib" }
+            links   { "Ptex" }
+         end
+
+      -- Windows general
+      configuration { "windows" }
+
+         includedirs { "./compat" } -- stdint
+
+	 if _OPTIONS['with-sdl'] then
+            defines { 'ENABLE_SDL' }
+            includedirs { "extlibs/windows/SDL/msvc/SDL-1.2.15/include" }
+            links { "SDL", "SDLmain" }
+            libdirs { "extlibs/windows/SDL/msvc/SDL-1.2.15/lib/x64" }
+         end
+
+         defines { 'NOMINMAX', '_LARGEFILE_SOURCE', '_FILE_OFFSET_BITS=64' }
+
+      -- Windows + gmake specific
+      configuration { "windows", "gmake" }
+
+         defines { '__STDC_CONSTANT_MACROS', '__STDC_LIMIT_MACROS' } -- c99
+
+         links { "stdc++", "msvcrt", "ws2_32", "winmm" }
+
+      -- Linux specific
+      configuration {"linux", "gmake"}
+         defines { '__STDC_CONSTANT_MACROS', '__STDC_LIMIT_MACROS' } -- c99
+
+         if _OPTIONS['k'] then
+            buildoptions { "-Xg -KPIC" } -- gcc compat, position independet code.
+
+            -- fj openmp
+            if _OPTIONS['with-openmp'] then
+               buildoptions { "-Kopenmp" }
+               linkoptions { "-Kopenmp" }
+            end
+         else
+            -- gcc openmp
+            if _OPTIONS['with-openmp'] then
+               buildoptions { "-fopenmp" }
+               linkoptions { "-fopenmp" }
+            end
+
+            -- gcc mpi
+            if _OPTIONS['with-mpi'] then
+               defines { 'WITH_MPI' }
+            end
+
+         end
+
+         if _OPTIONS['with-sdl'] then
+            defines { 'ENABLE_SDL' }
+            buildoptions { "`sdl2-config --cflags`" }
+            linkoptions { "`sdl2-config --libs`" }
+         end
+
+         if not _OPTIONS['k'] then
+            linkoptions { "-pthread" }
+         end
+
+      configuration "Debug"
+         defines { "DEBUG" } -- -DDEBUG
+         flags { "Symbols" }
+         targetdir "bin/"
+         targetname "mallie_debug"
+
+      configuration "Release"
+         defines { "NDEBUG" }
+         flags { "Symbols", "Optimize" }
+         if _OPTIONS['k'] then
+            -- pass buildoptions { "-Kfast" }
+         else
+            flags { "EnableSSE2" }
+         end
+         targetdir "bin/"
+         targetname "mallie"
+
+   -- A project defines one build target
+   project "MallieTest"
+      kind "ConsoleApp"
+      language "C++"
+      files { test_sources, gtest_sources }
+
+      includedirs {
+         "./",
+         "deps/parson/",
+         "deps/TinyThread++-1.1/source/",
+         "deps/gtest-1.7.0/include/",
+         "deps/gtest-1.7.0/",
+      }
+
+      defines { 'ENABLE_UNITTEST' }
+
+      -- for gtest
+      if _OPTIONS['k'] then
+         defines { 'GTEST_HAS_TR1_TUPLE=0' }
+      end
 
       -- MacOSX. Guess we use gcc.
       configuration { "macosx", "gmake" }
@@ -99,7 +251,7 @@ solution "MallieSolution"
 
          includedirs { "./compat" } -- stdint
 
-	 if _OPTIONS['with-sdl'] then
+         if _OPTIONS['with-sdl'] then
             defines { 'ENABLE_SDL' }
             includedirs { "extlibs/windows/SDL/msvc/SDL-1.2.15/include" }
             links { "SDL", "SDLmain" }
@@ -119,7 +271,7 @@ solution "MallieSolution"
       configuration {"linux", "gmake"}
          defines { '__STDC_CONSTANT_MACROS', '__STDC_LIMIT_MACROS' } -- c99
 
-         if _OPTIONS['cross-k'] then
+         if _OPTIONS['k'] then
             buildoptions { "-Xg -KPIC" } -- gcc compat, position independet code.
 
             -- fj openmp
@@ -133,12 +285,6 @@ solution "MallieSolution"
                buildoptions { "-fopenmp" }
                linkoptions { "-fopenmp" }
             end
-
-            -- gcc mpi
-            if _OPTIONS['with-mpi'] then
-               defines { 'WITH_MPI' }
-            end
-
          end
 
          if _OPTIONS['with-sdl'] then
@@ -147,21 +293,23 @@ solution "MallieSolution"
             linkoptions { "`sdl2-config --libs`" }
          end
 
-         if not _OPTIONS['cross-k'] then
+         if not _OPTIONS['k'] then
             linkoptions { "-pthread" }
          end
 
       configuration "Debug"
          defines { "DEBUG" } -- -DDEBUG
          flags { "Symbols" }
-         targetname "mallie_debug"
+         targetdir "bin/"
+         targetname "test_mallie_debug"
 
       configuration "Release"
          defines { "NDEBUG" }
          flags { "Symbols", "Optimize" }
-         if _OPTIONS['cross-k'] then
+         if _OPTIONS['k'] then
             -- pass buildoptions { "-Kfast" }
          else
             flags { "EnableSSE2" }
          end
-         targetname "mallie"
+         targetdir "bin/"
+         targetname "test_mallie"
