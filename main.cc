@@ -1,3 +1,7 @@
+#ifdef WITH_MPI
+#include <mpi.h>
+#endif
+
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -8,10 +12,6 @@
 
 #ifdef _OPENMP
 #include <omp.h>
-#endif
-
-#ifdef WITH_MPI
-#include <mpi.h>
 #endif
 
 #ifdef ENABLE_SDL

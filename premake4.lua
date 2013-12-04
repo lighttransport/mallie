@@ -4,6 +4,12 @@ newoption {
    description = "Compile for K/FX10."
 }
 
+-- ARM target
+newoption {
+   trigger     = "arm",
+   description = "Compile for ARM."
+}
+
 -- OpenMP
 newoption {
    trigger     = "with-openmp",
@@ -195,7 +201,9 @@ solution "MallieSolution"
          flags { "Symbols", "Optimize" }
          if _OPTIONS['k'] then
             -- pass buildoptions { "-Kfast" }
-         else
+         elseif _OPTIONS['arm'] then
+            -- buildoptions { "NEON" }
+         else 
             flags { "EnableSSE2" }
          end
          targetdir "bin/"
@@ -308,7 +316,9 @@ solution "MallieSolution"
          flags { "Symbols", "Optimize" }
          if _OPTIONS['k'] then
             -- pass buildoptions { "-Kfast" }
-         else
+         elseif _OPTIONS['arm'] then
+            -- buildoptions { "NEON" }
+         else 
             flags { "EnableSSE2" }
          end
          targetdir "bin/"
