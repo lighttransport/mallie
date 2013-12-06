@@ -12,7 +12,7 @@ static inline double vdot(double a[3], double b[3]) {
   return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
 }
 
-static inline double vcross(double c[3], double a[3], double b[3]) {
+static inline void vcross(double c[3], double a[3], double b[3]) {
   c[0] = a[1] * b[2] - a[2] * b[1];
   c[1] = a[2] * b[0] - a[0] * b[2];
   c[2] = a[0] * b[1] - a[1] * b[0];
