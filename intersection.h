@@ -3,23 +3,22 @@
 
 #include "common.h"
 
-typedef struct
-{
-    real            t;
-    real            u;
-    real            v;
-    unsigned int    faceID;
+typedef struct {
+  real t;
+  real u;
+  real v;
+  unsigned int faceID;
 
-    unsigned int    f0;
-    unsigned int    f1;
-    unsigned int    f2;
+  unsigned int f0;
+  unsigned int f1;
+  unsigned int f2;
 
-    real3           position;
-    real3           geometricNormal;
-    real3           normal;
-    //real3           tangent;
-    //real3           binormal;
-    real            texcoord[2];
+  real3 position;
+  real3 geometricNormal;
+  real3 normal;
+  //real3           tangent;
+  //real3           binormal;
+  real texcoord[2];
 
 } Intersection;
 

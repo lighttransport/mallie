@@ -36,19 +36,9 @@ static void vnormalize(double v[3]) {
   }
 }
 
-
-
-void
-Camera::BuildCameraFrame(
-  double origin[3],
-  double corner[3],
-  double u[3],
-  double v[3],
-  double fov,
-  double quat[4],
-  int width,
-  int height)
-{
+void Camera::BuildCameraFrame(double origin[3], double corner[3], double u[3],
+                              double v[3], double fov, double quat[4],
+                              int width, int height) {
   double e[4][4];
   //printf("--in\n");
   //printf("eye: %f, %f, %f\n", eye_[0], eye_[1], eye_[2]);
@@ -80,8 +70,8 @@ Camera::BuildCameraFrame(
 
   double rr[4][4];
   double re[4][4];
-  double zero[3] = {0.0f, 0.0f, 0.0f};
-  double localUp[3] = {0.0f, 1.0f, 0.0f};
+  double zero[3] = { 0.0f, 0.0f, 0.0f };
+  double localUp[3] = { 0.0f, 1.0f, 0.0f };
   Matrix::LookAt(re, dir, zero, localUp);
 
   // translate
@@ -120,8 +110,7 @@ Camera::BuildCameraFrame(
 
   //Matrix::Inverse(m);
 
-
-  double vzero[3] = {0.0f, 0.0f, 0.0f};
+  double vzero[3] = { 0.0f, 0.0f, 0.0f };
   double eye1[3];
   Matrix::MultV(eye1, m, vzero);
   //printf("eye  = %f, %f, %f\n", eye_[0], eye_[1], eye_[2]);
@@ -173,14 +162,15 @@ Camera::BuildCameraFrame(
   }
 #endif
 
-	//glrsSetCamera(&eye1[0], &lookat1[0], &up1[0], 45.0f);
-	//fprintf(stderr, "eye: %f %f %f\n", eye1[0], eye1[1], eye1[2]);
-	//fprintf(stderr, "lookat: %f %f %f\n", lookat1[0], lookat1[1], lookat1[2]);
-	//fprintf(stderr, "up: %f %f %f\n", up1[0], up1[1], up1[2]);
-	//fprintf(stderr, "quat: %f %f %f %f\n", quat[0], quat[1], quat[2], quat[3]);
+  //glrsSetCamera(&eye1[0], &lookat1[0], &up1[0], 45.0f);
+  //fprintf(stderr, "eye: %f %f %f\n", eye1[0], eye1[1], eye1[2]);
+  //fprintf(stderr, "lookat: %f %f %f\n", lookat1[0], lookat1[1], lookat1[2]);
+  //fprintf(stderr, "up: %f %f %f\n", up1[0], up1[1], up1[2]);
+  //fprintf(stderr, "quat: %f %f %f %f\n", quat[0], quat[1], quat[2], quat[3]);
 
   {
-    double flen = (0.5f * (double)height / tanf(0.5f * (double)(fov * M_PI / 180.0f)));
+    double flen =
+        (0.5f * (double) height / tanf(0.5f * (double)(fov * M_PI / 180.0f)));
     double look1[3];
     look1[0] = lookat1[0] - eye1[0];
     look1[1] = lookat1[1] - eye1[1];
@@ -223,13 +213,12 @@ Camera::BuildCameraFrame(
     dv_[2] = v[2];
 
     fov_ = fov;
-  
+
   }
 
 }
 
-Ray
-Camera::GenerateRay(double u, double v) const {
+Ray Camera::GenerateRay(double u, double v) const {
   real3 dir;
 
   dir[0] = (corner_[0] + u * du_[0] + v * dv_[0]) - origin_[0];

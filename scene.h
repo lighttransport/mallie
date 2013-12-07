@@ -8,64 +8,58 @@
 
 namespace mallie {
 
-typedef enum
-{
+typedef enum {
   PRIMITIVE_POLYGON,
 } PrimitiveType;
 
-typedef struct 
-{
+typedef struct {
   PrimitiveType type;
-  BVHAccel*     accel;
+  BVHAccel *accel;
 } Primitive;
 
 //< Scene graph node class
-class
-Node
-{
-  public:
-    Node() {}
-    ~Node() {}
+class Node {
+public:
+  Node() {}
+  ~Node() {}
 
-    //< Recompute transform matrix(includes child nodes).
-    void UpdateTransform();
+  //< Recompute transform matrix(includes child nodes).
+  void UpdateTransform();
 
-  private:
-    double              xform_[16];               //< Transform of this node.
-    double              xformInverse_;            //< Inverse transform 
-    double              xformInverse33_;          //< Upper 3x3 of inverse transform 
-    double              xformInverseTranspose33_; //< Upper 3x3 of inverse transpose transform 
-    std::vector<Node*>  children_;                //< Children
+private:
+  double xform_[16];               //< Transform of this node.
+  double xformInverse_;            //< Inverse transform
+  double xformInverse33_;          //< Upper 3x3 of inverse transform
+  double xformInverseTranspose33_; //< Upper 3x3 of inverse transpose transform
+  std::vector<Node *> children_;   //< Children
 };
 
 //< Scene class. Usually only one instance of Scene class in rendering.
-class
-Scene
-{
-  public:
-    Scene() {};
-    ~Scene();
+class Scene {
+public:
+  Scene() {}
+  ;
+  ~Scene();
 
-    bool Init(const std::string& objFilename,
-              const std::string& materialFilename,
-              double sceneScale = 1.0);
+  bool Init(const std::string &objFilename, const std::string &materialFilename,
+            double sceneScale = 1.0);
 
-    bool Trace(Intersection& isect, Ray& ray);
+  bool Trace(Intersection &isect, Ray &ray);
 
-    void BoundingBox(real3& bmin, real3& bmax);
+  void BoundingBox(real3 &bmin, real3 &bmax);
 
-    real3 GetBackgroundRadiance(real3& dir);
+  real3 GetBackgroundRadiance(real3 &dir);
 
-    const Material& GetMaterial(int matID) const {
-      assert(matID < materials_.size());
-      return materials_[matID];
-    }
+  const Material &GetMaterial(int matID) const {
+    assert(matID < materials_.size());
+    return materials_[matID];
+  }
 
-  protected:
-    
-    BVHAccel              accel_;
-    Mesh                  mesh_;
-    std::vector<Material> materials_;
+protected:
+
+  BVHAccel accel_;
+  Mesh mesh_;
+  std::vector<Material> materials_;
 
 };
 

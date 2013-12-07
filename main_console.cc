@@ -20,23 +20,19 @@ namespace mallie {
 
 namespace {
 
-inline unsigned char fclamp(float x)
-{
+inline unsigned char fclamp(float x) {
   int i = x * 255.5;
-  if (i < 0) return 0;
-  if (i > 255) return 255;
-  return (unsigned char)i;
+  if (i < 0)
+    return 0;
+  if (i > 255)
+    return 255;
+  return (unsigned char) i;
 }
 
-void
-HDRToLDR(
-  std::vector<unsigned char>& out,
-  const std::vector<float>& in,
-  int width,
-  int height)
-{
-  out.resize(width*height*3);
-  assert(in.size() == (width*height*3));
+void HDRToLDR(std::vector<unsigned char> &out, const std::vector<float> &in,
+              int width, int height) {
+  out.resize(width * height * 3);
+  assert(in.size() == (width * height * 3));
 
   // Simple [0, 1] -> [0, 255]
   for (int i = 0; i < width * height * 3; i++) {
@@ -46,18 +42,14 @@ HDRToLDR(
 
 } // local
 
-void
-DoMainConsole(
-  Scene& scene,
-  const RenderConfig& config)
-{
+void DoMainConsole(Scene &scene, const RenderConfig &config) {
   printf("[Mallie] Console mode\n");
   std::vector<float> image;
 
   int width = config.width;
   int height = config.height;
 
-  image.resize(width*height*3);
+  image.resize(width * height * 3);
 
   //Render(config, image, width, height, config.eye, config.lookat, config.up);
 

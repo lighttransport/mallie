@@ -4,9 +4,7 @@
 namespace mallie {
 
 // PTex
-class
-PTexture()
-{
+class PTexture() {
 public:
   PTexture();
   ~PTexture();
@@ -21,4 +19,4 @@ private:
 
 } // namespace
 
-#endif  // __MALLIE_TEXTURE_H__
+#endif // __MALLIE_TEXTURE_H__

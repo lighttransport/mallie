@@ -3,10 +3,8 @@
 
 #include "common.h"
 
-class
-Light
-{
-  
+class Light {
+
   virtual real3 Radiance() const = 0;
 
   // Finite(area) or not(directional, envmap)
@@ -17,13 +15,11 @@ Light
 
 };
 
-class
-AreaLight : public Light
-{
-  public:
-    AreaLight(const real3& corner, const real3& du, const real3& dv) {
-      assert(0); // @todo
-    }
+class AreaLight : public Light {
+public:
+  AreaLight(const real3 &corner, const real3 &du, const real3 &dv) {
+    assert(0); // @todo
+  }
 };
 
 #endif // __MALLIE_LIGHT_H__

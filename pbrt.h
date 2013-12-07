@@ -33,7 +33,7 @@
  */
 
 #if defined(_MSC_VER)
-#define NOMINMAX 
+#define NOMINMAX
 #pragma once
 #endif
 
@@ -47,12 +47,12 @@
 #elif defined(__linux__)
 #define PBRT_IS_LINUX
 #elif defined(__APPLE__)
-  #define PBRT_IS_APPLE
-  #if !(defined(__i386__) || defined(__amd64__))
-  #define PBRT_IS_APPLE_PPC
-  #else
-  #define PBRT_IS_APPLE_X86
-  #endif
+#define PBRT_IS_APPLE
+#if !(defined(__i386__) || defined(__amd64__))
+#define PBRT_IS_APPLE_PPC
+#else
+#define PBRT_IS_APPLE_X86
+#endif
 #elif defined(__OpenBSD__)
 #define PBRT_IS_OPENBSD
 #endif
@@ -71,7 +71,8 @@ using std::vector;
 #if !defined(PBRT_IS_APPLE) && !defined(PBRT_IS_OPENBSD)
 #include <malloc.h> // for _alloca, memalign
 #endif
-#if !defined(PBRT_IS_WINDOWS) && !defined(PBRT_IS_APPLE) && !defined(PBRT_IS_OPENBSD)
+#if !defined(PBRT_IS_WINDOWS) && !defined(PBRT_IS_APPLE) &&                    \
+    !defined(PBRT_IS_OPENBSD)
 #include <alloca.h>
 #endif
 #include <assert.h>
@@ -94,9 +95,9 @@ typedef __int32 int32_t;
 typedef unsigned __int32 uint32_t;
 typedef __int64 int64_t;
 typedef unsigned __int64 uint64_t;
-#pragma warning (disable : 4305) // double constant assigned to float
-#pragma warning (disable : 4244) // int -> float conversion
-#pragma warning (disable : 4267) // size_t -> unsigned int conversion
+#pragma warning(disable : 4305) // double constant assigned to float
+#pragma warning(disable : 4244) // int -> float conversion
+#pragma warning(disable : 4267) // size_t -> unsigned int conversion
 #endif
 
 #if defined(PBRT_IS_LINUX) || defined(PBRT_IS_APPLE)
@@ -123,16 +124,17 @@ class Shape;
 class ParamSet;
 template <typename T> struct ParamSetItem;
 struct Options {
-    Options() { nCores = 0;
-                quickRender = quiet = openWindow = verbose = false;
-                imageFile = ""; }
-    int nCores;
-    bool quickRender;
-    bool quiet, verbose;
-    bool openWindow;
-    string imageFile;
+  Options() {
+    nCores = 0;
+    quickRender = quiet = openWindow = verbose = false;
+    imageFile = "";
+  }
+  int nCores;
+  bool quickRender;
+  bool quiet, verbose;
+  bool openWindow;
+  string imageFile;
 };
-
 
 extern Options PbrtOptions;
 class TextureParams;
@@ -187,9 +189,9 @@ class VolumeIntegrator;
 #ifdef M_PI
 #undef M_PI
 #endif
-#define M_PI       3.14159265358979323846f
-#define INV_PI     0.31830988618379067154f
-#define INV_TWOPI  0.15915494309189533577f
+#define M_PI 3.14159265358979323846f
+#define INV_PI 0.31830988618379067154f
+#define INV_TWOPI 0.15915494309189533577f
 #define INV_FOURPI 0.07957747154594766788f
 #ifndef INFINITY
 #define INFINITY FLT_MAX
@@ -215,113 +217,95 @@ class VolumeIntegrator;
 
 // Global Inline Functions
 inline float Lerp(float t, float v1, float v2) {
-    return (1.f - t) * v1 + t * v2;
+  return (1.f - t) * v1 + t * v2;
 }
-
 
 inline float Clamp(float val, float low, float high) {
-    if (val < low) return low;
-    else if (val > high) return high;
-    else return val;
+  if (val < low)
+    return low;
+  else if (val > high)
+    return high;
+  else
+    return val;
 }
-
 
 inline int Clamp(int val, int low, int high) {
-    if (val < low) return low;
-    else if (val > high) return high;
-    else return val;
+  if (val < low)
+    return low;
+  else if (val > high)
+    return high;
+  else
+    return val;
 }
-
 
 inline int Mod(int a, int b) {
-    int n = int(a/b);
-    a -= n*b;
-    if (a < 0) a += b;
-    return a;
+  int n = int(a / b);
+  a -= n * b;
+  if (a < 0)
+    a += b;
+  return a;
 }
 
+inline float Radians(float deg) { return ((float) M_PI / 180.f) * deg; }
 
-inline float Radians(float deg) {
-    return ((float)M_PI/180.f) * deg;
-}
-
-
-inline float Degrees(float rad) {
-    return (180.f/(float)M_PI) * rad;
-}
-
+inline float Degrees(float rad) { return (180.f / (float) M_PI) * rad; }
 
 inline float Log2(float x) {
-    static float invLog2 = 1.f / logf(2.f);
-    return logf(x) * invLog2;
+  static float invLog2 = 1.f / logf(2.f);
+  return logf(x) * invLog2;
 }
-
 
 inline int Floor2Int(float val);
-inline int Log2Int(float v) {
-    return Floor2Int(Log2(v));
-}
+inline int Log2Int(float v) { return Floor2Int(Log2(v)); }
 
-
-inline bool IsPowerOf2(int v) {
-    return (v & (v - 1)) == 0;
-}
-
+inline bool IsPowerOf2(int v) { return (v & (v - 1)) == 0; }
 
 inline uint32_t RoundUpPow2(uint32_t v) {
-    v--;
-    v |= v >> 1;    v |= v >> 2;
-    v |= v >> 4;    v |= v >> 8;
-    v |= v >> 16;
-    return v+1;
+  v--;
+  v |= v >> 1;
+  v |= v >> 2;
+  v |= v >> 4;
+  v |= v >> 8;
+  v |= v >> 16;
+  return v + 1;
 }
 
+inline int Floor2Int(float val) { return (int) floorf(val); }
 
-inline int Floor2Int(float val) {
-    return (int)floorf(val);
-}
+inline int Round2Int(float val) { return Floor2Int(val + 0.5f); }
 
+inline int Float2Int(float val) { return (int) val; }
 
-inline int Round2Int(float val) {
-    return Floor2Int(val + 0.5f);
-}
-
-
-inline int Float2Int(float val) {
-    return (int)val;
-}
-
-
-inline int Ceil2Int(float val) {
-    return (int)ceilf(val);
-}
-
+inline int Ceil2Int(float val) { return (int) ceilf(val); }
 
 #ifdef NDEBUG
-#define Assert(expr) ((void)0)
+#define Assert(expr) ((void) 0)
 #else
 #define Assert(expr) assert(expr)
 //#define Assert(expr) \
 //    ((expr) ? (void)0 : \
-//        Severe("Assertion \"%s\" failed in %s, line %d", \
+//        Severe("Assertion
+//\"%s\" failed in %s, line %d", \
 //               #expr, __FILE__, __LINE__))
 #endif // NDEBUG
 inline bool Quadratic(float A, float B, float C, float *t0, float *t1) {
-    // Find quadratic discriminant
-    float discrim = B * B - 4.f * A * C;
-    if (discrim < 0.) return false;
-    float rootDiscrim = sqrtf(discrim);
+  // Find quadratic discriminant
+  float discrim = B * B - 4.f * A * C;
+  if (discrim < 0.)
+    return false;
+  float rootDiscrim = sqrtf(discrim);
 
-    // Compute quadratic _t_ values
-    float q;
-    if (B < 0) q = -.5f * (B - rootDiscrim);
-    else       q = -.5f * (B + rootDiscrim);
-    *t0 = q / A;
-    *t1 = C / q;
-    if (*t0 > *t1) swap(*t0, *t1);
-    return true;
+  // Compute quadratic _t_ values
+  float q;
+  if (B < 0)
+    q = -.5f * (B - rootDiscrim);
+  else
+    q = -.5f * (B + rootDiscrim);
+  *t0 = q / A;
+  *t1 = C / q;
+  if (*t0 > *t1)
+    swap(*t0, *t1);
+  return true;
 }
-
-
 
 #endif // PBRT_CORE_PBRT_H

@@ -22,7 +22,7 @@
 #if defined(__APPLE__)
 #include <sys/sysctl.h>
 #include <sys/types.h>
-#include <unistd.h>     // usleep
+#include <unistd.h> // usleep
 #endif
 
 #include <fstream>
@@ -36,70 +36,63 @@
 
 namespace {
 
-static int GetNumCPUs()
-{
-    int cpus = 0;
+static int GetNumCPUs() {
+  int cpus = 0;
 
 #ifdef _WIN32
-    SYSTEM_INFO info;
+  SYSTEM_INFO info;
 
-    GetSystemInfo(&info);
+  GetSystemInfo(&info);
 
-    if (info.dwNumberOfProcessors > 1) {
-        cpus = info.dwNumberOfProcessors;
-    }
+  if (info.dwNumberOfProcessors > 1) {
+    cpus = info.dwNumberOfProcessors;
+  }
 #elif defined(__APPLE__) /* OS X */
-    int    mib[2], rc;
-    size_t len;
+  int mib[2], rc;
+  size_t len;
 
-    mib[0] = CTL_HW;
-    mib[1] = HW_NCPU;
-    len    = sizeof(cpus);
-    rc     = sysctl(mib, 2, &cpus, &len, NULL, 0);
+  mib[0] = CTL_HW;
+  mib[1] = HW_NCPU;
+  len = sizeof(cpus);
+  rc = sysctl(mib, 2, &cpus, &len, NULL, 0);
 
-#elif defined(__linux__)  /* linux */
-    FILE* fp;
-    char  buf[1024];
+#elif defined(__linux__) /* linux */
+  FILE *fp;
+  char buf[1024];
 
-    fp = fopen("/proc/cpuinfo", "r");
-    if (!fp)
-        return 0;
+  fp = fopen("/proc/cpuinfo", "r");
+  if (!fp)
+    return 0;
 
-    while (!feof(fp)) {
-        fgets(buf, 1023, fp);
-        if (strncasecmp("ht", buf, strlen("ht")) == 0) {
-            /* Hyper Thread */
-            cpus++;
-        } else if (strncasecmp("processor", buf, strlen("processor")) == 0) {
-            /* Pysical CPU processor */
-            cpus++;
-        }
+  while (!feof(fp)) {
+    fgets(buf, 1023, fp);
+    if (strncasecmp("ht", buf, strlen("ht")) == 0) {
+      /* Hyper Thread */
+      cpus++;
+    } else if (strncasecmp("processor", buf, strlen("processor")) == 0) {
+      /* Pysical CPU processor */
+      cpus++;
     }
-   
-    fclose(fp);
+  }
+
+  fclose(fp);
 
 #endif // ifdef _WIN32
 
-    if (cpus < 1) {
-        cpus = 1;
-    }
+  if (cpus < 1) {
+    cpus = 1;
+  }
 
-    return cpus;
-} 
-
-bool
-InitScene(
-  mallie::Scene& scene,
-  mallie::RenderConfig& config)
-{
-  return scene.Init(config.obj_filename, config.material_filename, config.scene_scale);
+  return cpus;
 }
 
-bool
-LoadJSONConfig(
-  mallie::RenderConfig& config, // [out]
-  const std::string& filename)
-{
+bool InitScene(mallie::Scene &scene, mallie::RenderConfig &config) {
+  return scene.Init(config.obj_filename, config.material_filename,
+                    config.scene_scale);
+}
+
+bool LoadJSONConfig(mallie::RenderConfig &config, // [out]
+                    const std::string &filename) {
 #if 1
   { // file check
     std::ifstream is(filename.c_str());
@@ -110,26 +103,31 @@ LoadJSONConfig(
     }
   }
 
-  JSON_Value* root = json_parse_file(filename.c_str());
+  JSON_Value *root = json_parse_file(filename.c_str());
   if (json_value_get_type(root) != JSONObject) {
     return false;
   }
 
-  JSON_Object* object = json_value_get_object(root);
-  if (json_value_get_type(json_object_dotget_value(object, "obj_filename")) == JSONString) {
+  JSON_Object *object = json_value_get_object(root);
+  if (json_value_get_type(json_object_dotget_value(object, "obj_filename")) ==
+      JSONString) {
     config.obj_filename = json_object_dotget_string(object, "obj_filename");
   }
 
-  if (json_value_get_type(json_object_dotget_value(object, "material_filename")) == JSONString) {
-    config.material_filename = json_object_dotget_string(object, "material_filename");
+  if (json_value_get_type(json_object_dotget_value(
+          object, "material_filename")) == JSONString) {
+    config.material_filename =
+        json_object_dotget_string(object, "material_filename");
   }
 
-  if (json_value_get_type(json_object_dotget_value(object, "scene_scale")) == JSONNumber) {
+  if (json_value_get_type(json_object_dotget_value(object, "scene_scale")) ==
+      JSONNumber) {
     config.scene_scale = json_object_dotget_number(object, "scene_scale");
   }
 
-  if (json_value_get_type(json_object_dotget_value(object, "eye")) == JSONArray) {
-    JSON_Array* array = json_object_dotget_array(object, "eye");
+  if (json_value_get_type(json_object_dotget_value(object, "eye")) ==
+      JSONArray) {
+    JSON_Array *array = json_object_dotget_array(object, "eye");
     if (json_array_get_count(array) == 3) {
       config.eye[0] = json_array_get_number(array, 0);
       config.eye[1] = json_array_get_number(array, 1);
@@ -137,8 +135,9 @@ LoadJSONConfig(
     }
   }
 
-  if (json_value_get_type(json_object_dotget_value(object, "up")) == JSONArray) {
-    JSON_Array* array = json_object_dotget_array(object, "up");
+  if (json_value_get_type(json_object_dotget_value(object, "up")) ==
+      JSONArray) {
+    JSON_Array *array = json_object_dotget_array(object, "up");
     if (json_array_get_count(array) == 3) {
       config.up[0] = json_array_get_number(array, 0);
       config.up[1] = json_array_get_number(array, 1);
@@ -146,8 +145,9 @@ LoadJSONConfig(
     }
   }
 
-  if (json_value_get_type(json_object_dotget_value(object, "lookat")) == JSONArray) {
-    JSON_Array* array = json_object_dotget_array(object, "lookat");
+  if (json_value_get_type(json_object_dotget_value(object, "lookat")) ==
+      JSONArray) {
+    JSON_Array *array = json_object_dotget_array(object, "lookat");
     if (json_array_get_count(array) == 3) {
       config.lookat[0] = json_array_get_number(array, 0);
       config.lookat[1] = json_array_get_number(array, 1);
@@ -155,23 +155,27 @@ LoadJSONConfig(
     }
   }
 
-  if (json_value_get_type(json_object_dotget_value(object, "resolution")) == JSONArray) {
-    JSON_Array* array = json_object_dotget_array(object, "resolution");
+  if (json_value_get_type(json_object_dotget_value(object, "resolution")) ==
+      JSONArray) {
+    JSON_Array *array = json_object_dotget_array(object, "resolution");
     if (json_array_get_count(array) == 2) {
-      config.width= json_array_get_number(array, 0);
+      config.width = json_array_get_number(array, 0);
       config.height = json_array_get_number(array, 1);
     }
   }
 
-  if (json_value_get_type(json_object_dotget_value(object, "num_passes")) == JSONNumber) {
+  if (json_value_get_type(json_object_dotget_value(object, "num_passes")) ==
+      JSONNumber) {
     config.num_passes = json_object_dotget_number(object, "num_passes");
   }
 
-  if (json_value_get_type(json_object_dotget_value(object, "num_photons")) == JSONNumber) {
+  if (json_value_get_type(json_object_dotget_value(object, "num_photons")) ==
+      JSONNumber) {
     config.num_passes = json_object_dotget_number(object, "num_photons");
   }
 
-  if (json_value_get_type(json_object_dotget_value(object, "plane")) == JSONBoolean) {
+  if (json_value_get_type(json_object_dotget_value(object, "plane")) ==
+      JSONBoolean) {
     config.plane = json_object_dotget_boolean(object, "plane");
   }
 
@@ -211,11 +215,11 @@ LoadJSONConfig(
   }
 
   if (v.get("num_passes").is<double>()) {
-    config.num_passes = (int)v.get("num_passes").get<double>();
+    config.num_passes = (int) v.get("num_passes").get<double>();
   }
 
   if (v.get("num_photons").is<double>()) {
-    config.num_photons = (int)v.get("num_photons").get<double>();
+    config.num_photons = (int) v.get("num_photons").get<double>();
   }
 
   if (v.get("eye").is<picojson::array>()) {
@@ -250,7 +254,7 @@ LoadJSONConfig(
   }
 
   if (v.get("num_passes").is<double>()) {
-    config.num_passes = (int)v.get("num_passes").get<double>();
+    config.num_passes = (int) v.get("num_passes").get<double>();
   }
 
   return true;
@@ -259,11 +263,7 @@ LoadJSONConfig(
 
 }
 
-int
-main(
-  int argc,
-  char **argv)
-{
+int main(int argc, char **argv) {
 
   if (argc > 1) {
     if (strcmp(argv[1], "--help") == 0) {
@@ -273,7 +273,8 @@ main(
   }
 
 #ifdef _OPENMP
-  printf("[Mallie] OpenMP Detected. Max # of threads = %d\n", omp_get_max_threads());
+  printf("[Mallie] OpenMP Detected. Max # of threads = %d\n",
+         omp_get_max_threads());
 #endif
 
 #ifdef WITH_MPI
@@ -314,7 +315,7 @@ main(
 
 #ifdef ENABLE_SDL
   // SDL_Init() must be defined in main()
-  SDL_Init(SDL_INIT_VIDEO|SDL_INIT_TIMER);
+  SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER);
   DoMainSDL(scene, config);
 #else
 
@@ -323,7 +324,7 @@ main(
 
   t.end();
   printf("[Mallie] End\n");
-  printf("[Mallie] Elapsed: %d sec(s)\n", (int)t.sec());
+  printf("[Mallie] Elapsed: %d sec(s)\n", (int) t.sec());
   fflush(stdout);
 
 #ifdef WITH_MPI
@@ -336,4 +337,3 @@ main(
 
   return EXIT_SUCCESS;
 }
- 

@@ -7,25 +7,16 @@
 
 namespace mallie {
 
-void
-Node::UpdateTransform()
-{
+void Node::UpdateTransform() {}
 
+Scene::~Scene() {
+  delete[] mesh_.vertices;
+  delete[] mesh_.faces;
+  delete[] mesh_.materialIDs;
 }
 
-Scene::~Scene()
-{
-  delete [] mesh_.vertices;
-  delete [] mesh_.faces;
-  delete [] mesh_.materialIDs;
-}
-
-bool
-Scene::Init(
-  const std::string& objFilename,
-  const std::string& materialFilename,
-  double sceneScale)
-{
+bool Scene::Init(const std::string &objFilename,
+                 const std::string &materialFilename, double sceneScale) {
   bool ret = MeshLoader::LoadObj(mesh_, objFilename.c_str());
   if (!ret) {
     printf("[Mallie] Failed to load .obj file [ %s ]\n", objFilename.c_str());
@@ -33,15 +24,15 @@ Scene::Init(
   }
 
   for (size_t i = 0; i < mesh_.numVertices; i++) {
-    mesh_.vertices[3*i+0] *= sceneScale;
-    mesh_.vertices[3*i+1] *= sceneScale;
-    mesh_.vertices[3*i+2] *= sceneScale;
+    mesh_.vertices[3 * i + 0] *= sceneScale;
+    mesh_.vertices[3 * i + 1] *= sceneScale;
+    mesh_.vertices[3 * i + 2] *= sceneScale;
   }
 
   mallie::timerutil t;
   t.start();
 
-  BVHBuildOptions options;  // Use default option
+  BVHBuildOptions options; // Use default option
 
   printf("  BVH build option:\n");
   printf("    # of leaf primitives: %d\n", options.minLeafPrimitives);
@@ -51,7 +42,7 @@ Scene::Init(
   assert(ret);
 
   t.end();
-  printf("  BVH build time: %d msecs\n", (int)t.msec());
+  printf("  BVH build time: %d msecs\n", (int) t.msec());
 
   BVHBuildStatistics stats = accel_.GetStatistics();
 
@@ -63,20 +54,12 @@ Scene::Init(
   return true;
 }
 
-bool
-Scene::Trace(
-  Intersection& isect,
-  Ray& ray)
-{
+bool Scene::Trace(Intersection &isect, Ray &ray) {
   return accel_.Traverse(isect, &mesh_, ray);
 }
 
-void
-Scene::BoundingBox(
-  real3& bmin,
-  real3& bmax)
-{
-  const std::vector<BVHNode>& nodes = accel_.GetNodes();
+void Scene::BoundingBox(real3 &bmin, real3 &bmax) {
+  const std::vector<BVHNode> &nodes = accel_.GetNodes();
   assert(nodes.size() > 0);
 
   bmin[0] = nodes[0].bmin[0];
@@ -88,10 +71,7 @@ Scene::BoundingBox(
   bmax[2] = nodes[0].bmax[2];
 }
 
-real3
-Scene::GetBackgroundRadiance(
-  real3& dir)
-{
+real3 Scene::GetBackgroundRadiance(real3 &dir) {
   // Constant dome light
   return real3(0.75, 0.75, 0.75);
 }
