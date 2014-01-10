@@ -15,6 +15,7 @@
 #include "camera.h"
 #include "timerutil.h"
 #include "render.h"
+#include "jpge.h"
 
 namespace mallie {
 
@@ -44,6 +45,19 @@ HDRToLDR(
   }
 }
 
+void
+SaveAsJPEG(
+  const char* filename,
+  std::vector<unsigned char>& image, // RGB
+  int width,
+  int height)
+{
+  jpge::params comp_params;
+  comp_params.m_quality = 100;
+  bool ret = jpge::compress_image_to_jpeg_file(filename, width, height, 3, &image.at(0), comp_params);
+  assert(ret);
+}
+
 } // local
 
 void
@@ -59,13 +73,13 @@ DoMainConsole(
 
   image.resize(width*height*3);
 
-  //Render(config, image, width, height, config.eye, config.lookat, config.up);
+  mallie::Render(scene, config, image, config.eye, config.lookat, config.up, config.quat, 1);
 
   std::string outfilename("output.jpg"); // fixme
 
   std::vector<unsigned char> out;
   HDRToLDR(out, image, width, height);
-  //SaveAsJPEG(outfilename.c_str(), out, width, height);
+  SaveAsJPEG(outfilename.c_str(), out, width, height);
 
   printf("[Mallie] Output %s\n", outfilename.c_str());
 

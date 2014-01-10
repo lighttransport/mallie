@@ -45,7 +45,7 @@ Camera::BuildCameraFrame(
   double u[3],
   double v[3],
   double fov,
-  double quat[4],
+  const double quat[4],
   int width,
   int height)
 {
