@@ -47,6 +47,7 @@ sources = {
    "mmm_io.cc",
    "render.cc",
    "camera.cc",
+   "light.cc",
    "matrix.cc",
    "trackball.cc",
    "importers/tiny_obj_loader.cc",
@@ -58,6 +59,7 @@ sources = {
    "deps/parson/parson.c",
    "tasksys.cc",
    "texture.cc",
+   "vcm.cc",
    "deps/TinyThread++-1.1/source/tinythread.cpp",
 }
 
@@ -98,8 +100,11 @@ solution "MallieSolution"
       includedirs {
          "./",
          "deps/parson/",
+         "deps/lua-5.2.2/",
          "deps/TinyThread++-1.1/source/",
       }
+
+      links "lua"
 
       -- MacOSX. Guess we use gcc.
       configuration { "macosx", "gmake" }
