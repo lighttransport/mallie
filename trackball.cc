@@ -299,7 +299,7 @@ normalize_quat(double q[4])
  *
  */
 void
-build_rotmatrix(double m[4][4], double q[4])
+build_rotmatrix(double m[4][4], const double q[4])
 {
     m[0][0] = 1.0 - 2.0 * (q[1] * q[1] + q[2] * q[2]);
     m[0][1] = 2.0 * (q[0] * q[1] - q[2] * q[3]);

@@ -1,3 +1,9 @@
+-- Unit test
+newoption {
+   trigger     = "with-unittest",
+   description = "Build unit test."
+}
+
 -- K/FX10 target
 newoption {
    trigger     = "k",
@@ -214,117 +220,7 @@ solution "MallieSolution"
          targetdir "bin/"
          targetname "mallie"
 
-   -- A project defines one build target
-   project "MallieTest"
-      kind "ConsoleApp"
-      language "C++"
-      files { test_sources, gtest_sources }
+   if _OPTIONS['with-unittest'] then
+      dofile "premake4-test.lua"
+   end
 
-      includedirs {
-         "./",
-         "deps/parson/",
-         "deps/TinyThread++-1.1/source/",
-         "deps/gtest-1.7.0/include/",
-         "deps/gtest-1.7.0/",
-      }
-
-      defines { 'ENABLE_UNITTEST' }
-
-      -- for gtest
-      if _OPTIONS['k'] then
-         defines { 'GTEST_HAS_TR1_TUPLE=0' }
-      end
-
-      -- MacOSX. Guess we use gcc.
-      configuration { "macosx", "gmake" }
-
-         defines { '_LARGEFILE_SOURCE', '_FILE_OFFSET_BITS=64' }
-
-         -- SDL
-         if _OPTIONS['with-sdl'] then
-            defines { 'ENABLE_SDL' }
-            buildoptions { "`sdl2-config --cflags`" }
-            buildoptions { "-msse2" }
-            linkoptions { "`sdl2-config --libs`" }
-         end
-
-         -- gcc openmp
-         if _OPTIONS['with-openmp'] then
-            buildoptions { "-fopenmp" }
-            linkoptions { "-fopenmp" }
-         end
-
-         -- gcc mpi
-         if _OPTIONS['with-mpi'] then
-            defines { 'WITH_MPI' }
-         end
-
-      -- Windows general
-      configuration { "windows" }
-
-         includedirs { "./compat" } -- stdint
-
-         if _OPTIONS['with-sdl'] then
-            defines { 'ENABLE_SDL' }
-            includedirs { "extlibs/windows/SDL/msvc/SDL-1.2.15/include" }
-            links { "SDL", "SDLmain" }
-            libdirs { "extlibs/windows/SDL/msvc/SDL-1.2.15/lib/x64" }
-         end
-
-         defines { 'NOMINMAX', '_LARGEFILE_SOURCE', '_FILE_OFFSET_BITS=64' }
-
-      -- Windows + gmake specific
-      configuration { "windows", "gmake" }
-
-         defines { '__STDC_CONSTANT_MACROS', '__STDC_LIMIT_MACROS' } -- c99
-
-         links { "stdc++", "msvcrt", "ws2_32", "winmm" }
-
-      -- Linux specific
-      configuration {"linux", "gmake"}
-         defines { '__STDC_CONSTANT_MACROS', '__STDC_LIMIT_MACROS' } -- c99
-
-         if _OPTIONS['k'] then
-            buildoptions { "-Xg -KPIC" } -- gcc compat, position independet code.
-
-            -- fj openmp
-            if _OPTIONS['with-openmp'] then
-               buildoptions { "-Kopenmp" }
-               linkoptions { "-Kopenmp" }
-            end
-         else
-            -- gcc openmp
-            if _OPTIONS['with-openmp'] then
-               buildoptions { "-fopenmp" }
-               linkoptions { "-fopenmp" }
-            end
-         end
-
-         if _OPTIONS['with-sdl'] then
-            defines { 'ENABLE_SDL' }
-            buildoptions { "`sdl2-config --cflags`" }
-            linkoptions { "`sdl2-config --libs`" }
-         end
-
-         if not _OPTIONS['k'] then
-            linkoptions { "-pthread" }
-         end
-
-      configuration "Debug"
-         defines { "DEBUG" } -- -DDEBUG
-         flags { "Symbols" }
-         targetdir "bin/"
-         targetname "test_mallie_debug"
-
-      configuration "Release"
-         defines { "NDEBUG" }
-         flags { "Symbols", "Optimize" }
-         if _OPTIONS['k'] then
-            -- pass buildoptions { "-Kfast" }
-         elseif _OPTIONS['arm'] then
-            -- buildoptions { "NEON" }
-         else 
-            flags { "EnableSSE2" }
-         end
-         targetdir "bin/"
-         targetname "test_mallie"

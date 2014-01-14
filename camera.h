@@ -22,9 +22,7 @@ public:
   ~Camera() {}
   ;
 
-  void BuildCameraFrame(double origin[3], double corner[3], double u[3],
-                        double v[3], double fov, double quat[4], int width,
-                        int height);
+  void BuildCameraFrame(double origin[3], double corner[3], double u[3], double v[3], double fov, const double quat[4], int width, int height);
 
   Ray GenerateRay(double u, double v) const;
 

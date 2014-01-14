@@ -69,7 +69,7 @@ add_quats(double *q1, double *q2, double *dest);
  * given quaternion.
  */
 void
-build_rotmatrix(double m[4][4], double q[4]);
+build_rotmatrix(double m[4][4], const double q[4]);
 
 /*
  * This function computes a quaternion based on an axis (defined by

@@ -15,6 +15,7 @@ struct RenderConfig {
   double eye[3];
   double lookat[3];
   double up[3];
+  double quat[4];
 
   double scene_scale;
 
@@ -39,15 +40,21 @@ struct RenderConfig {
     up[0] = 0.0;
     up[1] = 1.0;
     up[2] = 0.0;
+    quat[0] = quat[1] = quat[2] = quat[3] = 0.0;
   }
 
 };
 
-extern void Render(Scene &scene, const RenderConfig &config,
-                   std::vector<float> &image, // out image
-                   double eye[3], double lookat[3], double up[3],
-                   double quat[4], int step);
-
+extern void Render(
+  Scene& scene,
+  const RenderConfig& config,
+  std::vector<float>& image,   // out image
+  const double eye[3], 
+  const double lookat[3], 
+  const double up[3], 
+  const double quat[4],
+  int    step);
+ 
 }
 
 #endif // __MALLIE_RENDER_H__

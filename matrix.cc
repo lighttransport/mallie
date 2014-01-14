@@ -79,7 +79,7 @@ void Matrix::LookAt(double m[4][4], double eye[3], double lookat[3],
   m[0][0] = u[0];
   m[1][0] = v[0];
   m[2][0] = -look[0];
-  m[3][0] = eye[0];
+  m[3][0] =  eye[0];
 
   m[0][1] = u[1];
   m[1][1] = v[1];

@@ -36,9 +36,19 @@ static void vnormalize(double v[3]) {
   }
 }
 
-void Camera::BuildCameraFrame(double origin[3], double corner[3], double u[3],
-                              double v[3], double fov, double quat[4],
-                              int width, int height) {
+
+
+void
+Camera::BuildCameraFrame(
+  double origin[3],
+  double corner[3],
+  double u[3],
+  double v[3],
+  double fov,
+  const double quat[4],
+  int width,
+  int height)
+{
   double e[4][4];
   //printf("--in\n");
   //printf("eye: %f, %f, %f\n", eye_[0], eye_[1], eye_[2]);

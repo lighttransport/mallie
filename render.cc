@@ -5,6 +5,10 @@
 #include "timerutil.h"
 #include "scene.h"
 
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 #ifdef _WIN32
 #define THREAD_TLS __declspec(thread)
 #else // Assume gcc-like compiler
@@ -30,17 +34,46 @@ typedef std::vector<PathVertex> Path;
 
 namespace {
 
+unsigned int gSeed[1024][4];
+
+inline void init_randomreal(void) {
+#if _OPENMP
+  assert(omp_get_max_threads() < 1024);
+
+  for (int i = 0; i < omp_get_max_threads(); i++) {
+    gSeed[i][0] = 123456789 + i;
+    gSeed[i][1] = 362436069;
+    gSeed[i][2] = 521288629;
+    gSeed[i][3] = 88675123;
+  }
+#else
+#endif
+}
+
 inline double randomreal(void) {
   // xorshift RNG
+#ifdef _OPENMP
+  int tid = omp_get_thread_num();
+  unsigned int x = gSeed[tid][0];
+  unsigned int y = gSeed[tid][1];
+  unsigned int z = gSeed[tid][2];
+  unsigned int w = gSeed[tid][3];
+  unsigned t=x^(x<<11);
+  x=y; y=z; z=w; w=(w^(w>>19))^(t^(t>>8));
+
+  gSeed[tid][0] = x;
+  gSeed[tid][1] = y;
+  gSeed[tid][2] = z;
+  gSeed[tid][3] = w;
+  return w*(1.0/4294967296.0);
+#else
   // @fixme { don't use __thread keyword? }
-  static unsigned int THREAD_TLS x = 123456789, y = 362436069, z = 521288629,
-                                 w = 88675123;
-  unsigned t = x ^ (x << 11);
-  x = y;
-  y = z;
-  z = w;
-  w = (w ^ (w >> 19)) ^ (t ^ (t >> 8));
-  return w * (1.0 / 4294967296.0);
+  static unsigned int THREAD_TLS
+        x=123456789,y=362436069,z=521288629,w=88675123;
+  unsigned t=x^(x<<11);
+  x=y; y=z; z=w; w=(w^(w>>19))^(t^(t>>8));
+  return w*(1.0/4294967296.0);
+#endif
 }
 
 static void GenerateBasis(real3 &tangent, real3 &binormal,
@@ -226,10 +259,16 @@ real3 PathTrace(Scene &scene, const Camera &camera, const RenderConfig &config,
 
 }
 
-void Render(Scene &scene, const RenderConfig &config,
-            std::vector<float> &image, // RGB
-            double eye[3], double lookat[3], double up[3], double quat[4],
-            int step) {
+void Render(
+  Scene& scene,
+  const RenderConfig& config,
+  std::vector<float>& image,  // RGB
+  const double eye[3], 
+  const double lookat[3], 
+  const double up[3], 
+  const double quat[4],
+  int   step)
+{
   int width = config.width;
   int height = config.height;
   double fov = config.fov;
@@ -246,6 +285,9 @@ void Render(Scene &scene, const RenderConfig &config,
 
   assert(image.size() >= 3 * width * height);
   //memset(&image.at(0), 0, sizeof(float) * width * height * 3);
+  
+
+  init_randomreal();
 
   mallie::timerutil t;
   mallie::timerutil tEventTimer;
