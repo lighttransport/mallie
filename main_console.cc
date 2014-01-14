@@ -59,13 +59,15 @@ SaveAsJPEG(
 void DoMainConsole(Scene &scene, const RenderConfig &config) {
   printf("[Mallie] Console mode\n");
   std::vector<float> image;
+  std::vector<int> count;
 
   int width = config.width;
   int height = config.height;
 
   image.resize(width * height * 3);
+  count.resize(width * height);
 
-  mallie::Render(scene, config, image, config.eye, config.lookat, config.up, config.quat, 1);
+  mallie::Render(scene, config, image, count, config.eye, config.lookat, config.up, config.quat, 1);
 
   std::string outfilename("output.jpg"); // fixme
 

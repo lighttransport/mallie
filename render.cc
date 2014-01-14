@@ -1,4 +1,7 @@
 #include <cstdio>
+#include <ctime>
+#include <algorithm>
+
 #include "hashgrid.h"
 #include "render.h"
 #include "camera.h"
@@ -21,6 +24,8 @@ const double kFar = 1.0e+30;
 const double kEPS = 1.0e-3;
 const int kMaxPathLength = 16;
 const int kMinPathLength = 2;
+
+const int kTileSize = 8;
 
 struct PathVertex {
   real3 P;          // Position
@@ -190,6 +195,7 @@ void GenLightPath(Scene &scene, int numPhotons) {
 
 real3 PathTrace(Scene &scene, const Camera &camera, const RenderConfig &config,
                 std::vector<float> &image, // RGB
+                std::vector<int>   &count,
                 int px, int py, int step) {
   //
   // 1. Sample eye(E0)
@@ -197,7 +203,8 @@ real3 PathTrace(Scene &scene, const Camera &camera, const RenderConfig &config,
   float u = randomreal() - 0.5;
   float v = randomreal() - 0.5;
 
-  Ray ray = camera.GenerateRay(px + u + step / 2.0f, py + v + step / 2.0f);
+  //Ray ray = camera.GenerateRay(px + u + step / 2.0f, py + v + step / 2.0f);
+  Ray ray = camera.GenerateRay(px + u, py + v);
 
   Intersection isect;
   isect.t = kFar;
@@ -263,6 +270,7 @@ void Render(
   Scene& scene,
   const RenderConfig& config,
   std::vector<float>& image,  // RGB
+  std::vector<int>& count, 
   const double eye[3], 
   const double lookat[3], 
   const double up[3], 
@@ -272,6 +280,12 @@ void Render(
   int width = config.width;
   int height = config.height;
   double fov = config.fov;
+
+  std::vector<int> xs;
+  std::vector<int> ys;
+  std::srand ( unsigned ( std::time(0) ) );
+  std::random_shuffle ( xs.begin(), xs.end() );
+  std::random_shuffle ( ys.begin(), ys.end() );
 
   double origin[3], corner[3], du[3], dv[3];
   Camera camera(eye, lookat, up);
@@ -308,16 +322,27 @@ void Render(
       fflush(stdout);
     }
 
-    for (int x = 0; x < width; x++) {
-
 #if 1
-      real3 radiance = PathTrace(scene, camera, config, image, x, y, step);
+    for (int x = 0; x < width; x += step) {
 
-      image[3 * (y * width + x) + 0] = radiance[0];
-      image[3 * (y * width + x) + 1] = radiance[1];
-      image[3 * (y * width + x) + 2] = radiance[2];
+      // random sample pixel position in [step x step] sized tile.
+      int px = x + (int)(randomreal() * step);
+      int py = y + (int)(randomreal() * step);
+      px = std::min(px, (width-1));
+      py = std::min(py, (height-1));
+      
+      real3 radiance = PathTrace(scene, camera, config, image, count, px, py, 1);
+
+      image[3 * (py * width + px) + 0] = radiance[0];
+      image[3 * (py * width + px) + 1] = radiance[1];
+      image[3 * (py * width + px) + 2] = radiance[2];
+      count[py*width+px]++;
+    }
 
 #else
+
+    for (int x = 0; x < width; x += step) {
+
       float u = randomreal() - 0.5;
       float v = randomreal() - 0.5;
 
@@ -334,7 +359,6 @@ void Render(
         image[3 * (y * width + x) + 1] = isect.normal[1];
         image[3 * (y * width + x) + 2] = isect.normal[2];
       }
-#endif
 
     }
 
@@ -351,6 +375,7 @@ void Render(
         }
       }
     }
+#endif
 
   }
 

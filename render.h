@@ -49,6 +49,7 @@ extern void Render(
   Scene& scene,
   const RenderConfig& config,
   std::vector<float>& image,   // out image
+  std::vector<int>& count,     // per-pixel counter
   const double eye[3], 
   const double lookat[3], 
   const double up[3], 

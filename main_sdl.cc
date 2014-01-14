@@ -66,8 +66,10 @@ int gHeight = 256;
 SDL_Window *gWindow = NULL;
 SDL_Surface *gSurface = NULL;
 SDL_Renderer *gSDLRenderer = NULL;
+SDL_mutex *gMutex = NULL;
 
 std::vector<float> gImage;
+std::vector<int>   gCount;
 std::vector<float> gFramebuffer; // HDR framebuffer
 RenderConfig gRenderConfig;
 
@@ -136,6 +138,12 @@ static void AccumImage(std::vector<float> &dst, const std::vector<float> &src) {
 static void ClearImage(std::vector<float> &img) {
   for (size_t i = 0; i < img.size(); i++) {
     img[i] = 0.0f;
+  }
+}
+
+static void ClearCount(std::vector<int> &img) {
+  for (size_t i = 0; i < img.size(); i++) {
+    img[i] = 0;
   }
 }
 
@@ -333,8 +341,11 @@ bool HandleKey(SDL_Event e) {
   return false;
 }
 
-void Display(SDL_Surface *surface, const std::vector<float> &image, int passes,
+void Display(SDL_Surface *surface, const std::vector<float> &image, const std::vector<int>& counts, int passes,
              int width, int height) {
+  int ret = SDL_LockMutex(gMutex);
+  assert(ret == 0);
+
   SDL_SetRenderDrawColor(gSDLRenderer, 0, 0, 0, 255);
   SDL_RenderClear(gSDLRenderer);
 
@@ -342,9 +353,15 @@ void Display(SDL_Surface *surface, const std::vector<float> &image, int passes,
 
   // ARGB
   unsigned char *data = (unsigned char *)surface->pixels;
+#if 0
   float scale = 1.0f / (float) passes;
+#endif
   for (int y = 0; y < height; y++) {
     for (int x = 0; x < width; x++) {
+#if 1
+      // per-pixel count
+      float scale = 1.0f / (float)counts[y*width+x];
+#endif
 
       unsigned char col[3];
       col[0] = x % 255;
@@ -375,6 +392,8 @@ void Display(SDL_Surface *surface, const std::vector<float> &image, int passes,
 
   SDL_UnlockSurface(surface);
   //SDL_RenderPresent(gSDLRenderer);
+
+  SDL_UnlockMutex(gMutex);
 }
 
 Uint32 TimeLeft(int interval) {
@@ -490,19 +509,25 @@ void RenderThread(void *arg) {
     //printf("quat = %f, %f, %f, %f\n", gCurrQuat[0], gCurrQuat[1],
     //gCurrQuat[2], gCurrQuat[3]);
 
-    Render(*(ctx.scene), *(ctx.config), gImage, gEye, gLookat, gUp, gCurrQuat,
+    Render(*(ctx.scene), *(ctx.config), gImage, gCount, gEye, gLookat, gUp, gCurrQuat,
            gRenderPixelStep);
 
     // Always clear framebuffer for intermediate result
     //if (gRenderPixelStep > 1) {
     if (gRenderPasses == 1) {
-      ClearImage(gFramebuffer);
+      //ClearImage(gFramebuffer);
     }
 
     AccumImage(gFramebuffer, gImage);
 
-    Display(gSurface, gFramebuffer, gRenderPasses, ctx.config->width,
+    Display(gSurface, gFramebuffer, gCount, gRenderPasses, ctx.config->width,
             ctx.config->height);
+
+    if (gMouseMoving) {
+      ClearImage(gFramebuffer);
+      ClearCount(gCount);
+    }
+      
 
 //printf("step = %d, interactive = %d\n", gRenderPixelStep, gRenderInteractive);
 
@@ -560,10 +585,18 @@ void DoMainSDL(Scene &scene, const RenderConfig &config) {
     exit(1);
   }
 
+  gMutex = SDL_CreateMutex();
+
+
   gFramebuffer.resize(gWidth * gHeight * 3); // RGB
   ClearImage(gFramebuffer);
 
   gImage.resize(gWidth * gHeight * 3); // RGB
+
+  gCount.resize(gWidth * gHeight);
+  for (size_t i = 0; i < gCount.size(); i++) {
+    gCount[i] = 0;
+  }
 
   Init(config);
 
@@ -666,7 +699,13 @@ void DoMainSDL(Scene &scene, const RenderConfig &config) {
     }
 
     SDL_Delay(33);
-    SDL_RenderPresent(gSDLRenderer); // bitblit
+    {
+      // Ensure render thread deson't write to a framebuffer.
+      int ret = SDL_LockMutex(gMutex);
+      assert(ret);
+      SDL_RenderPresent(gSDLRenderer); // bitblit
+      SDL_UnlockMutex(gMutex);
+    }
 
 #endif
 
