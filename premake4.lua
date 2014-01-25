@@ -110,7 +110,7 @@ solution "MallieSolution"
          "deps/TinyThread++-1.1/source/",
       }
 
-      links "lua"
+      -- links "lua"
 
       -- MacOSX. Guess we use gcc.
       configuration { "macosx", "gmake" }
