@@ -14,9 +14,9 @@
 #include <omp.h>
 #endif
 
-extern "C" {
-#include <lua.h>
-}
+//extern "C" {
+//#include <lua.h>
+//}
 
 #ifdef ENABLE_SDL
 #include <SDL.h>
