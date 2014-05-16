@@ -69,6 +69,12 @@ sources = {
    "deps/TinyThread++-1.1/source/tinythread.cpp",
 }
 
+tinyjs_sources = {
+   "deps/tinyjs/TinyJS.cpp",
+   "deps/tinyjs/TinyJS_Functions.cpp",
+   "deps/tinyjs/TinyJS_MathFunctions.cpp",
+}
+
 test_sources = {
    "test/cctest/test-atomic.cc"
 }
@@ -101,13 +107,14 @@ solution "MallieSolution"
    project "Mallie"
       kind "ConsoleApp"
       language "C++"
-      files { sources }
+      files { sources, tinyjs_sources }
 
       includedirs {
          "./",
          "deps/parson/",
          "deps/lua-5.2.2/",
          "deps/TinyThread++-1.1/source/",
+         "deps/tinyjs/",
       }
 
       -- links "lua"

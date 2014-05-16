@@ -166,7 +166,7 @@ void SaveCamera(const std::string &filename) {
 
   fclose(fp);
 
-  std::cout << "[Mallie] Save camera data to: " << filename << std::endl;
+  std::cout << "Mallie:info\tSave camera data to: " << filename << std::endl;
 }
 
 void LoadCamera(const std::string &filename) {
@@ -561,7 +561,7 @@ void RenderThread(void *arg) {
 }
 
 void DoMainSDL(Scene &scene, const RenderConfig &config) {
-  printf("[Mallie] SDL window mode.\n");
+  printf("Mallie:info\tSDL window mode.\n");
 
   gWidth = config.width;
   gHeight = config.height;
@@ -569,19 +569,19 @@ void DoMainSDL(Scene &scene, const RenderConfig &config) {
   gWindow = SDL_CreateWindow("Mallie", SDL_WINDOWPOS_UNDEFINED,
                              SDL_WINDOWPOS_UNDEFINED, gWidth, gHeight, 0);
   if (!gWindow) {
-    printf("SDL err: %s\n", SDL_GetError());
+    printf("Mallie:error\tSDL err: %s\n", SDL_GetError());
     exit(1);
   }
 
   gSDLRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_SOFTWARE);
   if (!gSDLRenderer) {
-    printf("SDL err: %s\n", SDL_GetError());
+    printf("Mallie:error\tSDL err: %s\n", SDL_GetError());
     exit(1);
   }
 
   gSurface = SDL_GetWindowSurface(gWindow);
   if (!gSurface) {
-    printf("SDL err: %s\n", SDL_GetError());
+    printf("Mallie:error\tSDL err: %s\n", SDL_GetError());
     exit(1);
   }
 

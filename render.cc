@@ -318,7 +318,7 @@ void Render(
   for (int y = 0; y < height; y += step) {
 
     if ((y % 100) == 0) {
-      printf("\r[Mallie] Render %d of %d", y, height);
+      printf("\rMallie:info\tRender %d of %d", y, height);
       fflush(stdout);
     }
 
