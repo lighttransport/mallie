@@ -5,6 +5,8 @@
 //
 
 //
+// version 0.9.6: Support Ni(index of refraction) mtl parameter.
+//                Parse transmittance material parameter correctly.
 // version 0.9.5: Parse multiple group name.
 //                Add support of specifying the base path to load material file.
 // version 0.9.4: Initial suupport of group tag(g)
@@ -84,6 +86,14 @@ static inline std::string parseString(const char*& token)
 
   token += (e - b);
   return s;
+}
+
+static inline int parseInt(const char*& token)
+{
+  token += strspn(token, " \t");
+  int i = atoi(token);
+  token += strcspn(token, " \t\r");
+  return i;
 }
 
 static inline float parseFloat(const char*& token)
@@ -191,15 +201,36 @@ updateVertex(
   return idx;
 }
 
+void InitMaterial(material_t& material) {
+  material.name = "";
+  material.ambient_texname = "";
+  material.diffuse_texname = "";
+  material.specular_texname = "";
+  material.normal_texname = "";
+  for (int i = 0; i < 3; i ++) {
+    material.ambient[i] = 0.f;
+    material.diffuse[i] = 0.f;
+    material.specular[i] = 0.f;
+    material.transmittance[i] = 0.f;
+    material.emission[i] = 0.f;
+  }
+  material.illum = 0;
+  material.dissolve = 1.f;
+  material.shininess = 1.f;
+  material.ior = 1.f;
+  material.unknown_parameter.clear();
+}
+
 static bool
 exportFaceGroupToShape(
   shape_t& shape,
-  const std::vector<float> in_positions,
-  const std::vector<float> in_normals,
-  const std::vector<float> in_texcoords,
+  const std::vector<float> &in_positions,
+  const std::vector<float> &in_normals,
+  const std::vector<float> &in_texcoords,
   const std::vector<std::vector<vertex_index> >& faceGroup,
-  const material_t material,
-  const std::string name)
+  const material_t &material,
+  const std::string &name,
+  const bool is_material_seted)
 {
   if (faceGroup.empty()) {
     return false;
@@ -247,57 +278,32 @@ exportFaceGroupToShape(
   shape.mesh.texcoords.swap(texcoords);
   shape.mesh.indices.swap(indices);
 
-  shape.material = material;
+  if(is_material_seted) {
+    shape.material = material;
+  } else {
+    InitMaterial(shape.material);
+    shape.material.diffuse[0] = 1.f;
+    shape.material.diffuse[1] = 1.f;
+    shape.material.diffuse[2] = 1.f;
+  }
 
   return true;
 
 }
 
-  
-void InitMaterial(material_t& material) {
-  material.name = "";
-  material.ambient_texname = "";
-  material.diffuse_texname = "";
-  material.specular_texname = "";
-  material.normal_texname = "";
-  for (int i = 0; i < 3; i ++) {
-    material.ambient[i] = 0.f;
-    material.diffuse[i] = 0.f;
-    material.specular[i] = 0.f;
-    material.transmittance[i] = 0.f;
-    material.emission[i] = 0.f;
-  }
-  material.shininess = 1.f;
-}
-
 std::string LoadMtl (
   std::map<std::string, material_t>& material_map,
-  const char* filename,
-  const char* mtl_basepath)
+  std::istream& inStream)
 {
   material_map.clear();
   std::stringstream err;
-
-  std::string filepath;
-
-  if (mtl_basepath) {
-    filepath = std::string(mtl_basepath) + std::string(filename);
-  } else {
-    filepath = std::string(filename);
-  }
-
-  std::ifstream ifs(filepath.c_str());
-  if (!ifs) {
-    err << "Cannot open file [" << filepath << "]" << std::endl;
-    return err.str();
-  }
 
   material_t material;
   
   int maxchars = 8192;  // Alloc enough size.
   std::vector<char> buf(maxchars);  // Alloc enough size.
-  while (ifs.peek() != -1) {
-    ifs.getline(&buf[0], maxchars);
+  while (inStream.peek() != -1) {
+    inStream.getline(&buf[0], maxchars);
 
     std::string linebuf(&buf[0]);
 
@@ -372,14 +378,21 @@ std::string LoadMtl (
       continue;
     }
     
-    // specular
+    // transmittance
     if (token[0] == 'K' && token[1] == 't' && isSpace((token[2]))) {
       token += 2;
       float r, g, b;
       parseFloat3(r, g, b, token);
-      material.specular[0] = r;
-      material.specular[1] = g;
-      material.specular[2] = b;
+      material.transmittance[0] = r;
+      material.transmittance[1] = g;
+      material.transmittance[2] = b;
+      continue;
+    }
+
+    // ior(index of refraction)
+    if (token[0] == 'N' && token[1] == 'i' && isSpace((token[2]))) {
+      token += 2;
+      material.ior = parseFloat(token);
       continue;
     }
 
@@ -398,6 +411,25 @@ std::string LoadMtl (
     if(token[0] == 'N' && token[1] == 's' && isSpace(token[2])) {
       token += 2;
       material.shininess = parseFloat(token);
+      continue;
+    }
+
+    // illum model
+    if (0 == strncmp(token, "illum", 5) && isSpace(token[5])) {
+      token += 6;
+      material.illum = parseInt(token);
+      continue;
+    }
+
+    // dissolve
+    if ((token[0] == 'd' && isSpace(token[1]))) {
+      token += 1;
+      material.dissolve = parseFloat(token);
+      continue;
+    }
+    if (token[0] == 'T' && token[1] == 'r' && isSpace(token[2])) {
+      token += 2;
+      material.dissolve = parseFloat(token);
       continue;
     }
 
@@ -447,6 +479,22 @@ std::string LoadMtl (
   return err.str();
 }
 
+std::string MaterialFileReader::operator() (
+    const std::string& matId,
+    std::map<std::string, material_t>& matMap)
+{
+  std::string filepath;
+
+  if (!m_mtlBasePath.empty()) {
+    filepath = std::string(m_mtlBasePath) + matId;
+  } else {
+    filepath = matId;
+  }
+
+  std::ifstream matIStream(filepath.c_str());
+  return LoadMtl(matMap, matIStream);
+}
+
 std::string
 LoadObj(
   std::vector<shape_t>& shapes,
@@ -464,6 +512,22 @@ LoadObj(
     return err.str();
   }
 
+  std::string basePath;
+  if (mtl_basepath) {
+    basePath = mtl_basepath;
+  }
+  MaterialFileReader matFileReader( basePath );
+  
+  return LoadObj(shapes, ifs, matFileReader);
+}
+
+std::string LoadObj(
+  std::vector<shape_t>& shapes,
+  std::istream& inStream,
+  MaterialReader& readMatFn)
+{
+  std::stringstream err;
+
   std::vector<float> v;
   std::vector<float> vn;
   std::vector<float> vt;
@@ -473,11 +537,12 @@ LoadObj(
   // material
   std::map<std::string, material_t> material_map;
   material_t material;
+  bool is_material_seted = false;
 
   int maxchars = 8192;  // Alloc enough size.
   std::vector<char> buf(maxchars);  // Alloc enough size.
-  while (ifs.peek() != -1) {
-    ifs.getline(&buf[0], maxchars);
+  while (inStream.peek() != -1) {
+    inStream.getline(&buf[0], maxchars);
 
     std::string linebuf(&buf[0]);
 
@@ -562,6 +627,7 @@ LoadObj(
 
       if (material_map.find(namebuf) != material_map.end()) {
         material = material_map[namebuf];
+        is_material_seted = true;
       } else {
         // { error!! material not found }
         InitMaterial(material);
@@ -575,12 +641,13 @@ LoadObj(
       char namebuf[4096];
       token += 7;
       sscanf(token, "%s", namebuf);
-
-      std::string err_mtl = LoadMtl(material_map, namebuf, mtl_basepath);
+        
+      std::string err_mtl = readMatFn(namebuf, material_map);
       if (!err_mtl.empty()) {
         faceGroup.clear();  // for safety
         return err_mtl;
       }
+      
       continue;
     }
 
@@ -589,11 +656,12 @@ LoadObj(
 
       // flush previous face group.
       shape_t shape;
-      bool ret = exportFaceGroupToShape(shape, v, vn, vt, faceGroup, material, name);
+      bool ret = exportFaceGroupToShape(shape, v, vn, vt, faceGroup, material, name, is_material_seted);
       if (ret) {
         shapes.push_back(shape);
       }
 
+      is_material_seted = false;
       faceGroup.clear();
 
       std::vector<std::string> names;
@@ -620,11 +688,12 @@ LoadObj(
 
       // flush previous face group.
       shape_t shape;
-      bool ret = exportFaceGroupToShape(shape, v, vn, vt, faceGroup, material, name);
+      bool ret = exportFaceGroupToShape(shape, v, vn, vt, faceGroup, material, name, is_material_seted);
       if (ret) {
         shapes.push_back(shape);
       }
 
+      is_material_seted = false;
       faceGroup.clear();
 
       // @todo { multiple object name? }
@@ -641,10 +710,11 @@ LoadObj(
   }
 
   shape_t shape;
-  bool ret = exportFaceGroupToShape(shape, v, vn, vt, faceGroup, material, name);
+  bool ret = exportFaceGroupToShape(shape, v, vn, vt, faceGroup, material, name, is_material_seted);
   if (ret) {
     shapes.push_back(shape);
   }
+  is_material_seted = false; // for safety
   faceGroup.clear();  // for safety
 
   return err.str();
