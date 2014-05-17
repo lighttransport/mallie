@@ -18,6 +18,7 @@
 #include "timerutil.h"
 #include "render.h"
 #include "tinythread.h"
+#include "script_engine.h"
 
 #define PIXELSTEP_COARSE (8)
 
@@ -167,6 +168,12 @@ void SaveCamera(const std::string &filename) {
   fclose(fp);
 
   std::cout << "Mallie:info\tSave camera data to: " << filename << std::endl;
+
+  char buf[1024];
+  sprintf(buf, "eye = [%f, %f, %f];\n", gEye[0], gEye[1], gEye[2]);
+  printf("\n");
+  ScriptEngine::Eval(buf);
+  printf("\n");
 }
 
 void LoadCamera(const std::string &filename) {
@@ -294,6 +301,10 @@ bool HandleKey(SDL_Event e) {
       //exit(-1);
       return true;
       break;
+    case 'd':
+      //exit(-1);
+      ScriptEngine::Eval("dumpCamera(eye, lookat, up);\n");
+      break;
     case SDLK_SPACE:
       // reset rotation
       gEye[0] = gRenderConfig.eye[0];
@@ -332,6 +343,9 @@ bool HandleKey(SDL_Event e) {
     case SDLK_TAB:
     case SDLK_LCTRL:
       gCtrlPressed = true;
+      break;
+    case 'c':
+      SaveCamera("camera.dat");
       break;
     default:
       break;

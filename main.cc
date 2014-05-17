@@ -38,13 +38,9 @@
 #include "main_console.h"
 #include "scene.h"
 
-#include "TinyJS.h"
-#include "TinyJS_Functions.h"
-#include "TinyJS_MathFunctions.h"
+#include "script_engine.h"
 
 namespace {
-
-CTinyJS* gJS; 
 
 static int GetNumCPUs() {
   int cpus = 0;
@@ -99,38 +95,6 @@ static int GetNumCPUs() {
 bool InitScene(mallie::Scene &scene, mallie::RenderConfig &config) {
   return scene.Init(config.obj_filename, config.material_filename,
                     config.scene_scale);
-}
-
-void js_print(CScriptVar *v, void *userdata) {
-    printf("Mallie > %s\n", v->getParameter("text")->getString().c_str());
-}
-
-void js_dump(CScriptVar *v, void *userdata) {
-    CTinyJS *js = (CTinyJS*)userdata;
-    js->root->trace(">  ");
-}
-
-bool InitScriptEngine()
-{
-  gJS = new CTinyJS(); 
-
-  /* add the functions from TinyJS_Functions.cpp and TinyJS_MathFunctions.cpp */
-  registerFunctions(gJS);
-  registerMathFunctions(gJS);
-  /* Add a native function */
-  gJS->addNative("function print(text)", &js_print, 0);
-  gJS->addNative("function dump()", &js_dump, gJS);
-
-  gJS->execute("print(\"Script initialized.\n\");");
-
-  return true;
-}
-
-bool DeleteScriptEngine()
-{
-  delete gJS;
-
-  return true;
 }
 
 bool LoadJSONConfig(mallie::RenderConfig &config, // [out]
@@ -352,7 +316,7 @@ int main(int argc, char **argv) {
   assert(ret);
 
   // Iinit script
-  InitScriptEngine();
+  ScriptEngine::Create();
 
   mallie::timerutil t;
   t.start();
@@ -376,7 +340,7 @@ int main(int argc, char **argv) {
   MPI_Finalize();
 #endif
 
-  DeleteScriptEngine();
+  ScriptEngine::Release();
 
 #ifdef ENABLE_SDL
   SDL_Quit();

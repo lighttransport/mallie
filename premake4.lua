@@ -66,6 +66,7 @@ sources = {
    "tasksys.cc",
    "texture.cc",
    "vcm.cc",
+   "script_engine.cc",
    "deps/TinyThread++-1.1/source/tinythread.cpp",
 }
 

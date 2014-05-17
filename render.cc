@@ -7,6 +7,7 @@
 #include "camera.h"
 #include "timerutil.h"
 #include "scene.h"
+#include "script_engine.h"
 
 #ifdef _OPENMP
 #include <omp.h>
