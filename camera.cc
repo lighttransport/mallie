@@ -85,8 +85,8 @@ Camera::BuildCameraFrame(
   Matrix::LookAt(re, dir, zero, localUp);
 
   // translate
-  re[3][0] += 0.0; // lo[0];
-  re[3][1] += 0.0; //lo[1];
+  re[3][0] += eye_[0]; //0.0; //lo[0];
+  re[3][1] += eye_[1]; //0.0; //lo[1];
   re[3][2] += (eye_[2] - dist);
 
   // rot -> trans
@@ -108,8 +108,8 @@ Camera::BuildCameraFrame(
   }
 
   // translate
-  //m[3][0] += 0.0; // lo[0];
-  //m[3][1] += 0.0; //lo[1];
+  //m[3][0] += eye_[0];
+  //m[3][1] += eye_[1];
   //m[3][2] += (eye_[2] - dist);
 
   //Matrix::Mult(m, e, rr);

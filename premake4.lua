@@ -108,6 +108,7 @@ solution "MallieSolution"
    project "Mallie"
       kind "ConsoleApp"
       language "C++"
+
       files { sources, tinyjs_sources }
 
       includedirs {
@@ -157,7 +158,7 @@ solution "MallieSolution"
 
          includedirs { "./compat" } -- stdint
 
-	 if _OPTIONS['with-sdl'] then
+         if _OPTIONS['with-sdl'] then
             defines { 'ENABLE_SDL' }
             includedirs { "extlibs/windows/SDL/msvc/SDL-1.2.15/include" }
             links { "SDL", "SDLmain" }
