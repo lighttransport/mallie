@@ -160,11 +160,12 @@ solution "MallieSolution"
 
          if _OPTIONS['with-sdl'] then
             defines { 'ENABLE_SDL' }
-            includedirs { "extlibs/windows/SDL/msvc/SDL-1.2.15/include" }
-            links { "SDL", "SDLmain" }
-            libdirs { "extlibs/windows/SDL/msvc/SDL-1.2.15/lib/x64" }
+            includedirs { "extlibs/windows/SDL2-2.0.3/include/" }
+            links { "SDL2", "SDL2main" }
+            libdirs { "extlibs/windows/SDL2-2.0.3/lib/x64/" }
          end
 
+         defines { '_USE_MATH_DEFINES' }
          defines { 'NOMINMAX', '_LARGEFILE_SOURCE', '_FILE_OFFSET_BITS=64' }
 
       -- Windows + gmake specific

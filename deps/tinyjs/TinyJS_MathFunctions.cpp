@@ -28,7 +28,7 @@
  * SOFTWARE.
  */
 
-#include <math.h>
+#include <cmath>
 #include <cstdlib>
 #include <sstream>
 #include "TinyJS_MathFunctions.h"
@@ -56,7 +56,7 @@ using namespace std;
 #ifdef _MSC_VER
 namespace
 {
-    double asinh( const double &value )
+    double myasinh( const double &value )
     {
         double returned;
 
@@ -68,7 +68,7 @@ namespace
         return(returned);
     }
 
-    double acosh( const double &value )
+    double myacosh( const double &value )
     {
         double returned;
 
@@ -188,7 +188,7 @@ void scMathSinh(CScriptVar *c, void *userdata) {
 
 //Math.asinh(a) - returns trig. hyperbolic arcsine of given angle in radians
 void scMathASinh(CScriptVar *c, void *userdata) {
-    scReturnDouble( asinh( scGetDouble("a") ) );
+    scReturnDouble( (double)asinh( (double)scGetDouble("a") ) );
 }
 
 //Math.cosh(a) - returns trig. hyperbolic cosine of given angle in radians
@@ -198,7 +198,11 @@ void scMathCosh(CScriptVar *c, void *userdata) {
 
 //Math.acosh(a) - returns trig. hyperbolic arccosine of given angle in radians
 void scMathACosh(CScriptVar *c, void *userdata) {
-    scReturnDouble( acosh( scGetDouble("a") ) );
+#ifdef _MSC_VER
+	scReturnDouble((double)myacosh((double)scGetDouble("a")));
+#else
+    scReturnDouble( (double)acosh( (double)scGetDouble("a") ) );
+#endif
 }
 
 //Math.tanh(a) - returns trig. hyperbolic tangent of given angle in radians
@@ -243,7 +247,7 @@ void scMathSqr(CScriptVar *c, void *userdata) {
 
 //Math.sqrt(a) - returns square root of given value
 void scMathSqrt(CScriptVar *c, void *userdata) {
-    scReturnDouble( sqrtf( scGetDouble("a") ) );
+    scReturnDouble( (double)sqrtf( scGetDouble("a") ) );
 }
 
 // ----------------------------------------------- Register Functions

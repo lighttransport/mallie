@@ -465,7 +465,7 @@ bool BVHAccel::Build(const Mesh *mesh, const BVHBuildOptions &options) {
   //
   // 2. Build tree
   //
-  BuildTree(mesh, 0, n, 0);
+  BuildTree(mesh, 0, n-1, 0);
 
   // Tree will be null if input triangle count == 0.
   if (!nodes_.empty()) {

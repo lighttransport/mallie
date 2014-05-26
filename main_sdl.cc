@@ -20,6 +20,11 @@
 #include "tinythread.h"
 #include "script_engine.h"
 
+#if defined(_WIN32) && !defined(_USE_MATH_DEFINES)
+#define _USE_MATH_DEFINES
+#endif
+#include <cmath>
+
 #define PIXELSTEP_COARSE (8)
 
 namespace mallie {
@@ -57,7 +62,7 @@ static int gRenderPixelStep = PIXELSTEP_COARSE;
 static int gRenderPasses = 1;
 
 static tthread::mutex gRenderThreadMutex;
-static clock_t gRenderClock = 0;
+static time_t gRenderClock = 0;
 static bool gRenderQuit = false; // Only become true when we quit app.
 
 int gWidth = 256;
@@ -467,8 +472,8 @@ static void Init(const RenderConfig &config) {
   // printf("[Mallie] up     = %f, %f, %f\n", gUp[0], gUp[1], gUp[2]);
 }
 
-clock_t GetCurrentRenderClock() {
-  clock_t clk;
+time_t GetCurrentRenderClock() {
+  time_t clk;
   tthread::lock_guard<tthread::mutex> guard(gRenderThreadMutex);
   clk = gRenderClock;
 
@@ -477,7 +482,8 @@ clock_t GetCurrentRenderClock() {
 
 void NotifyRenderClock() {
   tthread::lock_guard<tthread::mutex> guard(gRenderThreadMutex);
-  gRenderClock = clock();
+  timerutil t;
+  gRenderClock = t.current();
   return;
 }
 
@@ -498,14 +504,18 @@ void NotifyRenderQuit() {
 void RenderThread(void *arg) {
   RenderContext ctx = *(reinterpret_cast<RenderContext *>(arg));
 
-  clock_t prevRenderClock = 0;
+  time_t prevRenderClock = 0;
 
   while (!GetRenderQuitRequest()) {
 
-    clock_t currentRenderClock = GetCurrentRenderClock();
+    time_t currentRenderClock = GetCurrentRenderClock();
     if ((gRenderPasses >= ctx.config->num_passes) &&
         (currentRenderClock <= prevRenderClock)) {
+#ifdef _WIN32
+		Sleep(33);
+#else
       usleep(1000 * 33);
+#endif
       continue;
     }
 
@@ -713,7 +723,7 @@ void DoMainSDL(Scene &scene, const RenderConfig &config) {
     {
       // Ensure render thread deson't write to a framebuffer.
       int ret = SDL_LockMutex(gMutex);
-      assert(ret);
+      assert(ret == 0); // 0 = success
       SDL_RenderPresent(gSDLRenderer); // bitblit
       SDL_UnlockMutex(gMutex);
     }

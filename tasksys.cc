@@ -116,7 +116,9 @@ machine.
 #define DBG(x)
 
 #ifdef ISPC_IS_WINDOWS
+#ifndef NOMINMAX
 #define NOMINMAX
+#endif
 #include <windows.h>
 #endif // ISPC_IS_WINDOWS
 #ifdef ISPC_USE_CONCRT
