@@ -6,42 +6,38 @@
 
 namespace {
 
-static CTinyJS* gJS;
+static CTinyJS *gJS;
 
 void js_print(CScriptVar *v, void *userdata) {
-    printf("Mallie > %s\n", v->getParameter("text")->getString().c_str());
+  printf("Mallie > %s\n", v->getParameter("text")->getString().c_str());
 }
 
 void js_print_camera(CScriptVar *v, void *userdata) {
-    printf("\nMallie:info\teye:%f,%f,%f\tlookat:%f,%f,%f\tup:%f,%f,%f\n",
-      v->getParameter("e")->getArrayIndex(0)->getDouble(),
-      v->getParameter("e")->getArrayIndex(1)->getDouble(),
-      v->getParameter("e")->getArrayIndex(2)->getDouble(),
-      v->getParameter("l")->getArrayIndex(0)->getDouble(),
-      v->getParameter("l")->getArrayIndex(1)->getDouble(),
-      v->getParameter("l")->getArrayIndex(2)->getDouble(),
-      v->getParameter("u")->getArrayIndex(0)->getDouble(),
-      v->getParameter("u")->getArrayIndex(1)->getDouble(),
-      v->getParameter("u")->getArrayIndex(2)->getDouble());
+  printf("\nMallie:info\teye:%f,%f,%f\tlookat:%f,%f,%f\tup:%f,%f,%f\n",
+         v->getParameter("e")->getArrayIndex(0)->getDouble(),
+         v->getParameter("e")->getArrayIndex(1)->getDouble(),
+         v->getParameter("e")->getArrayIndex(2)->getDouble(),
+         v->getParameter("l")->getArrayIndex(0)->getDouble(),
+         v->getParameter("l")->getArrayIndex(1)->getDouble(),
+         v->getParameter("l")->getArrayIndex(2)->getDouble(),
+         v->getParameter("u")->getArrayIndex(0)->getDouble(),
+         v->getParameter("u")->getArrayIndex(1)->getDouble(),
+         v->getParameter("u")->getArrayIndex(2)->getDouble());
 }
 
 void js_dump(CScriptVar *v, void *userdata) {
-    CTinyJS *js = (CTinyJS*)userdata;
-    js->root->trace(">  ");
+  CTinyJS *js = (CTinyJS *)userdata;
+  js->root->trace(">  ");
 }
 
 } // namespace
 
-void ScriptEngine::Release()
-{
-  delete gJS;
-}
+void ScriptEngine::Release() { delete gJS; }
 
-void ScriptEngine::Create()
-{
+void ScriptEngine::Create() {
   Release();
 
-  gJS = new CTinyJS(); 
+  gJS = new CTinyJS();
 
   /* add the functions from TinyJS_Functions.cpp and TinyJS_MathFunctions.cpp */
   registerFunctions(gJS);
@@ -54,7 +50,8 @@ void ScriptEngine::Create()
   gJS->execute("print(\"Script initialized.\n\");");
 
   try {
-    gJS->execute("var eye = [0,0,0]; var lookup = [0,0,0]; var up = [0,0,0];\n");
+    gJS->execute(
+        "var eye = [0,0,0]; var lookup = [0,0,0]; var up = [0,0,0];\n");
   } catch (CScriptException *e) {
     printf("ERROR: %s\n", e->text.c_str());
   }
@@ -62,8 +59,7 @@ void ScriptEngine::Create()
   return;
 }
 
-bool ScriptEngine::Eval(const char* str)
-{
+bool ScriptEngine::Eval(const char *str) {
   try {
     gJS->execute(str);
   } catch (CScriptException *e) {
@@ -72,4 +68,3 @@ bool ScriptEngine::Eval(const char* str)
 
   return true;
 }
-

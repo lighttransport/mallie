@@ -23,7 +23,6 @@ public:
   static void Mult(double dst[4][4], double m0[4][4], double m1[4][4]);
   static void MultV(double dst[3], double m[4][4], double v[3]);
 };
-
 }
 
 #endif

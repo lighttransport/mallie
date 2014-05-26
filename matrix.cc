@@ -79,7 +79,7 @@ void Matrix::LookAt(double m[4][4], double eye[3], double lookat[3],
   m[0][0] = u[0];
   m[1][0] = v[0];
   m[2][0] = -look[0];
-  m[3][0] =  eye[0];
+  m[3][0] = eye[0];
 
   m[0][1] = u[1];
   m[1][1] = v[1];
@@ -207,10 +207,10 @@ void Matrix::Mult(double dst[4][4], double m0[4][4], double m1[4][4]) {
 }
 
 void Matrix::MultV(double dst[3], double m[4][4], double v[3]) {
-  //printf("v = %f, %f, %f\n", v[0], v[1], v[2]);
+  // printf("v = %f, %f, %f\n", v[0], v[1], v[2]);
   dst[0] = m[0][0] * v[0] + m[1][0] * v[1] + m[2][0] * v[2] + m[3][0];
   dst[1] = m[0][1] * v[0] + m[1][1] * v[1] + m[2][1] * v[2] + m[3][1];
   dst[2] = m[0][2] * v[0] + m[1][2] * v[1] + m[2][2] * v[2] + m[3][2];
-  //printf("m = %f, %f, %f\n", m[3][0], m[3][1], m[3][2]);
-  //printf("dst = %f, %f, %f\n", dst[0], dst[1], dst[2]);
+  // printf("m = %f, %f, %f\n", m[3][0], m[3][1], m[3][2]);
+  // printf("dst = %f, %f, %f\n", dst[0], dst[1], dst[2]);
 }

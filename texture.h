@@ -10,11 +10,9 @@ public:
   ~PTexture();
 
 private:
-
 #ifdef ENABLE_PTEX
 
 #endif
-
 };
 
 } // namespace

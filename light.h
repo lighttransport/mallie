@@ -19,7 +19,6 @@ class Light {
 
   // Sample light position and direction, and its PDFs.
   virtual real SampleL(real posRnd[2], real dirRnd[2]) const = 0;
-
 };
 
 class AreaLight : public Light {
@@ -36,9 +35,8 @@ public:
   bool IsFinite() const { return false; }
 
   bool IsDelta() const { return false; }
-  
-  real SampleL(real posRnd[2], real dirRnd[2]) const;
 
+  real SampleL(real posRnd[2], real dirRnd[2]) const;
 };
 
 } // namespace

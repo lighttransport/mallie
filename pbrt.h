@@ -109,7 +109,7 @@ typedef unsigned __int64 uint64_t;
 #endif
 
 // Global Macros
-#define ALLOCA(TYPE, COUNT) (TYPE *)alloca((COUNT) * sizeof(TYPE))
+#define ALLOCA(TYPE, COUNT) (TYPE *) alloca((COUNT) * sizeof(TYPE))
 
 // Global Forward Declarations
 class RNG;
@@ -246,9 +246,9 @@ inline int Mod(int a, int b) {
   return a;
 }
 
-inline float Radians(float deg) { return ((float) M_PI / 180.f) * deg; }
+inline float Radians(float deg) { return ((float)M_PI / 180.f) * deg; }
 
-inline float Degrees(float rad) { return (180.f / (float) M_PI) * rad; }
+inline float Degrees(float rad) { return (180.f / (float)M_PI) * rad; }
 
 inline float Log2(float x) {
   static float invLog2 = 1.f / logf(2.f);
@@ -270,16 +270,16 @@ inline uint32_t RoundUpPow2(uint32_t v) {
   return v + 1;
 }
 
-inline int Floor2Int(float val) { return (int) floorf(val); }
+inline int Floor2Int(float val) { return (int)floorf(val); }
 
 inline int Round2Int(float val) { return Floor2Int(val + 0.5f); }
 
-inline int Float2Int(float val) { return (int) val; }
+inline int Float2Int(float val) { return (int)val; }
 
-inline int Ceil2Int(float val) { return (int) ceilf(val); }
+inline int Ceil2Int(float val) { return (int)ceilf(val); }
 
 #ifdef NDEBUG
-#define Assert(expr) ((void) 0)
+#define Assert(expr) ((void)0)
 #else
 #define Assert(expr) assert(expr)
 //#define Assert(expr) \

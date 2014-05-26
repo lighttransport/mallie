@@ -14,7 +14,7 @@
 #include <omp.h>
 #endif
 
-//extern "C" {
+// extern "C" {
 //#include <lua.h>
 //}
 
@@ -221,11 +221,11 @@ bool LoadJSONConfig(mallie::RenderConfig &config, // [out]
   }
 
   if (v.get("num_passes").is<double>()) {
-    config.num_passes = (int) v.get("num_passes").get<double>();
+    config.num_passes = (int)v.get("num_passes").get<double>();
   }
 
   if (v.get("num_photons").is<double>()) {
-    config.num_photons = (int) v.get("num_photons").get<double>();
+    config.num_photons = (int)v.get("num_photons").get<double>();
   }
 
   if (v.get("eye").is<picojson::array>()) {
@@ -260,13 +260,12 @@ bool LoadJSONConfig(mallie::RenderConfig &config, // [out]
   }
 
   if (v.get("num_passes").is<double>()) {
-    config.num_passes = (int) v.get("num_passes").get<double>();
+    config.num_passes = (int)v.get("num_passes").get<double>();
   }
 
   return true;
 #endif
 }
-
 }
 
 int main(int argc, char **argv) {
@@ -333,7 +332,7 @@ int main(int argc, char **argv) {
 
   t.end();
   printf("Mallie:info\tEnd\n");
-  printf("Mallie:info\tElapsed: %d sec(s)\n", (int) t.sec());
+  printf("Mallie:info\tElapsed: %d sec(s)\n", (int)t.sec());
   fflush(stdout);
 
 #ifdef WITH_MPI

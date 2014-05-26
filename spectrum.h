@@ -64,10 +64,7 @@ inline void RGBToXYZ(const float rgb[3], float xyz[3]) {
   xyz[2] = 0.019334f * rgb[0] + 0.119193f * rgb[1] + 0.950227f * rgb[2];
 }
 
-enum SpectrumType {
-  SPECTRUM_REFLECTANCE,
-  SPECTRUM_ILLUMINANT
-};
+enum SpectrumType { SPECTRUM_REFLECTANCE, SPECTRUM_ILLUMINANT };
 extern void Blackbody(const float *wl, int n, float temp, float *vals);
 extern float InterpolateSpectrumSamples(const float *lambda, const float *vals,
                                         int n, float l);
@@ -430,7 +427,7 @@ public:
     return r;
   }
   float y() const {
-    const float YWeight[3] = { 0.212671f, 0.715160f, 0.072169f };
+    const float YWeight[3] = {0.212671f, 0.715160f, 0.072169f};
     return YWeight[0] * c[0] + YWeight[1] * c[1] + YWeight[2] * c[2];
   }
   static RGBSpectrum FromSampled(const float *lambda, const float *v, int n) {
@@ -441,7 +438,7 @@ public:
       SortSpectrumSamples(&slambda[0], &sv[0], n);
       return FromSampled(&slambda[0], &sv[0], n);
     }
-    float xyz[3] = { 0, 0, 0 };
+    float xyz[3] = {0, 0, 0};
     float yint = 0.f;
     for (int i = 0; i < nCIESamples; ++i) {
       yint += CIE_Y[i];

@@ -37,16 +37,16 @@ static bool gShiftPressed = false;
 static bool gCtrlPressed = false;
 static bool gLightEditing = false;
 
-static double gEye[3] = { 0.0, 0.0, -5.0 };
-static double gUp[3] = { 0.0, 1.0, 0.0 };
-static double gLookat[3] = { 0.0, 0.0, 0.0 };
+static double gEye[3] = {0.0, 0.0, -5.0};
+static double gUp[3] = {0.0, 1.0, 0.0};
+static double gLookat[3] = {0.0, 0.0, 0.0};
 static double gFov = 45.0;
 static double gScale = 0.1;
-static double gPrevQuat[4] = { 0.0, 0.0, 0.0, 0.0 };
-static double gCurrQuat[4] = { 0.0, 0.0, 0.0, 0.0 };
-static double gInitQuat[4] = { 0.0, 0.0, 0.0, 1.0 };
+static double gPrevQuat[4] = {0.0, 0.0, 0.0, 0.0};
+static double gCurrQuat[4] = {0.0, 0.0, 0.0, 0.0};
+static double gInitQuat[4] = {0.0, 0.0, 0.0, 1.0};
 
-static double gRotate[3] = { 0.0f, 0.0f, 0.0f };
+static double gRotate[3] = {0.0f, 0.0f, 0.0f};
 static double gOrigin[3], gCorner[3], gDu[3], gDv[3];
 
 static double gIntensity = 1.0;
@@ -63,14 +63,14 @@ static bool gRenderQuit = false; // Only become true when we quit app.
 int gWidth = 256;
 int gHeight = 256;
 
-//SDL_Surface* gSurface = NULL;
+// SDL_Surface* gSurface = NULL;
 SDL_Window *gWindow = NULL;
 SDL_Surface *gSurface = NULL;
 SDL_Renderer *gSDLRenderer = NULL;
 SDL_mutex *gMutex = NULL;
 
 std::vector<float> gImage;
-std::vector<int>   gCount;
+std::vector<int> gCount;
 std::vector<float> gFramebuffer; // HDR framebuffer
 RenderConfig gRenderConfig;
 
@@ -81,7 +81,7 @@ typedef struct {
 
 static void EulerToQuatRad(double quat[4], double x, double y,
                            double z) // in radian. yaw, pitch, roll
-    {
+{
   double rx = x;
   double ry = y;
   double rz = z;
@@ -106,7 +106,7 @@ static void EulerToQuatRad(double quat[4], double x, double y,
 
 static void EulerToQuatZYX(double quat[4], double x, double y,
                            double z) // in radian. yaw, pitch, roll
-    {
+{
   double rx = x;
   double ry = y;
   double rz = z;
@@ -154,7 +154,7 @@ inline unsigned char fclamp(float x) {
     return 0;
   if (i > 255)
     return 255;
-  return (unsigned char) i;
+  return (unsigned char)i;
 }
 
 void SaveCamera(const std::string &filename) {
@@ -213,7 +213,6 @@ void HandleMouseButton(SDL_Event e) {
     }
     trackball(gPrevQuat, 0.0, 0.0, 0.0, 0.0);
   }
-
 }
 
 void HandleMouseMotion(SDL_Event e) {
@@ -244,29 +243,29 @@ void HandleMouseMotion(SDL_Event e) {
       gLookat[1] -= gScale * (gMouseY - y);
 
     } else {
-      //trackball(gPrevQuat,
+      // trackball(gPrevQuat,
       //    0.0 * (2.0f * gMouseX - gWidth) / (float)gWidth,
       //    rotScale * (gHeight - 2.0f * gMouseY) / (float)gHeight,
       //    0.0 * (2.0f * x - gWidth) / (float)gWidth,
       //    rotScale * (gHeight - 2.0f * y) / (float)gHeight);
 
-      //trackball(gPrevQuat,
+      // trackball(gPrevQuat,
       //    rotScale * (2.0f * gMouseX - gWidth) / (float)gWidth,
       //    rotScale * (gHeight - 2.0f * gMouseY) / (float)gHeight,
       //    rotScale * (2.0f * x - gWidth) / (float)gWidth,
       //    rotScale * (gHeight - 2.0f * y) / (float)gHeight);
-      //trackball(gPrevQuat,
+      // trackball(gPrevQuat,
       //    0.0f,
       //    rotScale * (gHeight - 2.0f * gMouseY) / (float)gHeight,
       //    0.0f,
       //    rotScale * (gHeight - 2.0f * y) / (float)gHeight);
 
-      double xx = (x - gMouseX) / (double) gWidth;
-      double yy = (y - gMouseY) / (double) gHeight;
+      double xx = (x - gMouseX) / (double)gWidth;
+      double yy = (y - gMouseY) / (double)gHeight;
       double zz = 0.0;
-      //EulerToQuatRad(gPrevQuat, xx, yy, zz);
-      //printf("quat = %f, %f, %f, %f\n", gPrevQuat[0], gPrevQuat[1],
-      //gPrevQuat[2], gPrevQuat[3]);
+      // EulerToQuatRad(gPrevQuat, xx, yy, zz);
+      // printf("quat = %f, %f, %f, %f\n", gPrevQuat[0], gPrevQuat[1],
+      // gPrevQuat[2], gPrevQuat[3]);
 
       double scale = M_PI * 2.0; // Heuristic value
       gRotate[0] += scale * xx;
@@ -279,7 +278,6 @@ void HandleMouseMotion(SDL_Event e) {
         gRotate[1] = 0.5 * M_PI - eps;
 
       add_quats(gPrevQuat, gCurrQuat, gCurrQuat);
-
     }
   }
 
@@ -300,11 +298,11 @@ bool HandleKey(SDL_Event e) {
     switch (e.key.keysym.sym) {
     case SDLK_ESCAPE:
     case 'q':
-      //exit(-1);
+      // exit(-1);
       return true;
       break;
     case 'd':
-      //exit(-1);
+      // exit(-1);
       ScriptEngine::Eval("dumpCamera(eye, lookat, up);\n");
       break;
     case SDLK_SPACE:
@@ -357,8 +355,9 @@ bool HandleKey(SDL_Event e) {
   return false;
 }
 
-void Display(SDL_Surface *surface, const std::vector<float> &image, const std::vector<int>& counts, int passes,
-             int width, int height) {
+void Display(SDL_Surface *surface, const std::vector<float> &image,
+             const std::vector<int> &counts, int passes, int width,
+             int height) {
   int ret = SDL_LockMutex(gMutex);
   assert(ret == 0);
 
@@ -376,7 +375,7 @@ void Display(SDL_Surface *surface, const std::vector<float> &image, const std::v
     for (int x = 0; x < width; x++) {
 #if 1
       // per-pixel count
-      float scale = 1.0f / (float)counts[y*width+x];
+      float scale = 1.0f / (float)counts[y * width + x];
 #endif
 
       unsigned char col[3];
@@ -407,7 +406,7 @@ void Display(SDL_Surface *surface, const std::vector<float> &image, const std::v
   }
 
   SDL_UnlockSurface(surface);
-  //SDL_RenderPresent(gSDLRenderer);
+  // SDL_RenderPresent(gSDLRenderer);
 
   SDL_UnlockMutex(gMutex);
 }
@@ -428,7 +427,7 @@ Uint32 TimeLeft(int interval) {
 static bool CheckSDLEvent() {
   SDL_Event event;
   SDL_PumpEvents();
-  //if (SDL_PeepEvents(&event, 1, SDL_PEEKEVENT, SDL_EVENTMASK
+  // if (SDL_PeepEvents(&event, 1, SDL_PEEKEVENT, SDL_EVENTMASK
   //(SDL_MOUSEBUTTONDOWN) | SDL_EVENTMASK(SDL_KEYDOWN)) > 0) {
   if (SDL_PeepEvents(&event, 1, SDL_PEEKEVENT,
                      SDL_MOUSEBUTTONDOWN | SDL_KEYDOWN,
@@ -462,10 +461,10 @@ static void Init(const RenderConfig &config) {
   Camera camera(gEye, gLookat, gUp);
   camera.BuildCameraFrame(gOrigin, gCorner, gDu, gDv, gFov, gCurrQuat, gWidth,
                           gHeight);
-  //printf("[Mallie] eye    = %f, %f, %f\n", gEye[0], gEye[1], gEye[2]);
-  //printf("[Mallie] lookat = %f, %f, %f\n", gLookat[0], gLookat[1],
-  //gLookat[2]);
-  //printf("[Mallie] up     = %f, %f, %f\n", gUp[0], gUp[1], gUp[2]);
+  // printf("[Mallie] eye    = %f, %f, %f\n", gEye[0], gEye[1], gEye[2]);
+  // printf("[Mallie] lookat = %f, %f, %f\n", gLookat[0], gLookat[1],
+  // gLookat[2]);
+  // printf("[Mallie] up     = %f, %f, %f\n", gUp[0], gUp[1], gUp[2]);
 }
 
 clock_t GetCurrentRenderClock() {
@@ -511,27 +510,27 @@ void RenderThread(void *arg) {
     }
 
     if ((gRenderPasses >= ctx.config->num_passes)) {
-      //printf("Render finished\n");
+      // printf("Render finished\n");
       // render finished
-      //Display(gSurface, gFramebuffer, gRenderPasses, config.width,
-      //config.height);
+      // Display(gSurface, gFramebuffer, gRenderPasses, config.width,
+      // config.height);
       continue;
     }
 
     // Use Euler rotation.
-    //printf("rot = %f, %f, %f\n", 180*gRotate[0]/M_PI, 180*gRotate[1]/M_PI,
-    //180*gRotate[2]/M_PI);
+    // printf("rot = %f, %f, %f\n", 180*gRotate[0]/M_PI, 180*gRotate[1]/M_PI,
+    // 180*gRotate[2]/M_PI);
     EulerToQuatRad(gCurrQuat, gRotate[2], gRotate[0], gRotate[1] + M_PI);
-    //printf("quat = %f, %f, %f, %f\n", gCurrQuat[0], gCurrQuat[1],
-    //gCurrQuat[2], gCurrQuat[3]);
+    // printf("quat = %f, %f, %f, %f\n", gCurrQuat[0], gCurrQuat[1],
+    // gCurrQuat[2], gCurrQuat[3]);
 
-    Render(*(ctx.scene), *(ctx.config), gImage, gCount, gEye, gLookat, gUp, gCurrQuat,
-           gRenderPixelStep);
+    Render(*(ctx.scene), *(ctx.config), gImage, gCount, gEye, gLookat, gUp,
+           gCurrQuat, gRenderPixelStep);
 
     // Always clear framebuffer for intermediate result
-    //if (gRenderPixelStep > 1) {
+    // if (gRenderPixelStep > 1) {
     if (gRenderPasses == 1) {
-      //ClearImage(gFramebuffer);
+      // ClearImage(gFramebuffer);
     }
 
     AccumImage(gFramebuffer, gImage);
@@ -543,9 +542,9 @@ void RenderThread(void *arg) {
       ClearImage(gFramebuffer);
       ClearCount(gCount);
     }
-      
 
-//printf("step = %d, interactive = %d\n", gRenderPixelStep, gRenderInteractive);
+// printf("step = %d, interactive = %d\n", gRenderPixelStep,
+// gRenderInteractive);
 
 #if 0
     // Increment render pass.
@@ -571,9 +570,7 @@ void RenderThread(void *arg) {
 #endif
 
     prevRenderClock = currentRenderClock;
-
   }
-
 }
 
 void DoMainSDL(Scene &scene, const RenderConfig &config) {
@@ -602,7 +599,6 @@ void DoMainSDL(Scene &scene, const RenderConfig &config) {
   }
 
   gMutex = SDL_CreateMutex();
-
 
   gFramebuffer.resize(gWidth * gHeight * 3); // RGB
   ClearImage(gFramebuffer);
@@ -652,7 +648,6 @@ void DoMainSDL(Scene &scene, const RenderConfig &config) {
       if (done) {
         break;
       }
-
     }
 
     if (done) {
@@ -724,21 +719,19 @@ void DoMainSDL(Scene &scene, const RenderConfig &config) {
     }
 
 #endif
-
   }
 
 #if 1
   NotifyRenderQuit();
-  //renderThread.detach();
+  // renderThread.detach();
   renderThread.join();
 #endif
 
   printf("\n");
   fflush(stdout); // for safety
 }
-
 }
-#else // ENABLE_SDL
+#else  // ENABLE_SDL
 namespace mallie {
 
 void DoMainSDL(Scene &scene, const RenderConfig &config) {
@@ -746,6 +739,5 @@ void DoMainSDL(Scene &scene, const RenderConfig &config) {
 
   return;
 }
-
 }
 #endif // ENABLE_SDL

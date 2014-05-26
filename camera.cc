@@ -36,32 +36,22 @@ static void vnormalize(double v[3]) {
   }
 }
 
-
-
-void
-Camera::BuildCameraFrame(
-  double origin[3],
-  double corner[3],
-  double u[3],
-  double v[3],
-  double fov,
-  const double quat[4],
-  int width,
-  int height)
-{
+void Camera::BuildCameraFrame(double origin[3], double corner[3], double u[3],
+                              double v[3], double fov, const double quat[4],
+                              int width, int height) {
   double e[4][4];
-  //printf("--in\n");
-  //printf("eye: %f, %f, %f\n", eye_[0], eye_[1], eye_[2]);
-  //printf("lookat: %f, %f, %f\n", lookat_[0], lookat_[1], lookat_[2]);
-  //printf("up: %f, %f, %f\n", up_[0], up_[1], up_[2]);
+  // printf("--in\n");
+  // printf("eye: %f, %f, %f\n", eye_[0], eye_[1], eye_[2]);
+  // printf("lookat: %f, %f, %f\n", lookat_[0], lookat_[1], lookat_[2]);
+  // printf("up: %f, %f, %f\n", up_[0], up_[1], up_[2]);
   Matrix::LookAt(e, eye_, lookat_, up_);
-  //printf("e ---\n");
-  //Matrix::Print(e);
+  // printf("e ---\n");
+  // Matrix::Print(e);
 
   double r[4][4];
   build_rotmatrix(r, quat);
-  //printf("m ---\n");
-  //Matrix::Print(m);
+  // printf("m ---\n");
+  // Matrix::Print(m);
 
   double lo[3];
   lo[0] = lookat_[0] - eye_[0];
@@ -75,30 +65,30 @@ Camera::BuildCameraFrame(
   dir[2] = dist;
 
   Matrix::Inverse(r);
-  //printf("r ---\n");
-  //Matrix::Print(r);
+  // printf("r ---\n");
+  // Matrix::Print(r);
 
   double rr[4][4];
   double re[4][4];
-  double zero[3] = { 0.0f, 0.0f, 0.0f };
-  double localUp[3] = { 0.0f, 1.0f, 0.0f };
+  double zero[3] = {0.0f, 0.0f, 0.0f};
+  double localUp[3] = {0.0f, 1.0f, 0.0f};
   Matrix::LookAt(re, dir, zero, localUp);
 
   // translate
-  re[3][0] += eye_[0]; //0.0; //lo[0];
-  re[3][1] += eye_[1]; //0.0; //lo[1];
+  re[3][0] += eye_[0]; // 0.0; //lo[0];
+  re[3][1] += eye_[1]; // 0.0; //lo[1];
   re[3][2] += (eye_[2] - dist);
 
   // rot -> trans
-  //Matrix::Mult(rr, re, r);
+  // Matrix::Mult(rr, re, r);
   Matrix::Mult(rr, r, re);
 
   // trans -> rot
-  //Matrix::Mult(rr, r, re);
-  //printf("re ---\n");
-  //Matrix::Print(re);
-  //printf("rr ---\n");
-  //Matrix::Print(rr);
+  // Matrix::Mult(rr, r, re);
+  // printf("re ---\n");
+  // Matrix::Print(re);
+  // printf("rr ---\n");
+  // Matrix::Print(rr);
 
   double m[4][4];
   for (int j = 0; j < 4; j++) {
@@ -108,42 +98,42 @@ Camera::BuildCameraFrame(
   }
 
   // translate
-  //m[3][0] += eye_[0];
-  //m[3][1] += eye_[1];
-  //m[3][2] += (eye_[2] - dist);
+  // m[3][0] += eye_[0];
+  // m[3][1] += eye_[1];
+  // m[3][2] += (eye_[2] - dist);
 
-  //Matrix::Mult(m, e, rr);
-  //Matrix::Mult(m, e, rr);
-  //Matrix::Mult(m, r, e);
-  //printf("m ---\n");
-  //Matrix::Print(m);
+  // Matrix::Mult(m, e, rr);
+  // Matrix::Mult(m, e, rr);
+  // Matrix::Mult(m, r, e);
+  // printf("m ---\n");
+  // Matrix::Print(m);
 
-  //Matrix::Inverse(m);
+  // Matrix::Inverse(m);
 
-  double vzero[3] = { 0.0f, 0.0f, 0.0f };
+  double vzero[3] = {0.0f, 0.0f, 0.0f};
   double eye1[3];
   Matrix::MultV(eye1, m, vzero);
-  //printf("eye  = %f, %f, %f\n", eye_[0], eye_[1], eye_[2]);
-  //printf("eye1 = %f, %f, %f\n", eye1[0], eye1[1], eye1[2]);
+  // printf("eye  = %f, %f, %f\n", eye_[0], eye_[1], eye_[2]);
+  // printf("eye1 = %f, %f, %f\n", eye1[0], eye1[1], eye1[2]);
 
   double lookat1[3];
   dir[2] = -dir[2];
   Matrix::MultV(lookat1, m, dir);
-  //printf("dist    = %f\n", dist);
-  //printf("lookat1 = %f, %f, %f\n", lookat1[0], lookat1[1], lookat1[2]);
+  // printf("dist    = %f\n", dist);
+  // printf("lookat1 = %f, %f, %f\n", lookat1[0], lookat1[1], lookat1[2]);
 
   double up1[3];
-  //printf("up = %f, %f, %f\n", up[0], up[1], up[2]);
-  //Matrix::Print(m);
+  // printf("up = %f, %f, %f\n", up[0], up[1], up[2]);
+  // Matrix::Print(m);
   Matrix::MultV(up1, m, up_);
-  //printf("eye1 = %f, %f, %f\n", eye1[0], eye1[1], eye1[2]);
-  //printf("up1 = %f, %f, %f\n", up1[0], up1[1], up1[2]);
+  // printf("eye1 = %f, %f, %f\n", eye1[0], eye1[1], eye1[2]);
+  // printf("up1 = %f, %f, %f\n", up1[0], up1[1], up1[2]);
 
   // absolute -> relative
   up1[0] -= eye1[0];
   up1[1] -= eye1[1];
   up1[2] -= eye1[2];
-  //printf("up1(after) = %f, %f, %f\n", up1[0], up1[1], up1[2]);
+  // printf("up1(after) = %f, %f, %f\n", up1[0], up1[1], up1[2]);
 
   // Use original up vector
   up1[0] = up_[0];
@@ -172,20 +162,20 @@ Camera::BuildCameraFrame(
   }
 #endif
 
-  //glrsSetCamera(&eye1[0], &lookat1[0], &up1[0], 45.0f);
-  //fprintf(stderr, "eye: %f %f %f\n", eye1[0], eye1[1], eye1[2]);
-  //fprintf(stderr, "lookat: %f %f %f\n", lookat1[0], lookat1[1], lookat1[2]);
-  //fprintf(stderr, "up: %f %f %f\n", up1[0], up1[1], up1[2]);
-  //fprintf(stderr, "quat: %f %f %f %f\n", quat[0], quat[1], quat[2], quat[3]);
+  // glrsSetCamera(&eye1[0], &lookat1[0], &up1[0], 45.0f);
+  // fprintf(stderr, "eye: %f %f %f\n", eye1[0], eye1[1], eye1[2]);
+  // fprintf(stderr, "lookat: %f %f %f\n", lookat1[0], lookat1[1], lookat1[2]);
+  // fprintf(stderr, "up: %f %f %f\n", up1[0], up1[1], up1[2]);
+  // fprintf(stderr, "quat: %f %f %f %f\n", quat[0], quat[1], quat[2], quat[3]);
 
   {
     double flen =
-        (0.5f * (double) height / tanf(0.5f * (double)(fov * M_PI / 180.0f)));
+        (0.5f * (double)height / tanf(0.5f * (double)(fov * M_PI / 180.0f)));
     double look1[3];
     look1[0] = lookat1[0] - eye1[0];
     look1[1] = lookat1[1] - eye1[1];
     look1[2] = lookat1[2] - eye1[2];
-    //vcross(u, up1, look1);
+    // vcross(u, up1, look1);
     // flip
     vcross(u, look1, up1);
     vnormalize(u);
@@ -223,9 +213,7 @@ Camera::BuildCameraFrame(
     dv_[2] = v[2];
 
     fov_ = fov;
-
   }
-
 }
 
 Ray Camera::GenerateRay(double u, double v) const {

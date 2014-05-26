@@ -45,7 +45,6 @@ struct BinBuffer {
 
   std::vector<size_t> bin; // (min, max) * xyz * binsize
   int binSize;
-
 };
 
 static inline double CalculateSurfaceArea(const real3 &min, const real3 &max) {
@@ -86,7 +85,7 @@ static void ContributeBinBuffer(BinBuffer *bins, // [out]
                                 unsigned int leftIdx, unsigned int rightIdx) {
   static const real EPS = std::numeric_limits<real>::epsilon() * 1024;
 
-  real binSize = (real) bins->binSize;
+  real binSize = (real)bins->binSize;
 
   // Calculate extent
   real3 sceneSize, sceneInvSize;
@@ -124,8 +123,8 @@ static void ContributeBinBuffer(BinBuffer *bins, // [out]
 
     // idx is now in [0, BIN_SIZE)
     for (size_t j = 0; j < 3; ++j) {
-      idxBMin[j] = (unsigned int) floor(quantizedBMin[j]);
-      idxBMax[j] = (unsigned int) floor(quantizedBMax[j]);
+      idxBMin[j] = (unsigned int)floor(quantizedBMin[j]);
+      idxBMax[j] = (unsigned int)floor(quantizedBMax[j]);
 
       if (idxBMin[j] >= binSize)
         idxBMin[j] = binSize - 1;
@@ -144,12 +143,12 @@ static void ContributeBinBuffer(BinBuffer *bins, // [out]
 
 static inline double SAH(size_t ns1, real leftArea, size_t ns2, real rightArea,
                          real invS, real Taabb, real Ttri) {
-  //const real Taabb = 0.2f;
-  //const real Ttri = 0.8f;
+  // const real Taabb = 0.2f;
+  // const real Ttri = 0.8f;
   real T;
 
-  T = 2.0f * Taabb + (leftArea * invS) * (real)(ns1) * Ttri +
-      (rightArea * invS) * (real)(ns2) * Ttri;
+  T = 2.0f * Taabb + (leftArea * invS) * (real)(ns1)*Ttri +
+      (rightArea * invS) * (real)(ns2)*Ttri;
 
   return T;
 }
@@ -158,8 +157,8 @@ static bool FindCutFromBinBuffer(real *cutPos,     // [out] xyz
                                  int &minCostAxis, // [out]
                                  const BinBuffer *bins, const real3 &bmin,
                                  const real3 &bmax, size_t numTriangles,
-                                 real costTaabb)   // should be in [0.0, 1.0]
-    {
+                                 real costTaabb) // should be in [0.0, 1.0]
+{
   const real eps = std::numeric_limits<real>::epsilon() * 1024;
 
   size_t left, right;
@@ -230,15 +229,15 @@ static bool FindCutFromBinBuffer(real *cutPos,     // [out] xyz
         //
         minCost[j] = cost;
         minCostPos = pos;
-        //minCostAxis = j;
+        // minCostAxis = j;
       }
     }
 
     cutPos[j] = minCostPos;
   }
 
-  //cutAxis = minCostAxis;
-  //cutPos = minCostPos;
+  // cutAxis = minCostAxis;
+  // cutPos = minCostPos;
 
   // Find min cost axis
   real cost = minCost[0];
@@ -355,7 +354,7 @@ size_t BVHAccel::BuildTree(const Mesh *mesh, unsigned int leftIdx,
 
     leaf.flag = 1; // leaf
     leaf.data[0] = n;
-    leaf.data[1] = (unsigned int) leftIdx;
+    leaf.data[1] = (unsigned int)leftIdx;
     debug(" leaf n = %d, offt = %d\n", n, leftIdx);
 
     nodes_.push_back(leaf);
@@ -373,7 +372,7 @@ size_t BVHAccel::BuildTree(const Mesh *mesh, unsigned int leftIdx,
   // Compute SAH and find best split axis and position
   //
   int minCutAxis = 0;
-  real cutPos[3] = { 0.0, 0.0, 0.0 };
+  real cutPos[3] = {0.0, 0.0, 0.0};
 
   BinBuffer bins(options_.binSize);
   ContributeBinBuffer(&bins, bmin, bmax, mesh, &indices_.at(0), leftIdx,
@@ -415,7 +414,6 @@ size_t BVHAccel::BuildTree(const Mesh *mesh, unsigned int leftIdx,
 
       // Found good cut. exit loop.
       break;
-
     }
   }
 
@@ -442,7 +440,6 @@ size_t BVHAccel::BuildTree(const Mesh *mesh, unsigned int leftIdx,
   stats_.numBranchNodes++;
 
   return offset;
-
 }
 
 bool BVHAccel::Build(const Mesh *mesh, const BVHBuildOptions &options) {
@@ -781,7 +778,6 @@ bool BVHAccel::Traverse(Intersection &isect, const Mesh *mesh, Ray &ray) {
         // Traverse near first.
         nodeStack[++nodeStackIndex] = node.data[orderFar];
         nodeStack[++nodeStackIndex] = node.data[orderNear];
-
       }
 
     } else { // leaf node
@@ -791,7 +787,6 @@ bool BVHAccel::Traverse(Intersection &isect, const Mesh *mesh, Ray &ray) {
           hitT = isect.t;
         }
       }
-
     }
   }
 

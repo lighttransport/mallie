@@ -47,11 +47,9 @@
  * The resulting rotation is returned as a quaternion rotation in the
  * first paramater.
  */
-void
-trackball(double q[4], double p1x, double p1y, double p2x, double p2y);
+void trackball(double q[4], double p1x, double p1y, double p2x, double p2y);
 
-void
-negate_quat(double *q, double *qn);
+void negate_quat(double *q, double *qn);
 
 /*
  * Given two quaternions, add them together to get a third quaternion.
@@ -61,21 +59,17 @@ negate_quat(double *q, double *qn);
  * rotation, the second and third the total rotation (which will be
  * over-written with the resulting new total rotation).
  */
-void
-add_quats(double *q1, double *q2, double *dest);
+void add_quats(double *q1, double *q2, double *dest);
 
 /*
  * A useful function, builds a rotation matrix in Matrix based on
  * given quaternion.
  */
-void
-build_rotmatrix(double m[4][4], const double q[4]);
+void build_rotmatrix(double m[4][4], const double q[4]);
 
 /*
  * This function computes a quaternion based on an axis (defined by
  * the given vector) and an angle about which to rotate.  The angle is
  * expressed in radians.  The result is put into the third argument.
  */
-void
-axis_to_quat(double a[3], double phi, double q[4]);
-
+void axis_to_quat(double a[3], double phi, double q[4]);

@@ -37,8 +37,7 @@ namespace glrs {
 class vector3i {
 public:
   vector3i(int x_, int y_, int z_) : x(x_), y(y_), z(z_) {}
-  ~vector3i() {}
-  ;
+  ~vector3i() {};
 
   int x, y, z;
 };
@@ -47,8 +46,7 @@ class vector2i {
 public:
   vector2i() {}
   vector2i(int x_, int y_) : x(x_), y(y_) {}
-  ~vector2i() {}
-  ;
+  ~vector2i() {};
 
   int x, y;
 };
@@ -103,7 +101,7 @@ public:
     // element of cell x
 
     //// DEBUG
-    //for(size_t i=0; i<aParticles.size(); i++)
+    // for(size_t i=0; i<aParticles.size(); i++)
     //{
     //    const vector3 &pos  = aParticles[i].GetPosition();
     //    vector2i range = GetCellRange(GetCellIndex(pos));
@@ -190,7 +188,6 @@ public:
   }
 
 private:
-
   vector2i GetCellRange(int aCellIndex) const {
     if (aCellIndex == 0)
       return vector2i(0, mCellEnds[0]);
@@ -220,7 +217,6 @@ private:
   }
 
 private:
-
   vector3 mBBoxMin;
   vector3 mBBoxMax;
   std::vector<int> mIndices;

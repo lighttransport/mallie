@@ -42,7 +42,7 @@ bool Scene::Init(const std::string &objFilename,
   assert(ret);
 
   t.end();
-  printf("  BVH build time: %d msecs\n", (int) t.msec());
+  printf("  BVH build time: %d msecs\n", (int)t.msec());
 
   BVHBuildStatistics stats = accel_.GetStatistics();
 

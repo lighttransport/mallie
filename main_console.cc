@@ -27,7 +27,7 @@ inline unsigned char fclamp(float x) {
     return 0;
   if (i > 255)
     return 255;
-  return (unsigned char) i;
+  return (unsigned char)i;
 }
 
 void HDRToLDR(std::vector<unsigned char> &out, const std::vector<float> &in,
@@ -41,16 +41,13 @@ void HDRToLDR(std::vector<unsigned char> &out, const std::vector<float> &in,
   }
 }
 
-void
-SaveAsJPEG(
-  const char* filename,
-  std::vector<unsigned char>& image, // RGB
-  int width,
-  int height)
-{
+void SaveAsJPEG(const char *filename,
+                std::vector<unsigned char> &image, // RGB
+                int width, int height) {
   jpge::params comp_params;
   comp_params.m_quality = 100;
-  bool ret = jpge::compress_image_to_jpeg_file(filename, width, height, 3, &image.at(0), comp_params);
+  bool ret = jpge::compress_image_to_jpeg_file(filename, width, height, 3,
+                                               &image.at(0), comp_params);
   assert(ret);
 }
 
@@ -67,7 +64,8 @@ void DoMainConsole(Scene &scene, const RenderConfig &config) {
   image.resize(width * height * 3);
   count.resize(width * height);
 
-  mallie::Render(scene, config, image, count, config.eye, config.lookat, config.up, config.quat, 1);
+  mallie::Render(scene, config, image, count, config.eye, config.lookat,
+                 config.up, config.quat, 1);
 
   std::string outfilename("output.jpg"); // fixme
 
@@ -76,7 +74,6 @@ void DoMainConsole(Scene &scene, const RenderConfig &config) {
   SaveAsJPEG(outfilename.c_str(), out, width, height);
 
   printf("[Mallie] Output %s\n", outfilename.c_str());
-
 }
 
 } // liina

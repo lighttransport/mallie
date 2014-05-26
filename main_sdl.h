@@ -3,6 +3,8 @@
 
 #include "render.h"
 
-namespace mallie { void DoMainSDL(Scene &scene, const RenderConfig &config); }
+namespace mallie {
+void DoMainSDL(Scene &scene, const RenderConfig &config);
+}
 
 #endif

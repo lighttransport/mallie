@@ -4,7 +4,7 @@
 #include <cmath>
 
 typedef double real;
-//typedef float real;
+// typedef float real;
 
 struct real3 {
   real3() {}
@@ -56,7 +56,7 @@ struct real3 {
   }
 
   real x, y, z;
-  //real pad;  // for alignment
+  // real pad;  // for alignment
 };
 
 inline real3 operator*(real f, const real3 &v) {

@@ -9,10 +9,8 @@
 
 class BVHNode {
 public:
-  BVHNode() {}
-  ;
-  ~BVHNode() {}
-  ;
+  BVHNode() {};
+  ~BVHNode() {};
 
   real bmin[3];
   real bmax[3];
@@ -28,7 +26,6 @@ public:
   //   data[0] = child[0]
   //   data[1] = child[1]
   unsigned int data[2];
-
 };
 
 ///< BVH build option.
@@ -42,7 +39,6 @@ struct BVHBuildOptions {
   // Set default value: Taabb = 0.2
   BVHBuildOptions()
       : costTaabb(0.2), minLeafPrimitives(16), maxTreeDepth(256), binSize(64) {}
-
 };
 
 ///< BVH build statistics.
@@ -53,16 +49,12 @@ struct BVHBuildStatistics {
 
   // Set default value: Taabb = 0.2
   BVHBuildStatistics() : maxTreeDepth(0), numLeafNodes(0), numBranchNodes(0) {}
-
 };
 
 class BVHAccel {
 public:
-
-  BVHAccel() {}
-  ;
-  ~BVHAccel() {}
-  ;
+  BVHAccel() {};
+  ~BVHAccel() {};
 
   ///< Build BVH for input mesh.
   bool Build(const Mesh *mesh, const BVHBuildOptions &options);
@@ -83,7 +75,6 @@ public:
   const std::vector<unsigned int> &GetIndices() const { return indices_; }
 
 private:
-
   ///< Builds BVH tree recursively.
   size_t BuildTree(const Mesh *mesh, unsigned int leftIdx,
                    unsigned int rightIdx, int depth);
@@ -92,7 +83,6 @@ private:
   std::vector<BVHNode> nodes_;
   std::vector<unsigned int> indices_; // max 4G triangles.
   BVHBuildStatistics stats_;
-
 };
 
 #endif // __BVH_ACCEL_H__

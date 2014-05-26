@@ -1,7 +1,7 @@
 #ifndef __MALLIE__TIMERUTIL_H__
 #define __MALLIE__TIMERUTIL_H__
 
-//This class is NOT thread-safe timer!
+// This class is NOT thread-safe timer!
 
 #ifdef _WIN32
 #ifdef __cplusplus
@@ -54,8 +54,8 @@ public:
     return this->sec() * 1000000 + (time_t)(tv[1].tv_usec - tv[0].tv_usec);
   }
 
-#else //C timer
-      //using namespace std;
+#else // C timer
+  // using namespace std;
   typedef clock_t time_t;
 
   void start() { t_[0] = clock(); }
@@ -69,7 +69,6 @@ public:
 #endif
 
 private:
-
 #ifdef _WIN32
   DWORD t_[2];
 #else
@@ -80,9 +79,7 @@ private:
   time_t t_[2];
 #endif
 #endif
-
 };
-
 }
 
 #endif

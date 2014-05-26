@@ -3,8 +3,6 @@
 
 #define MALLIE_VERSION "0.1"
 
-namespace mallie {
-
-};
+namespace mallie {};
 
 #endif // __MALLIE_VERSION_H__

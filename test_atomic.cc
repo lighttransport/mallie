@@ -47,7 +47,6 @@ TEST(AtomicTest, Sparc_CAS64) {
                                reinterpret_cast<uintptr_t>(newaddr));
 
   EXPECT_EQ(ret, 1);
-
 }
 #endif
 

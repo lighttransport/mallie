@@ -19,10 +19,11 @@ public:
     lookat_[1] = lookat[1];
     lookat_[2] = lookat[2];
   }
-  ~Camera() {}
-  ;
+  ~Camera() {};
 
-  void BuildCameraFrame(double origin[3], double corner[3], double u[3], double v[3], double fov, const double quat[4], int width, int height);
+  void BuildCameraFrame(double origin[3], double corner[3], double u[3],
+                        double v[3], double fov, const double quat[4],
+                        int width, int height);
 
   Ray GenerateRay(double u, double v) const;
 
@@ -36,7 +37,6 @@ public:
   double du_[3];
   double dv_[3];
   double fov_;
-
 };
 
 } // namespace liina

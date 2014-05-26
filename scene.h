@@ -37,8 +37,7 @@ private:
 //< Scene class. Usually only one instance of Scene class in rendering.
 class Scene {
 public:
-  Scene() {}
-  ;
+  Scene() {};
   ~Scene();
 
   bool Init(const std::string &objFilename, const std::string &materialFilename,
@@ -56,13 +55,10 @@ public:
   }
 
 protected:
-
   BVHAccel accel_;
   Mesh mesh_;
   std::vector<Material> materials_;
-
 };
-
 }
 
 #endif // __MALLIE_SCENE_H__

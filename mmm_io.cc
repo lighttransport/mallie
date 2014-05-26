@@ -44,11 +44,10 @@ bool LoadMMM(double **data, int &width, int &height, const char *filename) {
   assert(n == 1);
 
   (*data) = reinterpret_cast<double *>(
-      malloc(sizeof(double) * (size_t) width * (size_t) height));
+      malloc(sizeof(double) * (size_t)width * (size_t)height));
   n = fread((*data), sizeof(double), width * height, fp);
   assert(n == width * height);
 
   fclose(fp);
   return true;
-
 }

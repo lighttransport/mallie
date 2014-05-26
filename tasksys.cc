@@ -381,7 +381,7 @@ inline void *TaskGroupBase::AllocMemory(int64_t size, int32_t alignment) {
   intptr_t iptr = (intptr_t)(basePtr + curMemBufferOffset);
   iptr = (iptr + (alignment - 1)) & ~(alignment - 1);
 
-  int newOffset = int(iptr - (intptr_t) basePtr + size);
+  int newOffset = int(iptr - (intptr_t)basePtr + size);
   if (newOffset < memBufferSize[curMemBuffer]) {
     curMemBufferOffset = newOffset;
     return (char *)iptr;
@@ -521,7 +521,6 @@ class TaskGroup : public TaskGroupBase {
 public:
   void Launch(int baseIndex, int count);
   void Sync();
-
 };
 
 #endif // ISPC_USE_CILK
@@ -532,7 +531,6 @@ class TaskGroup : public TaskGroupBase {
 public:
   void Launch(int baseIndex, int count);
   void Sync();
-
 };
 
 #endif // ISPC_USE_OMP
@@ -543,7 +541,6 @@ class TaskGroup : public TaskGroupBase {
 public:
   void Launch(int baseIndex, int count);
   void Sync();
-
 };
 
 #endif // ISPC_USE_TBB_PARALLEL_FOR
@@ -669,7 +666,7 @@ static std::vector<TaskGroup *> activeTaskGroups;
 static sem_t *workerSemaphore;
 
 static void *lTaskEntry(void *arg) {
-  int threadIndex = (int)((int64_t) arg);
+  int threadIndex = (int)((int64_t)arg);
   int threadCount = nThreads;
 
   while (1) {
@@ -760,7 +757,7 @@ static void InitTaskSystem() {
           }
 
           char name[32];
-          sprintf(name, "ispc_task.%d", (int) getpid());
+          sprintf(name, "ispc_task.%d", (int)getpid());
           workerSemaphore = sem_open(name, O_CREAT, S_IRUSR | S_IWUSR, 0);
           if (!workerSemaphore) {
             fprintf(stderr, "Error creating semaphore: %s\n", strerror(err));
@@ -995,11 +992,11 @@ inline void TaskGroup::Sync() {}
 
 static void InitTaskSystem() {
   // No initialization needed by default
-  //tbb::task_scheduler_init();
+  // tbb::task_scheduler_init();
 }
 
 inline void TaskGroup::Launch(int baseIndex, int count) {
-  tbb::parallel_for(0, count, [ = ](int i) {
+  tbb::parallel_for(0, count, [=](int i) {
     TaskInfo *ti = GetTaskInfo(baseIndex + i);
 
     // Actually run the task.
@@ -1019,12 +1016,12 @@ inline void TaskGroup::Sync() {}
 
 static void InitTaskSystem() {
   // No initialization needed by default
-  //tbb::task_scheduler_init();
+  // tbb::task_scheduler_init();
 }
 
 inline void TaskGroup::Launch(int baseIndex, int count) {
   for (int i = 0; i < count; i++) {
-    tbbTaskGroup.run([ = ]() {
+    tbbTaskGroup.run([=]() {
       TaskInfo *ti = GetTaskInfo(baseIndex + i);
 
       // TBB does not expose the task -> thread mapping so we pretend it's 1:1
@@ -1091,7 +1088,7 @@ void ISPCLaunch(void **taskGroupPtr, void *func, void *data, int count) {
   int baseIndex = taskGroup->AllocTaskInfo(count);
   for (int i = 0; i < count; ++i) {
     TaskInfo *ti = taskGroup->GetTaskInfo(baseIndex + i);
-    ti->func = (TaskFuncType) func;
+    ti->func = (TaskFuncType)func;
     ti->data = data;
     ti->taskIndex = i;
     ti->taskCount = count;
@@ -1169,11 +1166,11 @@ public:
 class TaskSys {
   static int numThreadsRunning;
   struct LiveTask {
-    volatile int locks; /*!< num locks on this task. gets
-                             initialized to NUM_THREADS+1, then counted
-                             down by every thread that sees this. this
-                             value is only valid when 'active' is set
-                             to true */
+    volatile int locks;  /*!< num locks on this task. gets
+                              initialized to NUM_THREADS+1, then counted
+                              down by every thread that sees this. this
+                              value is only valid when 'active' is set
+                              to true */
     volatile int active; /*! workers will spin on this until it
                              becomes active */
     Task *task;
@@ -1270,7 +1267,7 @@ public:
 };
 
 void TaskSys::threadFct() {
-  int myIndex = 0; //lAtomicAdd(&threadIdx,1);
+  int myIndex = 0; // lAtomicAdd(&threadIdx,1);
   while (1) {
     while (!taskQueue[myIndex].active) {
 #ifndef ISPC_IS_KNC
@@ -1339,7 +1336,7 @@ int TaskSys::numThreadsRunning = 0;
 
 void ISPCLaunch(void **taskGroupPtr, void *func, void *data, int count) {
   Task *ti = *(Task **)taskGroupPtr;
-  ti->func = (TaskFuncType) func;
+  ti->func = (TaskFuncType)func;
   ti->data = data;
   ti->taskIndex = 0;
   ti->taskCount = count;
