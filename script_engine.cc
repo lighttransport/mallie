@@ -1,3 +1,6 @@
+#include <cstdio>
+#include <cstdlib>
+
 #include "TinyJS.h"
 #include "TinyJS_Functions.h"
 #include "TinyJS_MathFunctions.h"
