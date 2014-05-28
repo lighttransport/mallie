@@ -45,7 +45,7 @@ bool SpectrumSamplesSorted(const float *lambda, const float *vals, int n) {
 }
 
 void SortSpectrumSamples(float *lambda, float *vals, int n) {
-  std::vector<std::pair<float, float>> sortVec;
+  std::vector<std::pair<float, float> > sortVec;
   sortVec.reserve(n);
   for (int i = 0; i < n; ++i)
     sortVec.push_back(std::make_pair(lambda[i], vals[i]));
