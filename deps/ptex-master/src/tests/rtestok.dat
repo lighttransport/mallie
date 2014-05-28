@@ -1,0 +1,468 @@
+meshType: quad
+dataType: uint16
+numChannels: 3
+alphaChannel: (none)
+numFaces: 9
+numMetaKeys: 4
+meta:
+  dvals type=double
+    0  1  2  3  4  5  6  7  8  9
+    10  11  12  13  14  15  16  17  18  19
+    20  21  22  23  24  25  26  27  28  29
+    30  31  32  33  34  35  36  37  38  39
+    40  41  42  43  44  45  46  47  48  49
+    50  51  52  53  54  55  56  57  58  59
+    60  61  62  63  64  65  66  67  68  69
+    70  71  72  73  74  75  76  77  78  79
+    80  81  82  83  84  85  86  87  88  89
+    90  91  92  93  94  95  96  97  98  99
+    100  101  102  103  104  105  106  107  108  109
+    110  111  112  113  114  115  116  117  118  119
+    120  121  122  123  124  125  126  127  128  129
+    130  131  132  133  134  135  136  137  138  139
+    140  141  142  143  144  145  146  147  148  149
+    150  151  152  153  154  155  156  157  158  159
+    160  161  162  163  164  165  166  167  168  169
+    170  171  172  173  174  175  176  177  178  179
+    180  181  182  183  184  185  186  187  188  189
+    190  191  192  193  194  195  196  197  198  199
+    200  201  202  203  204  205  206  207  208  209
+    210  211  212  213  214  215  216  217  218  219
+    220  221  222  223  224  225  226  227  228  229
+    230  231  232  233  234  235  236  237  238  239
+    240  241  242  243  244  245  246  247  248  249
+    250  251  252  253  254  255  256  257  258  259
+    260  261  262  263  264  265  266  267  268  269
+    270  271  272  273  274  275  276  277  278  279
+    280  281  282  283  284  285  286  287  288  289
+    290  291  292  293  294  295  296  297  298  299
+    300  301  302  303  304  305  306  307  308  309
+    310  311  312  313  314  315  316  317  318  319
+    320  321  322  323  324  325  326  327  328  329
+    330  331  332  333  334  335  336  337  338  339
+    340  341  342  343  344  345  346  347  348  349
+    350  351  352  353  354  355  356  357  358  359
+    360  361  362  363  364  365  366  367  368  369
+    370  371  372  373  374  375  376  377  378  379
+    380  381  382  383  384  385  386  387  388  389
+    390  391  392  393  394  395  396  397  398  399
+    400  401  402  403  404  405  406  407  408  409
+    410  411  412  413  414  415  416  417  418  419
+    420  421  422  423  424  425  426  427  428  429
+    430  431  432  433  434  435  436  437  438  439
+    440  441  442  443  444  445  446  447  448  449
+    450  451  452  453  454  455  456  457  458  459
+    460  461  462  463  464  465  466  467  468  469
+    470  471  472  473  474  475  476  477  478  479
+    480  481  482  483  484  485  486  487  488  489
+    490  491  492  493  494  495  496  497  498  499
+  ivals type=int16  2  4  6  8
+  sval type=string  a string value
+  xval type=string  another string value
+face 0:
+  res: 8 7
+  adjface: 3 1 -1 -1
+  adjedge: 2 3 0 1
+  flags: 0
+  data (256 x 128):
+    000000 0100ff 020000 0300ff 040000 0500ff 060000 0700ff ... f80000 f900ff fa0000 fb00ff fc0000 fd00ff fe0000 ff00ff 
+    0002ff 010200 0202ff 030200 0402ff 050200 0602ff 070200 ... f802ff f90200 fa02ff fb0200 fc02ff fd0200 fe02ff ff0200 
+    000400 0104ff 020400 0304ff 040400 0504ff 060400 0704ff ... f80400 f904ff fa0400 fb04ff fc0400 fd04ff fe0400 ff04ff 
+    0006ff 010600 0206ff 030600 0406ff 050600 0606ff 070600 ... f806ff f90600 fa06ff fb0600 fc06ff fd0600 fe06ff ff0600 
+    000800 0108ff 020800 0308ff 040800 0508ff 060800 0708ff ... f80800 f908ff fa0800 fb08ff fc0800 fd08ff fe0800 ff08ff 
+    000aff 010a00 020aff 030a00 040aff 050a00 060aff 070a00 ... f80aff f90a00 fa0aff fb0a00 fc0aff fd0a00 fe0aff ff0a00 
+    000c00 010cff 020c00 030cff 040c00 050cff 060c00 070cff ... f80c00 f90cff fa0c00 fb0cff fc0c00 fd0cff fe0c00 ff0cff 
+    000eff 010e00 020eff 030e00 040eff 050e00 060eff 070e00 ... f80eff f90e00 fa0eff fb0e00 fc0eff fd0e00 fe0eff ff0e00 
+    ...
+    00f100 01f1ff 02f100 03f1ff 04f100 05f1ff 06f100 07f1ff ... f8f100 f9f1ff faf100 fbf1ff fcf100 fdf1ff fef100 fff1ff 
+    00f3ff 01f300 02f3ff 03f300 04f3ff 05f300 06f3ff 07f300 ... f8f3ff f9f300 faf3ff fbf300 fcf3ff fdf300 fef3ff fff300 
+    00f500 01f5ff 02f500 03f5ff 04f500 05f5ff 06f500 07f5ff ... f8f500 f9f5ff faf500 fbf5ff fcf500 fdf5ff fef500 fff5ff 
+    00f7ff 01f700 02f7ff 03f700 04f7ff 05f700 06f7ff 07f700 ... f8f7ff f9f700 faf7ff fbf700 fcf7ff fdf700 fef7ff fff700 
+    00f900 01f9ff 02f900 03f9ff 04f900 05f9ff 06f900 07f9ff ... f8f900 f9f9ff faf900 fbf9ff fcf900 fdf9ff fef900 fff9ff 
+    00fbff 01fb00 02fbff 03fb00 04fbff 05fb00 06fbff 07fb00 ... f8fbff f9fb00 fafbff fbfb00 fcfbff fdfb00 fefbff fffb00 
+    00fd00 01fdff 02fd00 03fdff 04fd00 05fdff 06fd00 07fdff ... f8fd00 f9fdff fafd00 fbfdff fcfd00 fdfdff fefd00 fffdff 
+    00ffff 01ff00 02ffff 03ff00 04ffff 05ff00 06ffff 07ff00 ... f8ffff f9ff00 faffff fbff00 fcffff fdff00 feffff ffff00 
+  data (128 x 64):
+    00017f 02017f 04017f 06017f 08017f 0a017f 0c017f 0e017f ... f0017f f2017f f4017f f6017f f8017f fa017f fc017f fe017f 
+    00057f 02057f 04057f 06057f 08057f 0a057f 0c057f 0e057f ... f0057f f2057f f4057f f6057f f8057f fa057f fc057f fe057f 
+    00097f 02097f 04097f 06097f 08097f 0a097f 0c097f 0e097f ... f0097f f2097f f4097f f6097f f8097f fa097f fc097f fe097f 
+    000d7f 020d7f 040d7f 060d7f 080d7f 0a0d7f 0c0d7f 0e0d7f ... f00d7f f20d7f f40d7f f60d7f f80d7f fa0d7f fc0d7f fe0d7f 
+    00117f 02117f 04117f 06117f 08117f 0a117f 0c117f 0e117f ... f0117f f2117f f4117f f6117f f8117f fa117f fc117f fe117f 
+    00157f 02157f 04157f 06157f 08157f 0a157f 0c157f 0e157f ... f0157f f2157f f4157f f6157f f8157f fa157f fc157f fe157f 
+    00197f 02197f 04197f 06197f 08197f 0a197f 0c197f 0e197f ... f0197f f2197f f4197f f6197f f8197f fa197f fc197f fe197f 
+    001d7f 021d7f 041d7f 061d7f 081d7f 0a1d7f 0c1d7f 0e1d7f ... f01d7f f21d7f f41d7f f61d7f f81d7f fa1d7f fc1d7f fe1d7f 
+    ...
+    00e27f 02e27f 04e27f 06e27f 08e27f 0ae27f 0ce27f 0ee27f ... f0e27f f2e27f f4e27f f6e27f f8e27f fae27f fce27f fee27f 
+    00e67f 02e67f 04e67f 06e67f 08e67f 0ae67f 0ce67f 0ee67f ... f0e67f f2e67f f4e67f f6e67f f8e67f fae67f fce67f fee67f 
+    00ea7f 02ea7f 04ea7f 06ea7f 08ea7f 0aea7f 0cea7f 0eea7f ... f0ea7f f2ea7f f4ea7f f6ea7f f8ea7f faea7f fcea7f feea7f 
+    00ee7f 02ee7f 04ee7f 06ee7f 08ee7f 0aee7f 0cee7f 0eee7f ... f0ee7f f2ee7f f4ee7f f6ee7f f8ee7f faee7f fcee7f feee7f 
+    00f27f 02f27f 04f27f 06f27f 08f27f 0af27f 0cf27f 0ef27f ... f0f27f f2f27f f4f27f f6f27f f8f27f faf27f fcf27f fef27f 
+    00f67f 02f67f 04f67f 06f67f 08f67f 0af67f 0cf67f 0ef67f ... f0f67f f2f67f f4f67f f6f67f f8f67f faf67f fcf67f fef67f 
+    00fa7f 02fa7f 04fa7f 06fa7f 08fa7f 0afa7f 0cfa7f 0efa7f ... f0fa7f f2fa7f f4fa7f f6fa7f f8fa7f fafa7f fcfa7f fefa7f 
+    00fe7f 02fe7f 04fe7f 06fe7f 08fe7f 0afe7f 0cfe7f 0efe7f ... f0fe7f f2fe7f f4fe7f f6fe7f f8fe7f fafe7f fcfe7f fefe7f 
+  data (64 x 32):
+    01037f 05037f 09037f 0d037f 11037f 15037f 19037f 1d037f ... e1037f e5037f e9037f ed037f f1037f f5037f f9037f fd037f 
+    010b7f 050b7f 090b7f 0d0b7f 110b7f 150b7f 190b7f 1d0b7f ... e10b7f e50b7f e90b7f ed0b7f f10b7f f50b7f f90b7f fd0b7f 
+    01137f 05137f 09137f 0d137f 11137f 15137f 19137f 1d137f ... e1137f e5137f e9137f ed137f f1137f f5137f f9137f fd137f 
+    011b7f 051b7f 091b7f 0d1b7f 111b7f 151b7f 191b7f 1d1b7f ... e11b7f e51b7f e91b7f ed1b7f f11b7f f51b7f f91b7f fd1b7f 
+    01237f 05237f 09237f 0d237f 11237f 15237f 19237f 1d237f ... e1237f e5237f e9237f ed237f f1237f f5237f f9237f fd237f 
+    012b7f 052b7f 092b7f 0d2b7f 112b7f 152b7f 192b7f 1d2b7f ... e12b7f e52b7f e92b7f ed2b7f f12b7f f52b7f f92b7f fd2b7f 
+    01337f 05337f 09337f 0d337f 11337f 15337f 19337f 1d337f ... e1337f e5337f e9337f ed337f f1337f f5337f f9337f fd337f 
+    013b7f 053b7f 093b7f 0d3b7f 113b7f 153b7f 193b7f 1d3b7f ... e13b7f e53b7f e93b7f ed3b7f f13b7f f53b7f f93b7f fd3b7f 
+    ...
+    01c47f 05c47f 09c47f 0dc47f 11c47f 15c47f 19c47f 1dc47f ... e1c47f e5c47f e9c47f edc47f f1c47f f5c47f f9c47f fdc47f 
+    01cc7f 05cc7f 09cc7f 0dcc7f 11cc7f 15cc7f 19cc7f 1dcc7f ... e1cc7f e5cc7f e9cc7f edcc7f f1cc7f f5cc7f f9cc7f fdcc7f 
+    01d47f 05d47f 09d47f 0dd47f 11d47f 15d47f 19d47f 1dd47f ... e1d47f e5d47f e9d47f edd47f f1d47f f5d47f f9d47f fdd47f 
+    01dc7f 05dc7f 09dc7f 0ddc7f 11dc7f 15dc7f 19dc7f 1ddc7f ... e1dc7f e5dc7f e9dc7f eddc7f f1dc7f f5dc7f f9dc7f fddc7f 
+    01e47f 05e47f 09e47f 0de47f 11e47f 15e47f 19e47f 1de47f ... e1e47f e5e47f e9e47f ede47f f1e47f f5e47f f9e47f fde47f 
+    01ec7f 05ec7f 09ec7f 0dec7f 11ec7f 15ec7f 19ec7f 1dec7f ... e1ec7f e5ec7f e9ec7f edec7f f1ec7f f5ec7f f9ec7f fdec7f 
+    01f47f 05f47f 09f47f 0df47f 11f47f 15f47f 19f47f 1df47f ... e1f47f e5f47f e9f47f edf47f f1f47f f5f47f f9f47f fdf47f 
+    01fc7f 05fc7f 09fc7f 0dfc7f 11fc7f 15fc7f 19fc7f 1dfc7f ... e1fc7f e5fc7f e9fc7f edfc7f f1fc7f f5fc7f f9fc7f fdfc7f 
+  data (32 x 16):
+    03077f 0b077f 13077f 1b077f 23077f 2b077f 33077f 3b077f ... c3077f cb077f d3077f db077f e3077f eb077f f3077f fb077f 
+    03177f 0b177f 13177f 1b177f 23177f 2b177f 33177f 3b177f ... c3177f cb177f d3177f db177f e3177f eb177f f3177f fb177f 
+    03277f 0b277f 13277f 1b277f 23277f 2b277f 33277f 3b277f ... c3277f cb277f d3277f db277f e3277f eb277f f3277f fb277f 
+    03377f 0b377f 13377f 1b377f 23377f 2b377f 33377f 3b377f ... c3377f cb377f d3377f db377f e3377f eb377f f3377f fb377f 
+    03477f 0b477f 13477f 1b477f 23477f 2b477f 33477f 3b477f ... c3477f cb477f d3477f db477f e3477f eb477f f3477f fb477f 
+    03577f 0b577f 13577f 1b577f 23577f 2b577f 33577f 3b577f ... c3577f cb577f d3577f db577f e3577f eb577f f3577f fb577f 
+    03677f 0b677f 13677f 1b677f 23677f 2b677f 33677f 3b677f ... c3677f cb677f d3677f db677f e3677f eb677f f3677f fb677f 
+    03777f 0b777f 13777f 1b777f 23777f 2b777f 33777f 3b777f ... c3777f cb777f d3777f db777f e3777f eb777f f3777f fb777f 
+    03887f 0b887f 13887f 1b887f 23887f 2b887f 33887f 3b887f ... c3887f cb887f d3887f db887f e3887f eb887f f3887f fb887f 
+    03987f 0b987f 13987f 1b987f 23987f 2b987f 33987f 3b987f ... c3987f cb987f d3987f db987f e3987f eb987f f3987f fb987f 
+    03a87f 0ba87f 13a87f 1ba87f 23a87f 2ba87f 33a87f 3ba87f ... c3a87f cba87f d3a87f dba87f e3a87f eba87f f3a87f fba87f 
+    03b87f 0bb87f 13b87f 1bb87f 23b87f 2bb87f 33b87f 3bb87f ... c3b87f cbb87f d3b87f dbb87f e3b87f ebb87f f3b87f fbb87f 
+    03c87f 0bc87f 13c87f 1bc87f 23c87f 2bc87f 33c87f 3bc87f ... c3c87f cbc87f d3c87f dbc87f e3c87f ebc87f f3c87f fbc87f 
+    03d87f 0bd87f 13d87f 1bd87f 23d87f 2bd87f 33d87f 3bd87f ... c3d87f cbd87f d3d87f dbd87f e3d87f ebd87f f3d87f fbd87f 
+    03e87f 0be87f 13e87f 1be87f 23e87f 2be87f 33e87f 3be87f ... c3e87f cbe87f d3e87f dbe87f e3e87f ebe87f f3e87f fbe87f 
+    03f87f 0bf87f 13f87f 1bf87f 23f87f 2bf87f 33f87f 3bf87f ... c3f87f cbf87f d3f87f dbf87f e3f87f ebf87f f3f87f fbf87f 
+  data (16 x 8):
+    070f7f 170f7f 270f7f 370f7f 470f7f 570f7f 670f7f 770f7f 870f7f 970f7f a70f7f b70f7f c70f7f d70f7f e70f7f f70f7f 
+    072f7f 172f7f 272f7f 372f7f 472f7f 572f7f 672f7f 772f7f 872f7f 972f7f a72f7f b72f7f c72f7f d72f7f e72f7f f72f7f 
+    074f7f 174f7f 274f7f 374f7f 474f7f 574f7f 674f7f 774f7f 874f7f 974f7f a74f7f b74f7f c74f7f d74f7f e74f7f f74f7f 
+    076f7f 176f7f 276f7f 376f7f 476f7f 576f7f 676f7f 776f7f 876f7f 976f7f a76f7f b76f7f c76f7f d76f7f e76f7f f76f7f 
+    07907f 17907f 27907f 37907f 47907f 57907f 67907f 77907f 87907f 97907f a7907f b7907f c7907f d7907f e7907f f7907f 
+    07b07f 17b07f 27b07f 37b07f 47b07f 57b07f 67b07f 77b07f 87b07f 97b07f a7b07f b7b07f c7b07f d7b07f e7b07f f7b07f 
+    07d07f 17d07f 27d07f 37d07f 47d07f 57d07f 67d07f 77d07f 87d07f 97d07f a7d07f b7d07f c7d07f d7d07f e7d07f f7d07f 
+    07f07f 17f07f 27f07f 37f07f 47f07f 57f07f 67f07f 77f07f 87f07f 97f07f a7f07f b7f07f c7f07f d7f07f e7f07f f7f07f 
+  data (8 x 4):
+    0f1f7f 2f1f7f 4f1f7f 6f1f7f 8f1f7f af1f7f cf1f7f ef1f7f 
+    0f5f7f 2f5f7f 4f5f7f 6f5f7f 8f5f7f af5f7f cf5f7f ef5f7f 
+    0fa07f 2fa07f 4fa07f 6fa07f 8fa07f afa07f cfa07f efa07f 
+    0fe07f 2fe07f 4fe07f 6fe07f 8fe07f afe07f cfe07f efe07f 
+  data (4 x 2):
+    1f3f7f 5f3f7f 9f3f7f df3f7f 
+    1fc07f 5fc07f 9fc07f dfc07f 
+  data (2 x 1):
+    3f7f7f bf7f7f 
+  data (1 x 1):
+    7f7f7f 
+face 1:
+  res: 1 2
+  adjface: 4 2 -1 0
+  adjedge: 2 3 0 1
+  flags: 0
+  data (2 x 4):
+    000000 ff00ff 
+    0055ff ff5500 
+    00aa00 ffaaff 
+    00ffff ffff00 
+  data (1 x 2):
+    7f2a7f 
+    7fd47f 
+  data (1 x 1):
+    7f7f7f 
+face 2:
+  res: 3 1
+  adjface: 5 -1 -1 1
+  adjedge: 2 3 0 1
+  flags: 0
+  data (8 x 2):
+    000000 2400ff 490000 6d00ff 920000 b600ff db0000 ff00ff 
+    00ffff 24ff00 49ffff 6dff00 92ffff b6ff00 dbffff ffff00 
+  data (4 x 1):
+    127f7f 5b7f7f a47f7f ed7f7f 
+  data (2 x 1):
+    377f7f c87f7f 
+  data (1 x 1):
+    7f7f7f 
+face 3:
+  res: 5 4
+  adjface: 6 4 0 -1
+  adjedge: 2 3 0 1
+  flags: 0
+  data (32 x 16):
+    000000 0800ff 100000 1900ff 210000 2900ff 310000 3a00ff ... c50000 ce00ff d60000 de00ff e60000 ef00ff f70000 ff00ff 
+    0011ff 081100 1011ff 191100 2111ff 291100 3111ff 3a1100 ... c511ff ce1100 d611ff de1100 e611ff ef1100 f711ff ff1100 
+    002200 0822ff 102200 1922ff 212200 2922ff 312200 3a22ff ... c52200 ce22ff d62200 de22ff e62200 ef22ff f72200 ff22ff 
+    0033ff 083300 1033ff 193300 2133ff 293300 3133ff 3a3300 ... c533ff ce3300 d633ff de3300 e633ff ef3300 f733ff ff3300 
+    004400 0844ff 104400 1944ff 214400 2944ff 314400 3a44ff ... c54400 ce44ff d64400 de44ff e64400 ef44ff f74400 ff44ff 
+    0055ff 085500 1055ff 195500 2155ff 295500 3155ff 3a5500 ... c555ff ce5500 d655ff de5500 e655ff ef5500 f755ff ff5500 
+    006600 0866ff 106600 1966ff 216600 2966ff 316600 3a66ff ... c56600 ce66ff d66600 de66ff e66600 ef66ff f76600 ff66ff 
+    0077ff 087700 1077ff 197700 2177ff 297700 3177ff 3a7700 ... c577ff ce7700 d677ff de7700 e677ff ef7700 f777ff ff7700 
+    008800 0888ff 108800 1988ff 218800 2988ff 318800 3a88ff ... c58800 ce88ff d68800 de88ff e68800 ef88ff f78800 ff88ff 
+    0099ff 089900 1099ff 199900 2199ff 299900 3199ff 3a9900 ... c599ff ce9900 d699ff de9900 e699ff ef9900 f799ff ff9900 
+    00aa00 08aaff 10aa00 19aaff 21aa00 29aaff 31aa00 3aaaff ... c5aa00 ceaaff d6aa00 deaaff e6aa00 efaaff f7aa00 ffaaff 
+    00bbff 08bb00 10bbff 19bb00 21bbff 29bb00 31bbff 3abb00 ... c5bbff cebb00 d6bbff debb00 e6bbff efbb00 f7bbff ffbb00 
+    00cc00 08ccff 10cc00 19ccff 21cc00 29ccff 31cc00 3accff ... c5cc00 ceccff d6cc00 deccff e6cc00 efccff f7cc00 ffccff 
+    00ddff 08dd00 10ddff 19dd00 21ddff 29dd00 31ddff 3add00 ... c5ddff cedd00 d6ddff dedd00 e6ddff efdd00 f7ddff ffdd00 
+    00ee00 08eeff 10ee00 19eeff 21ee00 29eeff 31ee00 3aeeff ... c5ee00 ceeeff d6ee00 deeeff e6ee00 efeeff f7ee00 ffeeff 
+    00ffff 08ff00 10ffff 19ff00 21ffff 29ff00 31ffff 3aff00 ... c5ffff ceff00 d6ffff deff00 e6ffff efff00 f7ffff ffff00 
+  data (16 x 8):
+    04087f 15087f 25087f 35087f 46087f 56087f 67087f 77087f 88087f 98087f a9087f b9087f ca087f da087f ea087f fb087f 
+    042a7f 152a7f 252a7f 352a7f 462a7f 562a7f 672a7f 772a7f 882a7f 982a7f a92a7f b92a7f ca2a7f da2a7f ea2a7f fb2a7f 
+    044c7f 154c7f 254c7f 354c7f 464c7f 564c7f 674c7f 774c7f 884c7f 984c7f a94c7f b94c7f ca4c7f da4c7f ea4c7f fb4c7f 
+    046e7f 156e7f 256e7f 356e7f 466e7f 566e7f 676e7f 776e7f 886e7f 986e7f a96e7f b96e7f ca6e7f da6e7f ea6e7f fb6e7f 
+    04907f 15907f 25907f 35907f 46907f 56907f 67907f 77907f 88907f 98907f a9907f b9907f ca907f da907f ea907f fb907f 
+    04b27f 15b27f 25b27f 35b27f 46b27f 56b27f 67b27f 77b27f 88b27f 98b27f a9b27f b9b27f cab27f dab27f eab27f fbb27f 
+    04d47f 15d47f 25d47f 35d47f 46d47f 56d47f 67d47f 77d47f 88d47f 98d47f a9d47f b9d47f cad47f dad47f ead47f fbd47f 
+    04f67f 15f67f 25f67f 35f67f 46f67f 56f67f 67f67f 77f67f 88f67f 98f67f a9f67f b9f67f caf67f daf67f eaf67f fbf67f 
+  data (8 x 4):
+    0c197f 2d197f 4e197f 6f197f 90197f b1197f d2197f f3197f 
+    0c5d7f 2d5d7f 4e5d7f 6f5d7f 905d7f b15d7f d25d7f f35d7f 
+    0ca17f 2da17f 4ea17f 6fa17f 90a17f b1a17f d2a17f f3a17f 
+    0ce57f 2de57f 4ee57f 6fe57f 90e57f b1e57f d2e57f f3e57f 
+  data (4 x 2):
+    1d3b7f 5f3b7f a03b7f e23b7f 
+    1dc37f 5fc37f a0c37f e2c37f 
+  data (2 x 1):
+    3e7f7f c17f7f 
+  data (1 x 1):
+    7f7f7f 
+face 4:
+  res: 9 8
+  adjface: 7 5 1 3
+  adjedge: 2 3 0 1
+  flags: 0
+  data (512 x 256):
+    000000 0000ff 010000 0100ff 020000 0200ff 030000 0300ff ... fc0000 fc00ff fd0000 fd00ff fe0000 fe00ff fe0000 ff00ff 
+    0001ff 000100 0101ff 010100 0201ff 020100 0301ff 030100 ... fc01ff fc0100 fd01ff fd0100 fe01ff fe0100 fe01ff ff0100 
+    000200 0002ff 010200 0102ff 020200 0202ff 030200 0302ff ... fc0200 fc02ff fd0200 fd02ff fe0200 fe02ff fe0200 ff02ff 
+    0003ff 000300 0103ff 010300 0203ff 020300 0303ff 030300 ... fc03ff fc0300 fd03ff fd0300 fe03ff fe0300 fe03ff ff0300 
+    000400 0004ff 010400 0104ff 020400 0204ff 030400 0304ff ... fc0400 fc04ff fd0400 fd04ff fe0400 fe04ff fe0400 ff04ff 
+    0005ff 000500 0105ff 010500 0205ff 020500 0305ff 030500 ... fc05ff fc0500 fd05ff fd0500 fe05ff fe0500 fe05ff ff0500 
+    000600 0006ff 010600 0106ff 020600 0206ff 030600 0306ff ... fc0600 fc06ff fd0600 fd06ff fe0600 fe06ff fe0600 ff06ff 
+    0007ff 000700 0107ff 010700 0207ff 020700 0307ff 030700 ... fc07ff fc0700 fd07ff fd0700 fe07ff fe0700 fe07ff ff0700 
+    ...
+    00f800 00f8ff 01f800 01f8ff 02f800 02f8ff 03f800 03f8ff ... fcf800 fcf8ff fdf800 fdf8ff fef800 fef8ff fef800 fff8ff 
+    00f9ff 00f900 01f9ff 01f900 02f9ff 02f900 03f9ff 03f900 ... fcf9ff fcf900 fdf9ff fdf900 fef9ff fef900 fef9ff fff900 
+    00fa00 00faff 01fa00 01faff 02fa00 02faff 03fa00 03faff ... fcfa00 fcfaff fdfa00 fdfaff fefa00 fefaff fefa00 fffaff 
+    00fbff 00fb00 01fbff 01fb00 02fbff 02fb00 03fbff 03fb00 ... fcfbff fcfb00 fdfbff fdfb00 fefbff fefb00 fefbff fffb00 
+    00fc00 00fcff 01fc00 01fcff 02fc00 02fcff 03fc00 03fcff ... fcfc00 fcfcff fdfc00 fdfcff fefc00 fefcff fefc00 fffcff 
+    00fdff 00fd00 01fdff 01fd00 02fdff 02fd00 03fdff 03fd00 ... fcfdff fcfd00 fdfdff fdfd00 fefdff fefd00 fefdff fffd00 
+    00fe00 00feff 01fe00 01feff 02fe00 02feff 03fe00 03feff ... fcfe00 fcfeff fdfe00 fdfeff fefe00 fefeff fefe00 fffeff 
+    00ffff 00ff00 01ffff 01ff00 02ffff 02ff00 03ffff 03ff00 ... fcffff fcff00 fdffff fdff00 feffff feff00 feffff ffff00 
+  data (256 x 128):
+    00007f 01007f 02007f 03007f 04007f 05007f 06007f 07007f ... f8007f f9007f fa007f fb007f fc007f fd007f fe007f ff007f 
+    00027f 01027f 02027f 03027f 04027f 05027f 06027f 07027f ... f8027f f9027f fa027f fb027f fc027f fd027f fe027f ff027f 
+    00047f 01047f 02047f 03047f 04047f 05047f 06047f 07047f ... f8047f f9047f fa047f fb047f fc047f fd047f fe047f ff047f 
+    00067f 01067f 02067f 03067f 04067f 05067f 06067f 07067f ... f8067f f9067f fa067f fb067f fc067f fd067f fe067f ff067f 
+    00087f 01087f 02087f 03087f 04087f 05087f 06087f 07087f ... f8087f f9087f fa087f fb087f fc087f fd087f fe087f ff087f 
+    000a7f 010a7f 020a7f 030a7f 040a7f 050a7f 060a7f 070a7f ... f80a7f f90a7f fa0a7f fb0a7f fc0a7f fd0a7f fe0a7f ff0a7f 
+    000c7f 010c7f 020c7f 030c7f 040c7f 050c7f 060c7f 070c7f ... f80c7f f90c7f fa0c7f fb0c7f fc0c7f fd0c7f fe0c7f ff0c7f 
+    000e7f 010e7f 020e7f 030e7f 040e7f 050e7f 060e7f 070e7f ... f80e7f f90e7f fa0e7f fb0e7f fc0e7f fd0e7f fe0e7f ff0e7f 
+    ...
+    00f07f 01f07f 02f07f 03f07f 04f07f 05f07f 06f07f 07f07f ... f8f07f f9f07f faf07f fbf07f fcf07f fdf07f fef07f fff07f 
+    00f27f 01f27f 02f27f 03f27f 04f27f 05f27f 06f27f 07f27f ... f8f27f f9f27f faf27f fbf27f fcf27f fdf27f fef27f fff27f 
+    00f47f 01f47f 02f47f 03f47f 04f47f 05f47f 06f47f 07f47f ... f8f47f f9f47f faf47f fbf47f fcf47f fdf47f fef47f fff47f 
+    00f67f 01f67f 02f67f 03f67f 04f67f 05f67f 06f67f 07f67f ... f8f67f f9f67f faf67f fbf67f fcf67f fdf67f fef67f fff67f 
+    00f87f 01f87f 02f87f 03f87f 04f87f 05f87f 06f87f 07f87f ... f8f87f f9f87f faf87f fbf87f fcf87f fdf87f fef87f fff87f 
+    00fa7f 01fa7f 02fa7f 03fa7f 04fa7f 05fa7f 06fa7f 07fa7f ... f8fa7f f9fa7f fafa7f fbfa7f fcfa7f fdfa7f fefa7f fffa7f 
+    00fc7f 01fc7f 02fc7f 03fc7f 04fc7f 05fc7f 06fc7f 07fc7f ... f8fc7f f9fc7f fafc7f fbfc7f fcfc7f fdfc7f fefc7f fffc7f 
+    00fe7f 01fe7f 02fe7f 03fe7f 04fe7f 05fe7f 06fe7f 07fe7f ... f8fe7f f9fe7f fafe7f fbfe7f fcfe7f fdfe7f fefe7f fffe7f 
+  data (128 x 64):
+    01017f 03017f 05017f 07017f 09017f 0b017f 0d017f 0f017f ... f0017f f2017f f4017f f6017f f8017f fa017f fc017f fe017f 
+    01057f 03057f 05057f 07057f 09057f 0b057f 0d057f 0f057f ... f0057f f2057f f4057f f6057f f8057f fa057f fc057f fe057f 
+    01097f 03097f 05097f 07097f 09097f 0b097f 0d097f 0f097f ... f0097f f2097f f4097f f6097f f8097f fa097f fc097f fe097f 
+    010d7f 030d7f 050d7f 070d7f 090d7f 0b0d7f 0d0d7f 0f0d7f ... f00d7f f20d7f f40d7f f60d7f f80d7f fa0d7f fc0d7f fe0d7f 
+    01117f 03117f 05117f 07117f 09117f 0b117f 0d117f 0f117f ... f0117f f2117f f4117f f6117f f8117f fa117f fc117f fe117f 
+    01157f 03157f 05157f 07157f 09157f 0b157f 0d157f 0f157f ... f0157f f2157f f4157f f6157f f8157f fa157f fc157f fe157f 
+    01197f 03197f 05197f 07197f 09197f 0b197f 0d197f 0f197f ... f0197f f2197f f4197f f6197f f8197f fa197f fc197f fe197f 
+    011d7f 031d7f 051d7f 071d7f 091d7f 0b1d7f 0d1d7f 0f1d7f ... f01d7f f21d7f f41d7f f61d7f f81d7f fa1d7f fc1d7f fe1d7f 
+    ...
+    01e17f 03e17f 05e17f 07e17f 09e17f 0be17f 0de17f 0fe17f ... f0e17f f2e17f f4e17f f6e17f f8e17f fae17f fce17f fee17f 
+    01e57f 03e57f 05e57f 07e57f 09e57f 0be57f 0de57f 0fe57f ... f0e57f f2e57f f4e57f f6e57f f8e57f fae57f fce57f fee57f 
+    01e97f 03e97f 05e97f 07e97f 09e97f 0be97f 0de97f 0fe97f ... f0e97f f2e97f f4e97f f6e97f f8e97f fae97f fce97f fee97f 
+    01ed7f 03ed7f 05ed7f 07ed7f 09ed7f 0bed7f 0ded7f 0fed7f ... f0ed7f f2ed7f f4ed7f f6ed7f f8ed7f faed7f fced7f feed7f 
+    01f17f 03f17f 05f17f 07f17f 09f17f 0bf17f 0df17f 0ff17f ... f0f17f f2f17f f4f17f f6f17f f8f17f faf17f fcf17f fef17f 
+    01f57f 03f57f 05f57f 07f57f 09f57f 0bf57f 0df57f 0ff57f ... f0f57f f2f57f f4f57f f6f57f f8f57f faf57f fcf57f fef57f 
+    01f97f 03f97f 05f97f 07f97f 09f97f 0bf97f 0df97f 0ff97f ... f0f97f f2f97f f4f97f f6f97f f8f97f faf97f fcf97f fef97f 
+    01fd7f 03fd7f 05fd7f 07fd7f 09fd7f 0bfd7f 0dfd7f 0ffd7f ... f0fd7f f2fd7f f4fd7f f6fd7f f8fd7f fafd7f fcfd7f fefd7f 
+  data (64 x 32):
+    02037f 06037f 0a037f 0e037f 12037f 16037f 1a037f 1e037f ... e1037f e5037f e9037f ed037f f1037f f5037f f9037f fd037f 
+    020b7f 060b7f 0a0b7f 0e0b7f 120b7f 160b7f 1a0b7f 1e0b7f ... e10b7f e50b7f e90b7f ed0b7f f10b7f f50b7f f90b7f fd0b7f 
+    02137f 06137f 0a137f 0e137f 12137f 16137f 1a137f 1e137f ... e1137f e5137f e9137f ed137f f1137f f5137f f9137f fd137f 
+    021b7f 061b7f 0a1b7f 0e1b7f 121b7f 161b7f 1a1b7f 1e1b7f ... e11b7f e51b7f e91b7f ed1b7f f11b7f f51b7f f91b7f fd1b7f 
+    02237f 06237f 0a237f 0e237f 12237f 16237f 1a237f 1e237f ... e1237f e5237f e9237f ed237f f1237f f5237f f9237f fd237f 
+    022b7f 062b7f 0a2b7f 0e2b7f 122b7f 162b7f 1a2b7f 1e2b7f ... e12b7f e52b7f e92b7f ed2b7f f12b7f f52b7f f92b7f fd2b7f 
+    02337f 06337f 0a337f 0e337f 12337f 16337f 1a337f 1e337f ... e1337f e5337f e9337f ed337f f1337f f5337f f9337f fd337f 
+    023b7f 063b7f 0a3b7f 0e3b7f 123b7f 163b7f 1a3b7f 1e3b7f ... e13b7f e53b7f e93b7f ed3b7f f13b7f f53b7f f93b7f fd3b7f 
+    ...
+    02c37f 06c37f 0ac37f 0ec37f 12c37f 16c37f 1ac37f 1ec37f ... e1c37f e5c37f e9c37f edc37f f1c37f f5c37f f9c37f fdc37f 
+    02cb7f 06cb7f 0acb7f 0ecb7f 12cb7f 16cb7f 1acb7f 1ecb7f ... e1cb7f e5cb7f e9cb7f edcb7f f1cb7f f5cb7f f9cb7f fdcb7f 
+    02d37f 06d37f 0ad37f 0ed37f 12d37f 16d37f 1ad37f 1ed37f ... e1d37f e5d37f e9d37f edd37f f1d37f f5d37f f9d37f fdd37f 
+    02db7f 06db7f 0adb7f 0edb7f 12db7f 16db7f 1adb7f 1edb7f ... e1db7f e5db7f e9db7f eddb7f f1db7f f5db7f f9db7f fddb7f 
+    02e37f 06e37f 0ae37f 0ee37f 12e37f 16e37f 1ae37f 1ee37f ... e1e37f e5e37f e9e37f ede37f f1e37f f5e37f f9e37f fde37f 
+    02eb7f 06eb7f 0aeb7f 0eeb7f 12eb7f 16eb7f 1aeb7f 1eeb7f ... e1eb7f e5eb7f e9eb7f edeb7f f1eb7f f5eb7f f9eb7f fdeb7f 
+    02f37f 06f37f 0af37f 0ef37f 12f37f 16f37f 1af37f 1ef37f ... e1f37f e5f37f e9f37f edf37f f1f37f f5f37f f9f37f fdf37f 
+    02fb7f 06fb7f 0afb7f 0efb7f 12fb7f 16fb7f 1afb7f 1efb7f ... e1fb7f e5fb7f e9fb7f edfb7f f1fb7f f5fb7f f9fb7f fdfb7f 
+  data (32 x 16):
+    04077f 0c077f 14077f 1c077f 24077f 2c077f 34077f 3c077f ... c3077f cb077f d3077f db077f e3077f eb077f f3077f fb077f 
+    04177f 0c177f 14177f 1c177f 24177f 2c177f 34177f 3c177f ... c3177f cb177f d3177f db177f e3177f eb177f f3177f fb177f 
+    04277f 0c277f 14277f 1c277f 24277f 2c277f 34277f 3c277f ... c3277f cb277f d3277f db277f e3277f eb277f f3277f fb277f 
+    04377f 0c377f 14377f 1c377f 24377f 2c377f 34377f 3c377f ... c3377f cb377f d3377f db377f e3377f eb377f f3377f fb377f 
+    04477f 0c477f 14477f 1c477f 24477f 2c477f 34477f 3c477f ... c3477f cb477f d3477f db477f e3477f eb477f f3477f fb477f 
+    04577f 0c577f 14577f 1c577f 24577f 2c577f 34577f 3c577f ... c3577f cb577f d3577f db577f e3577f eb577f f3577f fb577f 
+    04677f 0c677f 14677f 1c677f 24677f 2c677f 34677f 3c677f ... c3677f cb677f d3677f db677f e3677f eb677f f3677f fb677f 
+    04777f 0c777f 14777f 1c777f 24777f 2c777f 34777f 3c777f ... c3777f cb777f d3777f db777f e3777f eb777f f3777f fb777f 
+    04877f 0c877f 14877f 1c877f 24877f 2c877f 34877f 3c877f ... c3877f cb877f d3877f db877f e3877f eb877f f3877f fb877f 
+    04977f 0c977f 14977f 1c977f 24977f 2c977f 34977f 3c977f ... c3977f cb977f d3977f db977f e3977f eb977f f3977f fb977f 
+    04a77f 0ca77f 14a77f 1ca77f 24a77f 2ca77f 34a77f 3ca77f ... c3a77f cba77f d3a77f dba77f e3a77f eba77f f3a77f fba77f 
+    04b77f 0cb77f 14b77f 1cb77f 24b77f 2cb77f 34b77f 3cb77f ... c3b77f cbb77f d3b77f dbb77f e3b77f ebb77f f3b77f fbb77f 
+    04c77f 0cc77f 14c77f 1cc77f 24c77f 2cc77f 34c77f 3cc77f ... c3c77f cbc77f d3c77f dbc77f e3c77f ebc77f f3c77f fbc77f 
+    04d77f 0cd77f 14d77f 1cd77f 24d77f 2cd77f 34d77f 3cd77f ... c3d77f cbd77f d3d77f dbd77f e3d77f ebd77f f3d77f fbd77f 
+    04e77f 0ce77f 14e77f 1ce77f 24e77f 2ce77f 34e77f 3ce77f ... c3e77f cbe77f d3e77f dbe77f e3e77f ebe77f f3e77f fbe77f 
+    04f77f 0cf77f 14f77f 1cf77f 24f77f 2cf77f 34f77f 3cf77f ... c3f77f cbf77f d3f77f dbf77f e3f77f ebf77f f3f77f fbf77f 
+  data (16 x 8):
+    080f7f 180f7f 280f7f 380f7f 480f7f 580f7f 680f7f 780f7f 870f7f 970f7f a70f7f b70f7f c70f7f d70f7f e70f7f f70f7f 
+    082f7f 182f7f 282f7f 382f7f 482f7f 582f7f 682f7f 782f7f 872f7f 972f7f a72f7f b72f7f c72f7f d72f7f e72f7f f72f7f 
+    084f7f 184f7f 284f7f 384f7f 484f7f 584f7f 684f7f 784f7f 874f7f 974f7f a74f7f b74f7f c74f7f d74f7f e74f7f f74f7f 
+    086f7f 186f7f 286f7f 386f7f 486f7f 586f7f 686f7f 786f7f 876f7f 976f7f a76f7f b76f7f c76f7f d76f7f e76f7f f76f7f 
+    088f7f 188f7f 288f7f 388f7f 488f7f 588f7f 688f7f 788f7f 878f7f 978f7f a78f7f b78f7f c78f7f d78f7f e78f7f f78f7f 
+    08af7f 18af7f 28af7f 38af7f 48af7f 58af7f 68af7f 78af7f 87af7f 97af7f a7af7f b7af7f c7af7f d7af7f e7af7f f7af7f 
+    08cf7f 18cf7f 28cf7f 38cf7f 48cf7f 58cf7f 68cf7f 78cf7f 87cf7f 97cf7f a7cf7f b7cf7f c7cf7f d7cf7f e7cf7f f7cf7f 
+    08ef7f 18ef7f 28ef7f 38ef7f 48ef7f 58ef7f 68ef7f 78ef7f 87ef7f 97ef7f a7ef7f b7ef7f c7ef7f d7ef7f e7ef7f f7ef7f 
+  data (8 x 4):
+    101f7f 301f7f 501f7f 701f7f 8f1f7f af1f7f cf1f7f ef1f7f 
+    105f7f 305f7f 505f7f 705f7f 8f5f7f af5f7f cf5f7f ef5f7f 
+    109f7f 309f7f 509f7f 709f7f 8f9f7f af9f7f cf9f7f ef9f7f 
+    10df7f 30df7f 50df7f 70df7f 8fdf7f afdf7f cfdf7f efdf7f 
+  data (4 x 2):
+    203f7f 603f7f 9f3f7f df3f7f 
+    20bf7f 60bf7f 9fbf7f dfbf7f 
+  data (2 x 1):
+    407f7f bf7f7f 
+  data (1 x 1):
+    7f7f7f 
+face 5:
+  res: 2 4
+  adjface: 8 -1 2 4
+  adjedge: 2 3 0 1
+  flags: 0
+  data (4 x 16):
+    000000 5500ff aa0000 ff00ff 
+    0011ff 551100 aa11ff ff1100 
+    002200 5522ff aa2200 ff22ff 
+    0033ff 553300 aa33ff ff3300 
+    004400 5544ff aa4400 ff44ff 
+    0055ff 555500 aa55ff ff5500 
+    006600 5566ff aa6600 ff66ff 
+    0077ff 557700 aa77ff ff7700 
+    008800 5588ff aa8800 ff88ff 
+    0099ff 559900 aa99ff ff9900 
+    00aa00 55aaff aaaa00 ffaaff 
+    00bbff 55bb00 aabbff ffbb00 
+    00cc00 55ccff aacc00 ffccff 
+    00ddff 55dd00 aaddff ffdd00 
+    00ee00 55eeff aaee00 ffeeff 
+    00ffff 55ff00 aaffff ffff00 
+  data (2 x 8):
+    2a087f d4087f 
+    2a2a7f d42a7f 
+    2a4c7f d44c7f 
+    2a6e7f d46e7f 
+    2a907f d4907f 
+    2ab27f d4b27f 
+    2ad47f d4d47f 
+    2af67f d4f67f 
+  data (1 x 4):
+    7f197f 
+    7f5d7f 
+    7fa17f 
+    7fe57f 
+  data (1 x 2):
+    7f3b7f 
+    7fc37f 
+  data (1 x 1):
+    7f7f7f 
+face 6:
+  res: 6 2
+  adjface: -1 7 3 -1
+  adjedge: 2 3 0 1
+  flags: 0
+  data (64 x 4):
+    000000 0400ff 080000 0c00ff 100000 1400ff 180000 1c00ff ... e30000 e700ff eb0000 ef00ff f30000 f700ff fb0000 ff00ff 
+    0055ff 045500 0855ff 0c5500 1055ff 145500 1855ff 1c5500 ... e355ff e75500 eb55ff ef5500 f355ff f75500 fb55ff ff5500 
+    00aa00 04aaff 08aa00 0caaff 10aa00 14aaff 18aa00 1caaff ... e3aa00 e7aaff ebaa00 efaaff f3aa00 f7aaff fbaa00 ffaaff 
+    00ffff 04ff00 08ffff 0cff00 10ffff 14ff00 18ffff 1cff00 ... e3ffff e7ff00 ebffff efff00 f3ffff f7ff00 fbffff ffff00 
+  data (32 x 2):
+    022a7f 0a2a7f 122a7f 1a2a7f 222a7f 2a2a7f 332a7f 3b2a7f ... c42a7f cc2a7f d42a7f dd2a7f e52a7f ed2a7f f52a7f fd2a7f 
+    02d47f 0ad47f 12d47f 1ad47f 22d47f 2ad47f 33d47f 3bd47f ... c4d47f ccd47f d4d47f ddd47f e5d47f edd47f f5d47f fdd47f 
+  data (16 x 1):
+    067f7f 167f7f 267f7f 377f7f 477f7f 577f7f 677f7f 777f7f 887f7f 987f7f a87f7f b87f7f c87f7f d97f7f e97f7f f97f7f 
+  data (8 x 1):
+    0e7f7f 2f7f7f 4f7f7f 6f7f7f 907f7f b07f7f d07f7f f17f7f 
+  data (4 x 1):
+    1e7f7f 5f7f7f a07f7f e17f7f 
+  data (2 x 1):
+    3f7f7f c07f7f 
+  data (1 x 1):
+    7f7f7f 
+face 7:
+  res: 7 4
+  adjface: -1 8 4 6
+  adjedge: 2 3 0 1
+  flags: 0
+  data (128 x 16):
+    000000 0200ff 040000 0600ff 080000 0a00ff 0c0000 0e00ff ... f10000 f300ff f50000 f700ff f90000 fb00ff fd0000 ff00ff 
+    0011ff 021100 0411ff 061100 0811ff 0a1100 0c11ff 0e1100 ... f111ff f31100 f511ff f71100 f911ff fb1100 fd11ff ff1100 
+    002200 0222ff 042200 0622ff 082200 0a22ff 0c2200 0e22ff ... f12200 f322ff f52200 f722ff f92200 fb22ff fd2200 ff22ff 
+    0033ff 023300 0433ff 063300 0833ff 0a3300 0c33ff 0e3300 ... f133ff f33300 f533ff f73300 f933ff fb3300 fd33ff ff3300 
+    004400 0244ff 044400 0644ff 084400 0a44ff 0c4400 0e44ff ... f14400 f344ff f54400 f744ff f94400 fb44ff fd4400 ff44ff 
+    0055ff 025500 0455ff 065500 0855ff 0a5500 0c55ff 0e5500 ... f155ff f35500 f555ff f75500 f955ff fb5500 fd55ff ff5500 
+    006600 0266ff 046600 0666ff 086600 0a66ff 0c6600 0e66ff ... f16600 f366ff f56600 f766ff f96600 fb66ff fd6600 ff66ff 
+    0077ff 027700 0477ff 067700 0877ff 0a7700 0c77ff 0e7700 ... f177ff f37700 f577ff f77700 f977ff fb7700 fd77ff ff7700 
+    008800 0288ff 048800 0688ff 088800 0a88ff 0c8800 0e88ff ... f18800 f388ff f58800 f788ff f98800 fb88ff fd8800 ff88ff 
+    0099ff 029900 0499ff 069900 0899ff 0a9900 0c99ff 0e9900 ... f199ff f39900 f599ff f79900 f999ff fb9900 fd99ff ff9900 
+    00aa00 02aaff 04aa00 06aaff 08aa00 0aaaff 0caa00 0eaaff ... f1aa00 f3aaff f5aa00 f7aaff f9aa00 fbaaff fdaa00 ffaaff 
+    00bbff 02bb00 04bbff 06bb00 08bbff 0abb00 0cbbff 0ebb00 ... f1bbff f3bb00 f5bbff f7bb00 f9bbff fbbb00 fdbbff ffbb00 
+    00cc00 02ccff 04cc00 06ccff 08cc00 0accff 0ccc00 0eccff ... f1cc00 f3ccff f5cc00 f7ccff f9cc00 fbccff fdcc00 ffccff 
+    00ddff 02dd00 04ddff 06dd00 08ddff 0add00 0cddff 0edd00 ... f1ddff f3dd00 f5ddff f7dd00 f9ddff fbdd00 fdddff ffdd00 
+    00ee00 02eeff 04ee00 06eeff 08ee00 0aeeff 0cee00 0eeeff ... f1ee00 f3eeff f5ee00 f7eeff f9ee00 fbeeff fdee00 ffeeff 
+    00ffff 02ff00 04ffff 06ff00 08ffff 0aff00 0cffff 0eff00 ... f1ffff f3ff00 f5ffff f7ff00 f9ffff fbff00 fdffff ffff00 
+  data (64 x 8):
+    01087f 05087f 09087f 0d087f 11087f 15087f 19087f 1d087f ... e2087f e6087f ea087f ee087f f2087f f6087f fa087f fe087f 
+    012a7f 052a7f 092a7f 0d2a7f 112a7f 152a7f 192a7f 1d2a7f ... e22a7f e62a7f ea2a7f ee2a7f f22a7f f62a7f fa2a7f fe2a7f 
+    014c7f 054c7f 094c7f 0d4c7f 114c7f 154c7f 194c7f 1d4c7f ... e24c7f e64c7f ea4c7f ee4c7f f24c7f f64c7f fa4c7f fe4c7f 
+    016e7f 056e7f 096e7f 0d6e7f 116e7f 156e7f 196e7f 1d6e7f ... e26e7f e66e7f ea6e7f ee6e7f f26e7f f66e7f fa6e7f fe6e7f 
+    01907f 05907f 09907f 0d907f 11907f 15907f 19907f 1d907f ... e2907f e6907f ea907f ee907f f2907f f6907f fa907f fe907f 
+    01b27f 05b27f 09b27f 0db27f 11b27f 15b27f 19b27f 1db27f ... e2b27f e6b27f eab27f eeb27f f2b27f f6b27f fab27f feb27f 
+    01d47f 05d47f 09d47f 0dd47f 11d47f 15d47f 19d47f 1dd47f ... e2d47f e6d47f ead47f eed47f f2d47f f6d47f fad47f fed47f 
+    01f67f 05f67f 09f67f 0df67f 11f67f 15f67f 19f67f 1df67f ... e2f67f e6f67f eaf67f eef67f f2f67f f6f67f faf67f fef67f 
+  data (32 x 4):
+    03197f 0b197f 13197f 1b197f 23197f 2b197f 33197f 3b197f ... c4197f cc197f d4197f dc197f e4197f ec197f f4197f fc197f 
+    035d7f 0b5d7f 135d7f 1b5d7f 235d7f 2b5d7f 335d7f 3b5d7f ... c45d7f cc5d7f d45d7f dc5d7f e45d7f ec5d7f f45d7f fc5d7f 
+    03a17f 0ba17f 13a17f 1ba17f 23a17f 2ba17f 33a17f 3ba17f ... c4a17f cca17f d4a17f dca17f e4a17f eca17f f4a17f fca17f 
+    03e57f 0be57f 13e57f 1be57f 23e57f 2be57f 33e57f 3be57f ... c4e57f cce57f d4e57f dce57f e4e57f ece57f f4e57f fce57f 
+  data (16 x 2):
+    073b7f 173b7f 273b7f 373b7f 473b7f 573b7f 673b7f 773b7f 883b7f 983b7f a83b7f b83b7f c83b7f d83b7f e83b7f f83b7f 
+    07c37f 17c37f 27c37f 37c37f 47c37f 57c37f 67c37f 77c37f 88c37f 98c37f a8c37f b8c37f c8c37f d8c37f e8c37f f8c37f 
+  data (8 x 1):
+    0f7f7f 2f7f7f 4f7f7f 6f7f7f 907f7f b07f7f d07f7f f07f7f 
+  data (4 x 1):
+    1f7f7f 5f7f7f a07f7f e07f7f 
+  data (2 x 1):
+    3f7f7f c07f7f 
+  data (1 x 1):
+    7f7f7f 
+face 8:
+  res: 2 1
+  adjface: -1 -1 5 7
+  adjedge: 2 3 0 1
+  flags: 0
+  data (4 x 2):
+    000000 5500ff aa0000 ff00ff 
+    00ffff 55ff00 aaffff ffff00 
+  data (2 x 1):
+    2a7f7f d47f7f 
+  data (1 x 1):
+    7f7f7f 
