@@ -143,8 +143,8 @@ solution "MallieSolution"
          -- Ptex
          if _OPTIONS['with-ptex'] then
             defines { 'ENABLE_PTEX' }
-            includedirs { "/Users/syoyo/work/ptex/install/include" }
-            libdirs { "/Users/syoyo/work/ptex/install/lib" }
+            includedirs { "./deps/ptex-master/install/include" }
+            libdirs { "./deps/ptex-master/install/lib" }
             links   { "Ptex" }
          end
 
@@ -183,6 +183,14 @@ solution "MallieSolution"
          -- gcc mpi
          if _OPTIONS['with-mpi'] then
             defines { 'WITH_MPI' }
+         end
+
+         -- Ptex
+         if _OPTIONS['with-ptex'] then
+            defines { 'ENABLE_PTEX' }
+            includedirs { "./deps/ptex-master/install/include" }
+            libdirs { "./deps/ptex-master/install/lib" }
+            links   { "Ptex" }
          end
 
          if _OPTIONS['with-sdl'] then

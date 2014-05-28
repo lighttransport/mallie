@@ -1,4 +1,9 @@
+#ifdef ENABLE_MPI
+#include <mpi.h>
+#endif
+
 #include <cstdio>
+#include <iostream>
 #include <ctime>
 #include <algorithm>
 
@@ -18,6 +23,10 @@
 #include <omp.h>
 #endif
 
+#ifdef ENABLE_PTEX
+#include <Ptexture.h>
+#endif
+
 #ifdef _WIN32
 #define THREAD_TLS __declspec(thread)
 #else // Assume gcc-like compiler
@@ -33,6 +42,8 @@ const int kMinPathLength = 2;
 
 const int kTileSize = 8;
 
+const int kPtexMaxMem = 1024*1024; // @fixme.
+
 struct PathVertex {
   real3 P;          // Position
   real3 N;          // Normal
@@ -44,6 +55,52 @@ struct PathVertex {
 typedef std::vector<PathVertex> Path;
 
 namespace {
+
+#ifdef ENABLE_PTEX
+PtexCache*
+InitPtex()
+{
+  PtexCache* c = PtexCache::create(0, kPtexMaxMem);
+
+  return c;
+}
+
+PtexTexture*
+LoadPtex(
+  PtexCache* cache,
+  const char* filename)
+{
+  Ptex::String err;
+  PtexTexture* r = PtexTexture::open(filename, err, /* premult */ 0);
+
+  printf("Mallie:info\tmsg:PtexTexture: %p\n", r);
+
+  if (!r) {
+    std::cerr << "Mallie:error\tmsg:" << err.c_str() << std::endl;
+    return NULL;
+  }
+
+  return r;
+}
+
+void PtexTest(PtexTexture* r)
+{
+  // @todo
+  PtexFilter::Options opts(PtexFilter::f_bicubic, 0, 1.0);
+  PtexPtr<PtexFilter> f(PtexFilter::getFilter(r, opts));
+
+  float result[4];
+  int faceid = 0;
+  float u=0, v=0, uw=.125, vw=.125;
+
+  for (v = 0; v <= 1; v += .125) {
+    for (u = 0; u <= 1; u += .125) {
+      f->eval(result, 0, 1, faceid, u, v, uw, 0, 0, vw);
+      printf("%8f %8f -> %8f\n", u, v, result[0]);
+    }
+  }
+}
+#endif // ENABLE_PTEX
 
 unsigned int gSeed[1024][4];
 

@@ -7,6 +7,14 @@
 * GCC (If you want OpenMP support)
 * SDL2.0(optional)
 * premake4
+* ptex(optional)
+
+#### Setup
+
+Build ptex(optional)
+
+    $ cd deps/ptex-master
+    $ make
 
 #### MacOSX
 
