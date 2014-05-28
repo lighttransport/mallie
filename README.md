@@ -58,7 +58,9 @@ GUI mode
 
 * mouse left : rotate
 * shift + mouse left : translate
-* ctrl + mouse left : dolly
+* ctrl(or tab) + mouse left : dolly
+* 'q' : quit.
+* 'c' : Dump camera data to camera.dat (eye, lookat, up, quaternion)
 
 EoL.
 

@@ -16,8 +16,8 @@ typedef struct {
   real3 position;
   real3 geometricNormal;
   real3 normal;
-  // real3           tangent;
-  // real3           binormal;
+  real3 tangent;
+  real3 binormal;
   real texcoord[2];
 
 } Intersection;

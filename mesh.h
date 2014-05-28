@@ -17,4 +17,3 @@ typedef struct {
 } Mesh;
 
 #endif // __MESH_H__
-       // vim:set sw=2 ts=2 expandtab:

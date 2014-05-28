@@ -722,7 +722,30 @@ void BuildIntersection(Intersection &isect, const Mesh *mesh, Ray &ray) {
   n.normalize();
 
   isect.geometricNormal = n;
-  isect.normal = n;
+
+  if (mesh->facevarying_normals) {
+    assert(0);
+    const real* normals = mesh->facevarying_normals;
+    real3 n0, n1, n2;
+
+    n0[0] = normals[9 * isect.faceID + 0];
+    n0[1] = normals[9 * isect.faceID + 1];
+    n0[2] = normals[9 * isect.faceID + 2];
+    n1[0] = normals[9 * isect.faceID + 3];
+    n1[1] = normals[9 * isect.faceID + 4];
+    n1[2] = normals[9 * isect.faceID + 5];
+    n2[0] = normals[9 * isect.faceID + 6];
+    n2[1] = normals[9 * isect.faceID + 7];
+    n2[2] = normals[9 * isect.faceID + 8];
+
+    // lerp
+    isect.normal[0] = (1.0 - isect.u - isect.v) * n0[0] + isect.u * n1[0] + isect.v * n2[0];
+    isect.normal[1] = (1.0 - isect.u - isect.v) * n0[1] + isect.u * n1[1] + isect.v * n2[1];
+    isect.normal[2] = (1.0 - isect.u - isect.v) * n0[2] + isect.u * n1[2] + isect.v * n2[2];
+
+  } else {
+    isect.normal = n;
+  }
 }
 
 } // namespace

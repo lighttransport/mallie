@@ -374,10 +374,10 @@ void Render(Scene &scene, const RenderConfig &config,
 #pragma omp parallel for schedule(dynamic, 1)
   for (int y = 0; y < height; y += step) {
 
-    if ((y % 100) == 0) {
-      printf("\rMallie:info\tRender %d of %d", y, height);
-      fflush(stdout);
-    }
+    //if ((y % 100) == 0) {
+      //printf("\rMallie:info\tRender %d of %d", y, height);
+      //fflush(stdout);
+    //}
 
 #if 1
     for (int x = 0; x < width; x += step) {

@@ -44,6 +44,12 @@ MeshLoader::LoadObj(
   mesh.faces    = new unsigned int[numFaces * 3];
   mesh.materialIDs = new unsigned int[numFaces];
 
+  // @todo {}
+  mesh.facevarying_normals = NULL;
+  mesh.facevarying_uvs = NULL;
+  mesh.facevarying_tangents = NULL;
+  mesh.facevarying_binormals = NULL;
+
   size_t vertexIdxOffset = 0;
   size_t faceIdxOffset = 0;
   for (size_t i = 0; i < shapes.size(); i++) {
