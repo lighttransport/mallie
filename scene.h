@@ -40,7 +40,8 @@ public:
   Scene() {};
   ~Scene();
 
-  bool Init(const std::string &objFilename, const std::string &materialFilename,
+  // Fixme.
+  bool Init(const std::string &objFilename, const std::string& esonFilename, const std::string &materialFilename,
             double sceneScale = 1.0);
 
   bool Trace(Intersection &isect, Ray &ray);

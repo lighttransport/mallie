@@ -25,6 +25,7 @@ struct RenderConfig {
   int num_photons; // # of photon to shoot per pass.
 
   std::string obj_filename;
+  std::string eson_filename;
   std::string material_filename;
 
   RenderConfig()

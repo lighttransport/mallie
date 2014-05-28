@@ -1,4 +1,11 @@
-- Render
+Towards OSD raytrace pub
+
+- Patch loader(ESON)
+- Ray-patch intersector 
+- Diagnostics(# of rays, # of isects, # of travs, etc)
+
+Other
+
 - Spectrum
 - Shader
 - Bidir path tracer

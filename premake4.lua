@@ -4,12 +4,6 @@ newoption {
    description = "Build unit test."
 }
 
--- K/FX10 target
-newoption {
-   trigger     = "k",
-   description = "Compile for K/FX10."
-}
-
 -- ARM target
 newoption {
    trigger     = "arm",
@@ -43,7 +37,7 @@ newoption {
 -- SDL
 newoption {
    trigger     = "with-sdl",
-   description = "Use SDL."
+   description = "Use SDL2.0."
 }
 
 sources = {
@@ -57,7 +51,11 @@ sources = {
    "matrix.cc",
    "trackball.cc",
    "importers/tiny_obj_loader.cc",
+   "importers/tiny_obj_loader.h",
+   "importers/eson.cc",
+   "importers/eson.h",
    "importers/mesh_loader.cc",
+   "importers/mesh_loader.h",
    "bvh_accel.cc",
    "scene.cc",
    "spectrum.cc",
@@ -114,12 +112,9 @@ solution "MallieSolution"
       includedirs {
          "./",
          "deps/parson/",
-         "deps/lua-5.2.2/",
          "deps/TinyThread++-1.1/source/",
          "deps/tinyjs/",
       }
-
-      -- links "lua"
 
       -- MacOSX. Guess we use gcc.
       configuration { "macosx", "gmake" }
@@ -179,36 +174,21 @@ solution "MallieSolution"
       configuration {"linux", "gmake"}
          defines { '__STDC_CONSTANT_MACROS', '__STDC_LIMIT_MACROS' } -- c99
 
-         if _OPTIONS['k'] then
-            buildoptions { "-Xg -KPIC" } -- gcc compat, position independet code.
+         -- gcc openmp
+         if _OPTIONS['with-openmp'] then
+            buildoptions { "-fopenmp" }
+            linkoptions { "-fopenmp" }
+         end
 
-            -- fj openmp
-            if _OPTIONS['with-openmp'] then
-               buildoptions { "-Kopenmp" }
-               linkoptions { "-Kopenmp" }
-            end
-         else
-            -- gcc openmp
-            if _OPTIONS['with-openmp'] then
-               buildoptions { "-fopenmp" }
-               linkoptions { "-fopenmp" }
-            end
-
-            -- gcc mpi
-            if _OPTIONS['with-mpi'] then
-               defines { 'WITH_MPI' }
-            end
-
+         -- gcc mpi
+         if _OPTIONS['with-mpi'] then
+            defines { 'WITH_MPI' }
          end
 
          if _OPTIONS['with-sdl'] then
             defines { 'ENABLE_SDL' }
             buildoptions { "`sdl2-config --cflags`" }
             linkoptions { "`sdl2-config --libs`" }
-         end
-
-         if not _OPTIONS['k'] then
-            linkoptions { "-pthread" }
          end
 
       configuration "Debug"
@@ -220,9 +200,7 @@ solution "MallieSolution"
       configuration "Release"
          defines { "NDEBUG" }
          flags { "Symbols", "Optimize" }
-         if _OPTIONS['k'] then
-            -- pass buildoptions { "-Kfast" }
-         elseif _OPTIONS['arm'] then
+         if _OPTIONS['arm'] then
             -- buildoptions { "NEON" }
          else 
             flags { "EnableSSE2" }

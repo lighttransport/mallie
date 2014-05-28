@@ -184,9 +184,9 @@ void SaveCamera(const std::string &filename) {
 void LoadCamera(const std::string &filename) {
   FILE *fp = fopen(filename.c_str(), "r");
 
-  fscanf(fp, "%f %f %f\n", &gEye[0], &gEye[1], &gEye[2]);
-  fscanf(fp, "%f %f %f\n", &gLookat[0], &gLookat[1], &gLookat[2]);
-  fscanf(fp, "%f %f %f %f\n", &gCurrQuat[0], &gCurrQuat[1], &gCurrQuat[2],
+  fscanf(fp, "%lf %lf %lf\n", &gEye[0], &gEye[1], &gEye[2]);
+  fscanf(fp, "%lf %lf %lf\n", &gLookat[0], &gLookat[1], &gLookat[2]);
+  fscanf(fp, "%lf %lf %lf %lf\n", &gCurrQuat[0], &gCurrQuat[1], &gCurrQuat[2],
          &gCurrQuat[3]);
 
   fclose(fp);

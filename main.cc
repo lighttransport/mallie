@@ -93,7 +93,7 @@ static int GetNumCPUs() {
 }
 
 bool InitScene(mallie::Scene &scene, mallie::RenderConfig &config) {
-  return scene.Init(config.obj_filename, config.material_filename,
+  return scene.Init(config.obj_filename, config.eson_filename, config.material_filename,
                     config.scene_scale);
 }
 
@@ -115,9 +115,15 @@ bool LoadJSONConfig(mallie::RenderConfig &config, // [out]
   }
 
   JSON_Object *object = json_value_get_object(root);
+
   if (json_value_get_type(json_object_dotget_value(object, "obj_filename")) ==
       JSONString) {
     config.obj_filename = json_object_dotget_string(object, "obj_filename");
+  }
+
+  if (json_value_get_type(json_object_dotget_value(object, "eson_filename")) ==
+      JSONString) {
+    config.eson_filename = json_object_dotget_string(object, "eson_filename");
   }
 
   if (json_value_get_type(json_object_dotget_value(

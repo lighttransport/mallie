@@ -1,5 +1,6 @@
 {
-    "obj_filename" : "cornellbox_suzanne.obj",
+    "0obj_filename" : "cornellbox_suzanne.obj",
+    "eson_filename" : "cornellbox_suzanne.eson",
     "material_filename" : "teapot.material.json",
     "resolution" : [512, 512],
     "scene_scale" : 1.0,
