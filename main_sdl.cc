@@ -512,7 +512,7 @@ void RenderThread(void *arg) {
     if ((gRenderPasses >= ctx.config->num_passes) &&
         (currentRenderClock <= prevRenderClock)) {
 #ifdef _WIN32
-		Sleep(33);
+      Sleep(33);
 #else
       usleep(1000 * 33);
 #endif
@@ -723,7 +723,7 @@ void DoMainSDL(Scene &scene, const RenderConfig &config) {
     {
       // Ensure render thread deson't write to a framebuffer.
       int ret = SDL_LockMutex(gMutex);
-      assert(ret == 0); // 0 = success
+      assert(ret == 0);                // 0 = success
       SDL_RenderPresent(gSDLRenderer); // bitblit
       SDL_UnlockMutex(gMutex);
     }

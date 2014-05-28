@@ -315,7 +315,7 @@ template <class T>
 inline vector3t<T> cross(const vector3t<T> &lhs, const vector3t<T> &rhs) {
   return vector3t<T>(lhs[1] * rhs[2] - lhs[2] * rhs[1], // xyzzy
                      lhs[2] * rhs[0] - lhs[0] * rhs[2], // yzxxz
-                     lhs[0] * rhs[1] - lhs[1] * rhs[0] // zxyyx
+                     lhs[0] * rhs[1] - lhs[1] * rhs[0]  // zxyyx
                      );
 }
 

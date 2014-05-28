@@ -26,27 +26,29 @@ bool Scene::Init(const std::string &objFilename,
     ret = MeshLoader::LoadObj(mesh_, objFilename.c_str());
 
     if (!ret) {
-      printf("Mallie:err\tmsg:Failed to load .obj file [ %s ]\n", objFilename.c_str());
+      printf("Mallie:err\tmsg:Failed to load .obj file [ %s ]\n",
+             objFilename.c_str());
       return false;
     } else {
-      printf("Mallie:info\tmsg:Success to load .obj file [ %s ]\n", objFilename.c_str());
+      printf("Mallie:info\tmsg:Success to load .obj file [ %s ]\n",
+             objFilename.c_str());
     }
   } else if (!esonFilename.empty()) {
     ret = MeshLoader::LoadESON(mesh_, esonFilename.c_str());
     if (!ret) {
-      printf("Mallie:err\tmsg:Failed to load .eson file [ %s ]\n", esonFilename.c_str());
+      printf("Mallie:err\tmsg:Failed to load .eson file [ %s ]\n",
+             esonFilename.c_str());
       return false;
     } else {
-      printf("Mallie:info\tmsg:Success to load .eson file [ %s ]\n", esonFilename.c_str());
+      printf("Mallie:info\tmsg:Success to load .eson file [ %s ]\n",
+             esonFilename.c_str());
     }
-
   }
 
   if (ret == false) {
     printf("Mallie:err\tmsg:Failed to load mesh\n");
     return ret;
   }
-
 
   for (size_t i = 0; i < mesh_.numVertices; i++) {
     mesh_.vertices[3 * i + 0] *= sceneScale;

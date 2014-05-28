@@ -93,8 +93,8 @@ static int GetNumCPUs() {
 }
 
 bool InitScene(mallie::Scene &scene, mallie::RenderConfig &config) {
-  return scene.Init(config.obj_filename, config.eson_filename, config.material_filename,
-                    config.scene_scale);
+  return scene.Init(config.obj_filename, config.eson_filename,
+                    config.material_filename, config.scene_scale);
 }
 
 bool LoadJSONConfig(mallie::RenderConfig &config, // [out]

@@ -54,7 +54,7 @@ public:
   time_t usec() {
     return this->sec() * 1000000 + (time_t)(tv[1].tv_usec - tv[0].tv_usec);
   }
-  time_t current() { 
+  time_t current() {
     struct timeval t;
     gettimeofday(&t, NULL);
     return (time_t)(t.tv_sec * 1000 + t.tv_usec);
