@@ -12,34 +12,39 @@
 
 Edit scripts/setup_macosx.sh, then,
 
-  $ ./scripts/setup_macosx.sh
-  $ export CC=gcc48 # optional
-  $ export CXX=g++48 # optional
-  $ make
+    $ ./scripts/setup_macosx.sh
+    $ export CC=gcc48 # optional
+    $ export CXX=g++48 # optional
+    $ make
  
 #### Linux
 
 Edit scripts/setup_linux.sh, then,
 
-  $ ./scripts/setup_linux.sh
-  $ export CC=gcc48 # optional
-  $ export CXX=g++48 # optional
-  $ make
+    $ ./scripts/setup_linux.sh
+    $ export CC=gcc48 # optional
+    $ export CXX=g++48 # optional
+    $ make
 
 #### Windows
 
 Edit vcbuild.bat, then,
 
-  > vcbuid.bat
+    > vcbuid.bat
 
 Solition file will be generated.
 Tested on VS2013.
+
+#### Bootstrap options for premake4
+
+    --with-sdl        : Enable SDL(GUI)
+    --with-openmp     : Enable OpenMP
 
 ### Usage
 
 Edit config.josn, then
 
-   $ ./bin/mallie
+    $ ./bin/mallie
 
 GUI mode
 
