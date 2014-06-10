@@ -40,10 +40,13 @@ newoption {
    description = "Use SDL2.0."
 }
 
-sources = {
+main_sources = {
    "main.cc",
    "main_console.cc",
    "main_sdl.cc",
+}
+
+sources = {
    "mmm_io.cc",
    "render.cc",
    "camera.cc",
@@ -75,12 +78,13 @@ tinyjs_sources = {
 }
 
 test_sources = {
-   "test/cctest/test-atomic.cc"
+   "test/cctest/test-atomic.cc",
+   "test/cctest/test-main.cc"
 }
 
 gtest_sources = {
    "deps/gtest-1.7.0/src/gtest-all.cc",
-   "deps/gtest-1.7.0/src/gtest_main.cc"
+   -- "deps/gtest-1.7.0/src/gtest_main.cc"
 }
 
 
@@ -107,7 +111,7 @@ solution "MallieSolution"
       kind "ConsoleApp"
       language "C++"
 
-      files { sources, tinyjs_sources }
+      files { main_sources, sources, tinyjs_sources }
 
       includedirs {
          "./",
