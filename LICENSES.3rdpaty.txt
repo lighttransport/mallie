@@ -1,5 +1,9 @@
 Mallie uses follwing third party libraries.
 
+- miniexr
+
+// miniexr.cpp - v0.2 - public domain - 2013 Aras Pranckevicius / Unity Technologies
+
 - TinyJS
 
 /*

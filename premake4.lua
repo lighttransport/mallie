@@ -69,6 +69,7 @@ sources = {
    "vcm.cc",
    "script_engine.cc",
    "deps/TinyThread++-1.1/source/tinythread.cpp",
+   "miniexr.cpp",
 }
 
 tinyjs_sources = {
