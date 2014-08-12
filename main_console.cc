@@ -11,6 +11,7 @@
 #include <cassert>
 #include <fstream>
 #include <vector>
+#include <sstream>
 
 #include "camera.h"
 #include "timerutil.h"
@@ -30,14 +31,14 @@ inline unsigned char fclamp(float x) {
   return (unsigned char)i;
 }
 
-void HDRToLDR(std::vector<unsigned char> &out, const std::vector<float> &in,
+void HDRToLDR(std::vector<unsigned char> &out, const std::vector<float> &in, const std::vector<int> &in_count,
               int width, int height) {
   out.resize(width * height * 3);
   assert(in.size() == (width * height * 3));
 
   // Simple [0, 1] -> [0, 255]
   for (int i = 0; i < width * height * 3; i++) {
-    out[i] = fclamp(in[i]);
+    out[i] = fclamp(in[i] / in_count[i / 3]);
   }
 }
 
@@ -55,25 +56,71 @@ void SaveAsJPEG(const char *filename,
 
 void DoMainConsole(Scene &scene, const RenderConfig &config) {
   printf("[Mallie] Console mode\n");
-  std::vector<float> image;
-  std::vector<int> count;
+#if 0
+  {
+    std::vector<float> image;
+    std::vector<int> count;
 
-  int width = config.width;
-  int height = config.height;
+    const int width = config.width;
+    const int height = config.height;
 
-  image.resize(width * height * 3);
-  count.resize(width * height);
+    image.resize(width * height * 3);
+    count.resize(width * height);
 
-  mallie::Render(scene, config, image, count, config.eye, config.lookat,
-                 config.up, config.quat, 1);
+    mallie::Render(scene, config, image, count, config.eye, config.lookat, config.up, config.quat, 1);
 
-  std::string outfilename("output.jpg"); // fixme
+    std::string outfilename("output.jpg"); // fixme
 
-  std::vector<unsigned char> out;
-  HDRToLDR(out, image, width, height);
-  SaveAsJPEG(outfilename.c_str(), out, width, height);
+    std::vector<unsigned char> out;
+    HDRToLDR(out, image, width, height);
+    SaveAsJPEG(outfilename.c_str(), out, width, height);
 
-  printf("[Mallie] Output %s\n", outfilename.c_str());
+    printf("[Mallie] Output %s\n", outfilename.c_str());
+  }
+#else
+  const_cast<RenderConfig &>(config).width = 600;
+  const_cast<RenderConfig &>(config).height = 300;
+
+  const_cast<RenderConfig &>(config).eye[0] = 0;
+  const_cast<RenderConfig &>(config).eye[1] = 1;
+  const_cast<RenderConfig &>(config).eye[2] = -4;
+
+  for (int i = 0, total = 720; i < total; ++i) {
+    std::vector<float> image;
+    std::vector<int> count;
+
+    int width = config.width;
+    int height = config.height;
+
+    image.resize(width * height * 3);
+    count.resize(width * height);
+
+    double eye[3];
+
+    /*eye[0] = config.eye[0];
+    eye[1] = config.eye[1];
+    eye[2] = config.eye[2];*/
+
+    eye[0] = 4.0 * sin(2.0 * M_PI * i / total);
+    eye[1] = 1.0;
+    eye[2] = 4.0 * cos(2.0 * M_PI * i / total);
+
+    mallie::RenderPanoramic(scene, config, image, count, eye, config.lookat, config.up, config.quat, 1);
+
+    std::string outfilename;
+    {
+      std::stringstream ss;
+      ss<<"output"<<i<<".jpg";
+      outfilename = ss.str();
+    }
+
+    std::vector<unsigned char> out;
+    HDRToLDR(out, image, count, width, height);
+    SaveAsJPEG(outfilename.c_str(), out, width, height);
+
+    printf("[Mallie] Output %s\n", outfilename.c_str());
+  }
+#endif
 }
 
 } // liina

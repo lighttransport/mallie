@@ -39,6 +39,8 @@ static void vnormalize(double v[3]) {
 void Camera::BuildCameraFrame(double origin[3], double corner[3], double u[3],
                               double v[3], double fov, const double quat[4],
                               int width, int height) {
+  width_ = width;
+  height_ = height;
   double e[4][4];
   // printf("--in\n");
   // printf("eye: %f, %f, %f\n", eye_[0], eye_[1], eye_[2]);
@@ -232,6 +234,22 @@ Ray Camera::GenerateRay(double u, double v) const {
   Ray ray;
   ray.org = org;
   ray.dir = dir;
+
+  return ray;
+}
+
+Ray Camera::GenerateEnvRay(double u, double v) const {
+  double theta = M_PI * (v / height_);
+  double phi = 2.0 * M_PI * (u / width_);
+
+  Ray ray;
+  ray.org[0] = origin_[0];
+  ray.org[1] = origin_[1];
+  ray.org[2] = origin_[2];
+
+  ray.dir[0] = sin(theta) * cos(phi);
+  ray.dir[1] = cos(theta);
+  ray.dir[2] = sin(theta) * sin(phi);
 
   return ray;
 }

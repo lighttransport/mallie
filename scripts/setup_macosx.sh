@@ -1,6 +1,15 @@
 #!/bin/bash
 
-flags='--with-sdl --with-openmp'
+args=`echo "$@" | tr -d "\r\n"`
+
+if [ -n "${args}" ]; then
+	flags="${args}"
+else
+	flags='--with-sdl --with-openmp'
+fi
+
+
+echo premake flags: ${flags}
 
 ./tools/macosx/premake4 ${flags} gmake
 

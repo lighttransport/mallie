@@ -50,6 +50,11 @@ extern void Render(Scene &scene, const RenderConfig &config,
                    std::vector<int> &count,   // per-pixel counter
                    const double eye[3], const double lookat[3],
                    const double up[3], const double quat[4], int step);
+extern void RenderPanoramic(Scene &scene, const RenderConfig &config,
+                   std::vector<float> &image, // out image
+                   std::vector<int> &count,   // per-pixel counter
+                   const double eye[3], const double lookat[3],
+                   const double up[3], const double quat[4], int step);
 }
 
 #endif // __MALLIE_RENDER_H__

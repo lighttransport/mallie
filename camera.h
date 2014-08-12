@@ -26,6 +26,7 @@ public:
                         int width, int height);
 
   Ray GenerateRay(double u, double v) const;
+  Ray GenerateEnvRay(double u, double v) const;
 
   double eye_[3];
   double up_[3];
@@ -37,6 +38,9 @@ public:
   double du_[3];
   double dv_[3];
   double fov_;
+
+  int height_;
+  int width_;
 };
 
 } // namespace liina
