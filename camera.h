@@ -27,6 +27,7 @@ public:
 
   Ray GenerateRay(double u, double v) const;
   Ray GenerateEnvRay(double u, double v) const;
+  Ray GenerateStereoEnvRay(double u, double v) const;
 
   double eye_[3];
   double up_[3];

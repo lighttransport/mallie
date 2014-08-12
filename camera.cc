@@ -1,6 +1,7 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 #include <cstdio>
+#include <cassert>
 
 #include "camera.h"
 #include "matrix.h"
@@ -247,9 +248,82 @@ Ray Camera::GenerateEnvRay(double u, double v) const {
   ray.org[1] = origin_[1];
   ray.org[2] = origin_[2];
 
+  // y up
   ray.dir[0] = sin(theta) * cos(phi);
   ray.dir[1] = cos(theta);
   ray.dir[2] = sin(theta) * sin(phi);
+
+  return ray;
+}
+
+Ray Camera::GenerateStereoEnvRay(double u, double v) const {
+  const bool is_left_side = v < (height_ >> 1);
+  const double focal_length = 4.0;
+  const double r = 0.5;
+
+  double theta = M_PI * fmod(2.0 * v / height_, 1.0); // [0, pi]
+  double phi = 2.0 * M_PI * (u / width_); // [0, 2pi]
+
+  // y up
+  real3 dir_original;
+  dir_original[0] = sin(theta) * cos(phi);
+  dir_original[1] = cos(theta);
+  dir_original[2] = sin(theta) * sin(phi);
+
+#if 0
+  {
+    Ray ray;
+    ray.dir[0] = dir_original[0];
+    ray.dir[1] = dir_original[1];
+    ray.dir[2] = dir_original[2];
+
+    ray.org[0] = origin_[0];
+    ray.org[1] = origin_[1];
+    ray.org[2] = origin_[2];
+
+    return ray;
+  }
+#endif
+
+  real3 parallax;
+  if (is_left_side) {
+    // positive rotation
+    parallax[0] = -dir_original[2];
+    parallax[1] = 0.0;
+    parallax[2] = dir_original[0];
+  } else {
+    // negative rotation
+    parallax[0] = dir_original[2];
+    parallax[1] = 0.0;
+    parallax[2] = -dir_original[0];
+  }
+
+  parallax.normalize();
+  parallax = parallax * r;
+  //printf("parallax: (%f, %f, %f)\n", parallax[0], parallax[1], parallax[2]);
+
+  Ray ray;
+  ray.org[0] = origin_[0] + parallax[0];
+  ray.org[1] = origin_[1] + parallax[1];
+  ray.org[2] = origin_[2] + parallax[2];
+
+  {
+    double psi = atan2(r, focal_length);
+    assert(psi >= 0.0);
+    //printf("psi: %f\n", psi);
+
+    if (is_left_side) {
+      // negative rotation
+      psi = -psi;
+    } else {
+      // positive rotation
+    }
+    ray.dir[0] = dir_original[0] * cos(psi) - dir_original[2] * sin(psi);
+    ray.dir[1] = dir_original[1];
+    ray.dir[2] = dir_original[0] * sin(psi) + dir_original[2] * cos(psi);
+
+    ray.dir.normalize();
+  }
 
   return ray;
 }

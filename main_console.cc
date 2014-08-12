@@ -72,20 +72,21 @@ void DoMainConsole(Scene &scene, const RenderConfig &config) {
     std::string outfilename("output.jpg"); // fixme
 
     std::vector<unsigned char> out;
-    HDRToLDR(out, image, width, height);
+    HDRToLDR(out, image, count, width, height);
     SaveAsJPEG(outfilename.c_str(), out, width, height);
 
     printf("[Mallie] Output %s\n", outfilename.c_str());
   }
 #else
   const_cast<RenderConfig &>(config).width = 600;
-  const_cast<RenderConfig &>(config).height = 300;
+  const_cast<RenderConfig &>(config).height = 600;
 
   const_cast<RenderConfig &>(config).eye[0] = 0;
   const_cast<RenderConfig &>(config).eye[1] = 1;
   const_cast<RenderConfig &>(config).eye[2] = -4;
 
-  for (int i = 0, total = 720; i < total; ++i) {
+  const int total_frame = 1;
+  for (int i = 0; i < total_frame; ++i) {
     std::vector<float> image;
     std::vector<int> count;
 
@@ -101,11 +102,12 @@ void DoMainConsole(Scene &scene, const RenderConfig &config) {
     eye[1] = config.eye[1];
     eye[2] = config.eye[2];*/
 
-    eye[0] = 4.0 * sin(2.0 * M_PI * i / total);
+    eye[0] = 4.0 * sin(2.0 * M_PI * i / total_frame);
     eye[1] = 1.0;
-    eye[2] = 4.0 * cos(2.0 * M_PI * i / total);
+    eye[2] = 4.0 * cos(2.0 * M_PI * i / total_frame);
 
-    mallie::RenderPanoramic(scene, config, image, count, eye, config.lookat, config.up, config.quat, 1);
+    // mallie::RenderPanoramic(scene, config, image, count, eye, config.lookat, config.up, config.quat, /* stereo = */ false);
+    mallie::RenderPanoramic(scene, config, image, count, eye, config.lookat, config.up, config.quat, /* stereo = */ true);
 
     std::string outfilename;
     {
