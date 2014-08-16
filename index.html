@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <title>Mallie by lighttransport</title>
+  </head>
+
+  <body>
+    <div id="container">
+      <div class="inner">
+
+        <header>
+          <h1>Mallie</h1>
+          <h2>Mallie, bootstrap for your own ray tracer.</h2>
+        </header>
+
+        <section id="downloads" class="clearfix">
+          <a href="https://github.com/lighttransport/mallie/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
+          <a href="https://github.com/lighttransport/mallie/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
+          <a href="https://github.com/lighttransport/mallie" id="view-on-github" class="button"><span>View on GitHub</span></a>
+        </section>
+
+        <hr>
+
+        <section id="main_content">
+          <h1>
+<a name="mallie-ray-tracer" class="anchor" href="#mallie-ray-tracer"><span class="octicon octicon-link"></span></a>Mallie ray tracer</h1>
+
+<p><img src="https://github.com/lighttransport/mallie/blob/master/mallie.jpg?raw=true" alt="Example"></p>
+
+<p>Mallie is bootstrap for ray tracing study and researh. Its already used in some raytracing research.
+You can easily extend/implement ray tracing algorithm.
+Mallie is written in portable C/C++ and depends on less third party libraries.</p>
+
+<h2>
+<a name="features" class="anchor" href="#features"><span class="octicon octicon-link"></span></a>Features</h2>
+
+<ul>
+<li>Binned SAH BVH builder(robust and works well up to 10M triangles).</li>
+<li>wavefront .obj loader(tinyobjloader)</li>
+<li>Very simple path tracer example.</li>
+<li>Portable(at least it should be run on MacOSX/Linux/Windows, x86/ARM)</li>
+<li>JSON configuration and JavaScript script engine(TinyJS)</li>
+</ul><h2>
+<a name="building" class="anchor" href="#building"><span class="octicon octicon-link"></span></a>Building</h2>
+
+<h3>
+<a name="requirements" class="anchor" href="#requirements"><span class="octicon octicon-link"></span></a>Requirements</h3>
+
+<ul>
+<li>C++ compiler</li>
+<li>GCC (If you want OpenMP support)</li>
+<li>SDL2.0(optional)</li>
+<li>ptex(optional)</li>
+</ul><h4>
+<a name="setup" class="anchor" href="#setup"><span class="octicon octicon-link"></span></a>Setup</h4>
+
+<p>Build ptex(optional)</p>
+
+<pre><code>$ cd deps/ptex-master
+$ make
+</code></pre>
+
+<h4>
+<a name="macosx" class="anchor" href="#macosx"><span class="octicon octicon-link"></span></a>MacOSX</h4>
+
+<p>Edit scripts/setup_macosx.sh, then,</p>
+
+<pre><code>$ ./scripts/setup_macosx.sh
+$ export CC=gcc48 # optional
+$ export CXX=g++48 # optional
+$ make
+</code></pre>
+
+<h4>
+<a name="linux" class="anchor" href="#linux"><span class="octicon octicon-link"></span></a>Linux</h4>
+
+<p>Edit scripts/setup_linux.sh, then,</p>
+
+<pre><code>$ ./scripts/setup_linux.sh
+$ export CC=gcc48 # optional
+$ export CXX=g++48 # optional
+$ make
+</code></pre>
+
+<h4>
+<a name="windows" class="anchor" href="#windows"><span class="octicon octicon-link"></span></a>Windows</h4>
+
+<p>Edit vcbuild.bat, then,</p>
+
+<pre><code>&gt; vcbuid.bat
+</code></pre>
+
+<p>Solition file will be generated.
+Tested on VS2013.</p>
+
+<h4>
+<a name="bootstrap-options-for-premake4" class="anchor" href="#bootstrap-options-for-premake4"><span class="octicon octicon-link"></span></a>Bootstrap options for premake4</h4>
+
+<pre><code>--with-sdl        : Enable SDL(GUI)
+--with-openmp     : Enable OpenMP
+</code></pre>
+
+<h3>
+<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h3>
+
+<p>Edit config.josn, then</p>
+
+<pre><code>$ ./bin/mallie
+</code></pre>
+
+<p>GUI mode</p>
+
+<ul>
+<li>mouse left : rotate</li>
+<li>shift + mouse left : translate</li>
+<li>ctrl(or tab) + mouse left : dolly</li>
+<li>'q' : quit.</li>
+<li>'c' : Dump camera data to camera.dat (eye, lookat, up, quaternion)</li>
+</ul><h2>
+<a name="quick-start-to-hacking" class="anchor" href="#quick-start-to-hacking"><span class="octicon octicon-link"></span></a>Quick start to hacking</h2>
+
+<p>See <code>render.cc::Render()</code>.</p>
+
+<h2>
+<a name="authors" class="anchor" href="#authors"><span class="octicon octicon-link"></span></a>Author(s)</h2>
+
+<ul>
+<li>Light Transport Entertainment, Inc.</li>
+</ul><h2>
+<a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
+
+<p>Mallie is licensed under 3-clause BSD. See <code>LICENSES.3rdpaty.txt</code> for components used in Mallie.</p>
+
+<p>EoL.</p>
+        </section>
+
+        <footer>
+          Mallie is maintained by <a href="https://github.com/lighttransport">lighttransport</a><br>
+          This page was generated by <a href="http://pages.github.com">GitHub Pages</a>. Tactile theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.
+        </footer>
+
+        
+      </div>
+    </div>
+  </body>
+</html>
