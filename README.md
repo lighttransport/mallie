@@ -1,5 +1,7 @@
 # Mallie ray tracer
 
+https://lighttransport.github.io/mallie
+
 ![Example](https://github.com/lighttransport/mallie/blob/master/mallie.jpg?raw=true)
 
 Mallie is bootstrap for ray tracing study and researh. Its already used in some raytracing research.
