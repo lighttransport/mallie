@@ -240,7 +240,7 @@ void HandleMouseMotion(SDL_Event e) {
 
     } else if (gShiftPressed || (gMouseButton == 2)) {
 
-      //printf("shift = %f\n", gScale * (gMouseX - x));
+      // printf("shift = %f\n", gScale * (gMouseX - x));
       gEye[0] += gScale * (gMouseX - x);
       gLookat[0] += gScale * (gMouseX - x);
 

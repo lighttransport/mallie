@@ -262,7 +262,7 @@ Ray Camera::GenerateStereoEnvRay(double u, double v) const {
   const double r = 0.5;
 
   double theta = M_PI * fmod(2.0 * v / height_, 1.0); // [0, pi]
-  double phi = 2.0 * M_PI * (u / width_); // [0, 2pi]
+  double phi = 2.0 * M_PI * (u / width_);             // [0, 2pi]
 
   // y up
   real3 dir_original;
@@ -300,7 +300,7 @@ Ray Camera::GenerateStereoEnvRay(double u, double v) const {
 
   parallax.normalize();
   parallax = parallax * r;
-  //printf("parallax: (%f, %f, %f)\n", parallax[0], parallax[1], parallax[2]);
+  // printf("parallax: (%f, %f, %f)\n", parallax[0], parallax[1], parallax[2]);
 
   Ray ray;
   ray.org[0] = origin_[0] + parallax[0];
@@ -310,7 +310,7 @@ Ray Camera::GenerateStereoEnvRay(double u, double v) const {
   {
     double psi = atan2(r, focal_length);
     assert(psi >= 0.0);
-    //printf("psi: %f\n", psi);
+    // printf("psi: %f\n", psi);
 
     if (is_left_side) {
       // negative rotation

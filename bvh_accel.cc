@@ -748,8 +748,8 @@ void BuildIntersection(Intersection &isect, const Mesh *mesh, Ray &ray) {
 #else
   {
 #endif
-    isect.normal = n;
-  }
+  isect.normal = n;
+}
 }
 
 } // namespace

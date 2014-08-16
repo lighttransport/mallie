@@ -31,8 +31,8 @@ inline unsigned char fclamp(float x) {
   return (unsigned char)i;
 }
 
-void HDRToLDR(std::vector<unsigned char> &out, const std::vector<float> &in, const std::vector<int> &in_count,
-              int width, int height) {
+void HDRToLDR(std::vector<unsigned char> &out, const std::vector<float> &in,
+              const std::vector<int> &in_count, int width, int height) {
   out.resize(width * height * 3);
   assert(in.size() == (width * height * 3));
 
@@ -106,13 +106,15 @@ void DoMainConsole(Scene &scene, const RenderConfig &config) {
     eye[1] = 1.0;
     eye[2] = 4.0 * cos(2.0 * M_PI * i / total_frame);
 
-    // mallie::RenderPanoramic(scene, config, image, count, eye, config.lookat, config.up, config.quat, /* stereo = */ false);
-    mallie::RenderPanoramic(scene, config, image, count, eye, config.lookat, config.up, config.quat, /* stereo = */ true);
+    // mallie::RenderPanoramic(scene, config, image, count, eye, config.lookat,
+    // config.up, config.quat, /* stereo = */ false);
+    mallie::RenderPanoramic(scene, config, image, count, eye, config.lookat,
+                            config.up, config.quat, /* stereo = */ true);
 
     std::string outfilename;
     {
       std::stringstream ss;
-      ss<<"output"<<i<<".jpg";
+      ss << "output" << i << ".jpg";
       outfilename = ss.str();
     }
 

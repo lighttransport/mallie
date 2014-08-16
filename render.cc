@@ -42,7 +42,7 @@ const int kMinPathLength = 2;
 
 const int kTileSize = 8;
 
-const int kPtexMaxMem = 1024*1024; // @fixme.
+const int kPtexMaxMem = 1024 * 1024; // @fixme.
 
 struct PathVertex {
   real3 P;          // Position
@@ -57,21 +57,15 @@ typedef std::vector<PathVertex> Path;
 namespace {
 
 #ifdef ENABLE_PTEX
-PtexCache*
-InitPtex()
-{
-  PtexCache* c = PtexCache::create(0, kPtexMaxMem);
+PtexCache *InitPtex() {
+  PtexCache *c = PtexCache::create(0, kPtexMaxMem);
 
   return c;
 }
 
-PtexTexture*
-LoadPtex(
-  PtexCache* cache,
-  const char* filename)
-{
+PtexTexture *LoadPtex(PtexCache *cache, const char *filename) {
   Ptex::String err;
-  PtexTexture* r = PtexTexture::open(filename, err, /* premult */ 0);
+  PtexTexture *r = PtexTexture::open(filename, err, /* premult */ 0);
 
   printf("Mallie:info\tmsg:PtexTexture: %p\n", r);
 
@@ -83,15 +77,14 @@ LoadPtex(
   return r;
 }
 
-void PtexTest(PtexTexture* r)
-{
+void PtexTest(PtexTexture *r) {
   // @todo
   PtexFilter::Options opts(PtexFilter::f_bicubic, 0, 1.0);
   PtexPtr<PtexFilter> f(PtexFilter::getFilter(r, opts));
 
   float result[4];
   int faceid = 0;
-  float u=0, v=0, uw=.125, vw=.125;
+  float u = 0, v = 0, uw = .125, vw = .125;
 
   for (v = 0; v <= 1; v += .125) {
     for (u = 0; u <= 1; u += .125) {
@@ -329,10 +322,10 @@ real3 PathTrace(Scene &scene, const Camera &camera, const RenderConfig &config,
   return radiance;
 }
 
-real3 PathTraceEnv(Scene &scene, const Camera &camera, const RenderConfig &config,
-                std::vector<float> &image, // RGB
-                std::vector<int> &count, int px, int py,
-                bool stereo) {
+real3 PathTraceEnv(Scene &scene, const Camera &camera,
+                   const RenderConfig &config,
+                   std::vector<float> &image, // RGB
+                   std::vector<int> &count, int px, int py, bool stereo) {
   //
   // 1. Sample eye(E0)
   //
@@ -345,7 +338,6 @@ real3 PathTraceEnv(Scene &scene, const Camera &camera, const RenderConfig &confi
   } else {
     ray = camera.GenerateEnvRay(px + u, py + v);
   }
-
 
   Intersection isect;
   isect.t = kFar;
@@ -403,7 +395,6 @@ real3 PathTraceEnv(Scene &scene, const Camera &camera, const RenderConfig &confi
 
   return radiance;
 }
-
 }
 
 void Render(Scene &scene, const RenderConfig &config,
@@ -450,10 +441,10 @@ void Render(Scene &scene, const RenderConfig &config,
 #pragma omp parallel for schedule(dynamic, 1)
   for (int y = 0; y < height; y += step) {
 
-    //if ((y % 100) == 0) {
-      //printf("\rMallie:info\tRender %d of %d", y, height);
-      //fflush(stdout);
-    //}
+// if ((y % 100) == 0) {
+// printf("\rMallie:info\tRender %d of %d", y, height);
+// fflush(stdout);
+//}
 
 #if 1
     for (int x = 0; x < width; x += step) {
@@ -472,7 +463,6 @@ void Render(Scene &scene, const RenderConfig &config,
       image[3 * (py * width + px) + 2] = radiance[2];
       count[py * width + px]++;
     }
-
 
 #else
 
@@ -521,10 +511,10 @@ void Render(Scene &scene, const RenderConfig &config,
 }
 
 void RenderPanoramic(Scene &scene, const RenderConfig &config,
-            std::vector<float> &image, // RGB
-            std::vector<int> &count, const double eye[3],
-            const double lookat[3], const double up[3], const double quat[4],
-            bool stereo) {
+                     std::vector<float> &image, // RGB
+                     std::vector<int> &count, const double eye[3],
+                     const double lookat[3], const double up[3],
+                     const double quat[4], bool stereo) {
   int width = config.width;
   int height = config.height;
   double fov = config.fov;
@@ -552,7 +542,8 @@ void RenderPanoramic(Scene &scene, const RenderConfig &config,
   for (int y = 0; y < height; ++y) {
     for (int x = 0; x < width; ++x) {
       for (int i = 0; i < 10; ++i) {
-        real3 radiance = PathTraceEnv(scene, camera, config, image, count, x, y, stereo);
+        real3 radiance =
+            PathTraceEnv(scene, camera, config, image, count, x, y, stereo);
 
         image[3 * (y * width + x) + 0] += radiance[0];
         image[3 * (y * width + x) + 1] += radiance[1];
@@ -565,7 +556,8 @@ void RenderPanoramic(Scene &scene, const RenderConfig &config,
   t.end();
 
   double fps = 1000.0 / (double)t.msec();
-  printf("\r[Mallie] Render time: %f sec(s) | %f fps", (double)t.msec() / 1000.0, fps);
+  printf("\r[Mallie] Render time: %f sec(s) | %f fps",
+         (double)t.msec() / 1000.0, fps);
   fflush(stdout);
 }
 
