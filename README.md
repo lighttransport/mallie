@@ -74,12 +74,9 @@ GUI mode
 * 'q' : quit.
 * 'c' : Dump camera data to camera.dat (eye, lookat, up, quaternion)
 
-## Quick start
+## Quick start to hacking
 
 See `render.cc::Render()`.
-
-```
-```
 
 ## Author(s)
 
