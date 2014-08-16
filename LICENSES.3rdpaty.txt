@@ -1,5 +1,10 @@
 Mallie uses follwing third party libraries.
 
+- jpge
+
+// jpge.cpp - C++ class for JPEG compression.
+// Public domain, Rich Geldreich <richgel99@gmail.com>
+
 - miniexr
 
 // miniexr.cpp - v0.2 - public domain - 2013 Aras Pranckevicius / Unity Technologies
