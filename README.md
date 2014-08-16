@@ -1,5 +1,7 @@
 # Mallie ray tracer
 
+![Example](https://github.com/lighttransport/mallie/blob/master/mallie.jpg?raw=true)
+
 Mallie is bootstrap for ray tracing study and researh. Its already used in some raytracing research.
 You can easily extend/implement ray tracing algorithm.
 Mallie is written in portable C/C++ and depends on less third party libraries.
