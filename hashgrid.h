@@ -22,8 +22,8 @@
  * (The above is MIT License: http://en.wikipedia.org/wiki/MIT_License)
  */
 
-#ifndef __GLRS_HASHGRID_HXX__
-#define __GLRS_HASHGRID_HXX__
+#ifndef __MALLIE_HASHGRID_HXX__
+#define __MALLIE_HASHGRID_HXX__
 
 #include <vector>
 #include <cmath>
@@ -230,4 +230,4 @@ private:
 
 } // namespace
 
-#endif //__GLRS_HASHGRID_HXX__
+#endif //__MALLIE_HASHGRID_HXX__

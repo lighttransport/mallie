@@ -25,7 +25,7 @@
 #endif
 #include <cmath>
 
-#define PIXELSTEP_COARSE (8)
+#define PIXELSTEP_COARSE (1)
 
 namespace mallie {
 

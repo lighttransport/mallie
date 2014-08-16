@@ -1,12 +1,24 @@
 # Mallie ray tracer
 
+Mallie is bootstrap for ray tracing study and researh. Its already used in some raytracing research.
+You can easily extend/implement ray tracing algorithm.
+Mallie is written in portable C/C++ and depends on less third party libraries.
+
+## Features
+
+* Binned SAH BVH builder(robust and works well up to 10M triangles).
+* wavefront .obj loader(tinyobjloader)
+* Very simple path tracer example.
+* Portable(at least it should be run on MacOSX/Linux/Windows, x86/ARM)
+* JSON configuration and JavaScript script engine(TinyJS)
+
 ## Building
 
 ### Requirements
 
+* C++ compiler
 * GCC (If you want OpenMP support)
 * SDL2.0(optional)
-* premake4
 * ptex(optional)
 
 #### Setup
@@ -62,5 +74,19 @@ GUI mode
 * 'q' : quit.
 * 'c' : Dump camera data to camera.dat (eye, lookat, up, quaternion)
 
-EoL.
+## Quick start
 
+See `render.cc::Render()`.
+
+```
+```
+
+## Author(s)
+
+* Light Transport Entertainment, Inc.
+
+## License
+
+Mallie is licensed under 3-clause BSD. See `LICENSES.3rdpaty.txt` for components used in Mallie.
+
+EoL.

@@ -99,6 +99,7 @@ unsigned int gSeed[1024][4];
 
 inline void init_randomreal(void) {
 #if _OPENMP
+  // @todo { Remove calling omp_XYZ for each time. }
   assert(omp_get_max_threads() < 1024);
 
   for (int i = 0; i < omp_get_max_threads(); i++) {
@@ -108,6 +109,10 @@ inline void init_randomreal(void) {
     gSeed[i][3] = 88675123;
   }
 #else
+    gSeed[0][0] = 123456789;
+    gSeed[0][1] = 362436069;
+    gSeed[0][2] = 521288629;
+    gSeed[0][3] = 88675123;
 #endif
 }
 
@@ -294,7 +299,7 @@ real3 PathTrace(Scene &scene, const Camera &camera, const RenderConfig &config,
 
     real3 hitP = ray.org + isect.t * ray.dir;
 
-    // 2. Next event estimation
+    // 2. Next event estimation{todo}
     {}
 
     // 3. Continue path tracing.
@@ -406,12 +411,6 @@ void Render(Scene &scene, const RenderConfig &config,
   int height = config.height;
   double fov = config.fov;
 
-  std::vector<int> xs;
-  std::vector<int> ys;
-  std::srand(unsigned(std::time(0)));
-  std::random_shuffle(xs.begin(), xs.end());
-  std::random_shuffle(ys.begin(), ys.end());
-
   double origin[3], corner[3], du[3], dv[3];
   Camera camera(eye, lookat, up);
   camera.BuildCameraFrame(origin, corner, du, dv, fov, quat, width, height);
@@ -425,7 +424,11 @@ void Render(Scene &scene, const RenderConfig &config,
   assert(image.size() >= 3 * width * height);
   // memset(&image.at(0), 0, sizeof(float) * width * height * 3);
 
-  init_randomreal();
+  static bool initial_pass = true;
+  if (initial_pass) {
+    init_randomreal();
+    initial_pass = false;
+  }
 
   mallie::timerutil t;
   mallie::timerutil tEventTimer;
@@ -441,19 +444,15 @@ void Render(Scene &scene, const RenderConfig &config,
 #pragma omp parallel for schedule(dynamic, 1)
   for (int y = 0; y < height; y += step) {
 
-// if ((y % 100) == 0) {
-// printf("\rMallie:info\tRender %d of %d", y, height);
-// fflush(stdout);
-//}
+    // if ((y % 100) == 0) {
+    // printf("\rMallie:info\tRender %d of %d", y, height);
+    // fflush(stdout);
+    //}
 
-#if 1
     for (int x = 0; x < width; x += step) {
 
-      // random sample pixel position in [step x step] sized tile.
-      int px = x + (int)(randomreal() * step);
-      int py = y + (int)(randomreal() * step);
-      px = std::min(px, (width - 1));
-      py = std::min(py, (height - 1));
+      int px = x;
+      int py = y;
 
       real3 radiance =
           PathTrace(scene, camera, config, image, count, px, py, 1);
@@ -461,29 +460,11 @@ void Render(Scene &scene, const RenderConfig &config,
       image[3 * (py * width + px) + 0] = radiance[0];
       image[3 * (py * width + px) + 1] = radiance[1];
       image[3 * (py * width + px) + 2] = radiance[2];
-      count[py * width + px]++;
-    }
 
-#else
-
-    for (int x = 0; x < width; x += step) {
-
-      float u = randomreal() - 0.5;
-      float v = randomreal() - 0.5;
-
-      Ray ray = camera.GenerateRay(x + u + step / 2.0f, y + v + step / 2.0f);
-
-      Intersection isect;
-      bool hit = scene.Trace(isect, ray);
-
-      if (hit) {
-
-        double dotNI = fabs(vdot(isect.normal, ray.dir.neg()));
-
-        image[3 * (y * width + x) + 0] = isect.normal[0];
-        image[3 * (y * width + x) + 1] = isect.normal[1];
-        image[3 * (y * width + x) + 2] = isect.normal[2];
+      if (step == 1) {
+        count[py * width + px]++;
       }
+
     }
 
     // block fill
@@ -494,12 +475,13 @@ void Render(Scene &scene, const RenderConfig &config,
             for (int k = 0; k < 3; k++) {
               image[((y + v) * width * 3 + (x + u) * 3) + k] =
                   image[3 * (y * width + x) + k];
+              count[(y + v) * width + (x + u)]++;
             }
           }
         }
       }
     }
-#endif
+
   }
 
   t.end();
@@ -525,7 +507,11 @@ void RenderPanoramic(Scene &scene, const RenderConfig &config,
 
   assert(image.size() >= 3 * width * height);
 
-  init_randomreal();
+  static bool initial_pass = true;
+  if (initial_pass) {
+    init_randomreal();
+    initial_pass = false;
+  }
 
   mallie::timerutil t;
   mallie::timerutil tEventTimer;
