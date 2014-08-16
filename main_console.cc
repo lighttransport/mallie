@@ -56,7 +56,7 @@ void SaveAsJPEG(const char *filename,
 
 void DoMainConsole(Scene &scene, const RenderConfig &config) {
   printf("[Mallie] Console mode\n");
-#if 0
+#if 1
   {
     std::vector<float> image;
     std::vector<int> count;
@@ -127,4 +127,4 @@ void DoMainConsole(Scene &scene, const RenderConfig &config) {
 #endif
 }
 
-} // liina
+} // mallie
