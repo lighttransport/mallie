@@ -70,6 +70,7 @@ sources = {
    "script_engine.cc",
    "deps/TinyThread++-1.1/source/tinythread.cpp",
    "miniexr.cpp",
+   "tinyexr.cc",
 }
 
 tinyjs_sources = {

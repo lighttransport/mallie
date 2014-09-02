@@ -15,6 +15,8 @@ Mallie is written in portable C/C++ and depends on less third party libraries.
 * Very simple path tracer example.
 * Portable(at least it should be run on MacOSX/Linux/Windows, x86/ARM)
 * JSON configuration and JavaScript script engine(TinyJS)
+* OpenEXR loader(tinyexr)
+* OpenEXR writer(miniexr)
 
 ## Building
 
