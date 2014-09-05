@@ -81,6 +81,9 @@ sources = {
    "deps/TinyThread++-1.1/source/tinythread.cpp",
    "miniexr.cpp",
    "tinyexr.cc",
+   "tinyexr.h",
+   "happyhttp.cpp",
+   "happyhttp.h",
 }
 
 tinyjs_sources = {
