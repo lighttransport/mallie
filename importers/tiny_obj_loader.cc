@@ -5,6 +5,7 @@
 //
 
 //
+// version 0.9.7: Support multi-materials(per-face material ID) per object/group.
 // version 0.9.6: Support Ni(index of refraction) mtl parameter.
 //                Parse transmittance material parameter correctly.
 // version 0.9.5: Parse multiple group name.
@@ -178,7 +179,7 @@ updateVertex(
     return it->second;
   }
 
-  assert(in_positions.size() > (3*i.v_idx+2));
+  assert(in_positions.size() > (unsigned int) (3*i.v_idx+2));
 
   positions.push_back(in_positions[3*i.v_idx+0]);
   positions.push_back(in_positions[3*i.v_idx+1]);
@@ -224,24 +225,22 @@ void InitMaterial(material_t& material) {
 static bool
 exportFaceGroupToShape(
   shape_t& shape,
+  std::map<vertex_index, unsigned int> vertexCache,
   const std::vector<float> &in_positions,
   const std::vector<float> &in_normals,
   const std::vector<float> &in_texcoords,
   const std::vector<std::vector<vertex_index> >& faceGroup,
-  const material_t &material,
+  const int material_id,
   const std::string &name,
-  const bool is_material_seted)
+  bool clearCache)
 {
   if (faceGroup.empty()) {
     return false;
   }
 
-  // Flattened version of vertex data
-  std::vector<float> positions;
-  std::vector<float> normals;
-  std::vector<float> texcoords;
-  std::map<vertex_index, unsigned int> vertexCache;
-  std::vector<unsigned int> indices;
+  size_t offset;
+
+  offset = shape.mesh.indices.size();
 
   // Flatten vertices and indices
   for (size_t i = 0; i < faceGroup.size(); i++) {
@@ -258,41 +257,31 @@ exportFaceGroupToShape(
       i1 = i2;
       i2 = face[k];
 
-      unsigned int v0 = updateVertex(vertexCache, positions, normals, texcoords, in_positions, in_normals, in_texcoords, i0);
-      unsigned int v1 = updateVertex(vertexCache, positions, normals, texcoords, in_positions, in_normals, in_texcoords, i1);
-      unsigned int v2 = updateVertex(vertexCache, positions, normals, texcoords, in_positions, in_normals, in_texcoords, i2);
+      unsigned int v0 = updateVertex(vertexCache, shape.mesh.positions, shape.mesh.normals, shape.mesh.texcoords, in_positions, in_normals, in_texcoords, i0);
+      unsigned int v1 = updateVertex(vertexCache, shape.mesh.positions, shape.mesh.normals, shape.mesh.texcoords, in_positions, in_normals, in_texcoords, i1);
+      unsigned int v2 = updateVertex(vertexCache, shape.mesh.positions, shape.mesh.normals, shape.mesh.texcoords, in_positions, in_normals, in_texcoords, i2);
 
-      indices.push_back(v0);
-      indices.push_back(v1);
-      indices.push_back(v2);
+      shape.mesh.indices.push_back(v0);
+      shape.mesh.indices.push_back(v1);
+      shape.mesh.indices.push_back(v2);
+
+      shape.mesh.material_ids.push_back(material_id);
     }
 
   }
 
-  //
-  // Construct shape.
-  //
   shape.name = name;
-  shape.mesh.positions.swap(positions);
-  shape.mesh.normals.swap(normals);
-  shape.mesh.texcoords.swap(texcoords);
-  shape.mesh.indices.swap(indices);
 
-  if(is_material_seted) {
-    shape.material = material;
-  } else {
-    InitMaterial(shape.material);
-    shape.material.diffuse[0] = 1.f;
-    shape.material.diffuse[1] = 1.f;
-    shape.material.diffuse[2] = 1.f;
-  }
+  if (clearCache)
+      vertexCache.clear();
 
   return true;
 
 }
 
 std::string LoadMtl (
-  std::map<std::string, material_t>& material_map,
+  std::map<std::string, int>& material_map,
+  std::vector<material_t>& materials,
   std::istream& inStream)
 {
   material_map.clear();
@@ -307,12 +296,12 @@ std::string LoadMtl (
 
     std::string linebuf(&buf[0]);
 
-    // Trim newline '\r\n' or '\r'
+    // Trim newline '\r\n' or '\n'
     if (linebuf.size() > 0) {
       if (linebuf[linebuf.size()-1] == '\n') linebuf.erase(linebuf.size()-1);
     }
     if (linebuf.size() > 0) {
-      if (linebuf[linebuf.size()-1] == '\n') linebuf.erase(linebuf.size()-1);
+      if (linebuf[linebuf.size()-1] == '\r') linebuf.erase(linebuf.size()-1);
     }
 
     // Skip if empty line.
@@ -332,7 +321,11 @@ std::string LoadMtl (
     // new mtl
     if ((0 == strncmp(token, "newmtl", 6)) && isSpace((token[6]))) {
       // flush previous material.
-      material_map.insert(std::pair<std::string, material_t>(material.name, material));
+      if (!material.name.empty())
+      {
+          material_map.insert(std::pair<std::string, int>(material.name, materials.size()));
+          materials.push_back(material);
+      }
 
       // initial temporary material
       InitMaterial(material);
@@ -474,14 +467,16 @@ std::string LoadMtl (
     }
   }
   // flush last material.
-  material_map.insert(std::pair<std::string, material_t>(material.name, material));
+  material_map.insert(std::pair<std::string, int>(material.name, materials.size()));
+  materials.push_back(material);
 
   return err.str();
 }
 
 std::string MaterialFileReader::operator() (
     const std::string& matId,
-    std::map<std::string, material_t>& matMap)
+    std::vector<material_t>& materials,
+    std::map<std::string, int>& matMap)
 {
   std::string filepath;
 
@@ -492,12 +487,13 @@ std::string MaterialFileReader::operator() (
   }
 
   std::ifstream matIStream(filepath.c_str());
-  return LoadMtl(matMap, matIStream);
+  return LoadMtl(matMap, materials, matIStream);
 }
 
 std::string
 LoadObj(
   std::vector<shape_t>& shapes,
+  std::vector<material_t>& materials,   // [output]
   const char* filename,
   const char* mtl_basepath)
 {
@@ -518,11 +514,12 @@ LoadObj(
   }
   MaterialFileReader matFileReader( basePath );
   
-  return LoadObj(shapes, ifs, matFileReader);
+  return LoadObj(shapes, materials, ifs, matFileReader);
 }
 
 std::string LoadObj(
   std::vector<shape_t>& shapes,
+  std::vector<material_t>& materials,   // [output]
   std::istream& inStream,
   MaterialReader& readMatFn)
 {
@@ -535,9 +532,11 @@ std::string LoadObj(
   std::string name;
 
   // material
-  std::map<std::string, material_t> material_map;
-  material_t material;
-  bool is_material_seted = false;
+  std::map<std::string, int> material_map;
+  std::map<vertex_index, unsigned int> vertexCache;
+  int  material = -1;
+
+  shape_t shape;
 
   int maxchars = 8192;  // Alloc enough size.
   std::vector<char> buf(maxchars);  // Alloc enough size.
@@ -546,12 +545,12 @@ std::string LoadObj(
 
     std::string linebuf(&buf[0]);
 
-    // Trim newline '\r\n' or '\r'
+    // Trim newline '\r\n' or '\n'
     if (linebuf.size() > 0) {
       if (linebuf[linebuf.size()-1] == '\n') linebuf.erase(linebuf.size()-1);
     }
     if (linebuf.size() > 0) {
-      if (linebuf[linebuf.size()-1] == '\n') linebuf.erase(linebuf.size()-1);
+      if (linebuf[linebuf.size()-1] == '\r') linebuf.erase(linebuf.size()-1);
     }
 
     // Skip if empty line.
@@ -625,13 +624,16 @@ std::string LoadObj(
       token += 7;
       sscanf(token, "%s", namebuf);
 
+      bool ret = exportFaceGroupToShape(shape, vertexCache, v, vn, vt, faceGroup, material, name, false);
+      faceGroup.clear();
+
       if (material_map.find(namebuf) != material_map.end()) {
         material = material_map[namebuf];
-        is_material_seted = true;
       } else {
         // { error!! material not found }
-        InitMaterial(material);
+        material = -1;
       }
+
       continue;
 
     }
@@ -642,7 +644,7 @@ std::string LoadObj(
       token += 7;
       sscanf(token, "%s", namebuf);
         
-      std::string err_mtl = readMatFn(namebuf, material_map);
+      std::string err_mtl = readMatFn(namebuf, materials, material_map);
       if (!err_mtl.empty()) {
         faceGroup.clear();  // for safety
         return err_mtl;
@@ -655,13 +657,14 @@ std::string LoadObj(
     if (token[0] == 'g' && isSpace((token[1]))) {
 
       // flush previous face group.
-      shape_t shape;
-      bool ret = exportFaceGroupToShape(shape, v, vn, vt, faceGroup, material, name, is_material_seted);
+      bool ret = exportFaceGroupToShape(shape, vertexCache, v, vn, vt, faceGroup, material, name, true);
       if (ret) {
         shapes.push_back(shape);
       }
 
-      is_material_seted = false;
+      shape = shape_t();
+
+      //material = -1;
       faceGroup.clear();
 
       std::vector<std::string> names;
@@ -687,14 +690,14 @@ std::string LoadObj(
     if (token[0] == 'o' && isSpace((token[1]))) {
 
       // flush previous face group.
-      shape_t shape;
-      bool ret = exportFaceGroupToShape(shape, v, vn, vt, faceGroup, material, name, is_material_seted);
+      bool ret = exportFaceGroupToShape(shape, vertexCache, v, vn, vt, faceGroup, material, name, true);
       if (ret) {
         shapes.push_back(shape);
       }
 
-      is_material_seted = false;
+      //material = -1;
       faceGroup.clear();
+      shape = shape_t();
 
       // @todo { multiple object name? }
       char namebuf[4096];
@@ -709,16 +712,14 @@ std::string LoadObj(
     // Ignore unknown command.
   }
 
-  shape_t shape;
-  bool ret = exportFaceGroupToShape(shape, v, vn, vt, faceGroup, material, name, is_material_seted);
+  bool ret = exportFaceGroupToShape(shape, vertexCache, v, vn, vt, faceGroup, material, name, true);
   if (ret) {
     shapes.push_back(shape);
   }
-  is_material_seted = false; // for safety
   faceGroup.clear();  // for safety
 
   return err.str();
 }
 
 
-};
+}

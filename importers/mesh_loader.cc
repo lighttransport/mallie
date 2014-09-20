@@ -14,8 +14,9 @@ MeshLoader::LoadObj(
   const char* filename)
 {
   std::vector<tinyobj::shape_t> shapes;
+  std::vector<tinyobj::material_t> materials;
 
-  std::string err = tinyobj::LoadObj(shapes, filename);
+  std::string err = tinyobj::LoadObj(shapes, materials, filename);
 
   if (!err.empty()) {
     std::cerr << err << std::endl;
@@ -68,6 +69,7 @@ MeshLoader::LoadObj(
       mesh.vertices[3*(vertexIdxOffset+v)+0] = shapes[i].mesh.positions[3*v+0];
       mesh.vertices[3*(vertexIdxOffset+v)+1] = shapes[i].mesh.positions[3*v+1];
       mesh.vertices[3*(vertexIdxOffset+v)+2] = shapes[i].mesh.positions[3*v+2];
+      mesh.materialIDs[vertexIdxOffset+v] = shapes[i].mesh.material_ids[v];
     }
 
     vertexIdxOffset += shapes[i].mesh.positions.size() / 3;

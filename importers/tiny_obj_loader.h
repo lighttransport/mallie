@@ -40,12 +40,12 @@ typedef struct
     std::vector<float>          normals;
     std::vector<float>          texcoords;
     std::vector<unsigned int>   indices;
+    std::vector<int>            material_ids; // per-mesh material ID
 } mesh_t;
 
 typedef struct
 {
     std::string  name;
-    material_t   material;
     mesh_t       mesh;
 } shape_t;
 
@@ -57,7 +57,8 @@ public:
 
     virtual std::string operator() (
         const std::string& matId,
-        std::map<std::string, material_t>& matMap) = 0;
+        std::vector<material_t>& materials,
+        std::map<std::string, int>& matMap) = 0;
 };
 
 class MaterialFileReader:
@@ -68,7 +69,8 @@ class MaterialFileReader:
         virtual ~MaterialFileReader() {}
         virtual std::string operator() (
           const std::string& matId,
-          std::map<std::string, material_t>& matMap);
+          std::vector<material_t>& materials,
+          std::map<std::string, int>& matMap);
 
     private:
         std::string m_mtlBasePath;
@@ -81,6 +83,7 @@ class MaterialFileReader:
 /// 'mtl_basepath' is optional, and used for base path for .mtl file.
 std::string LoadObj(
     std::vector<shape_t>& shapes,   // [output]
+    std::vector<material_t>& materials,   // [output]
     const char* filename,
     const char* mtl_basepath = NULL);
 
@@ -89,14 +92,16 @@ std::string LoadObj(
 /// Returns empty string when loading .obj success.
 std::string LoadObj(
     std::vector<shape_t>& shapes,   // [output]
+    std::vector<material_t>& materials,   // [output]
     std::istream& inStream,
     MaterialReader& readMatFn);
 
 /// Loads materials into std::map
 /// Returns an empty string if successful
 std::string LoadMtl (
-  std::map<std::string, material_t>& material_map,
+  std::map<std::string, int>& material_map,
+  std::vector<material_t>& materials,
   std::istream& inStream);
-};
+}
 
 #endif  // _TINY_OBJ_LOADER_H
