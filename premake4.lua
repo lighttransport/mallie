@@ -53,6 +53,8 @@ sources = {
    "light.cc",
    "matrix.cc",
    "trackball.cc",
+   "prim-plane.cc",
+   "prim-plane.h",
    "importers/tiny_obj_loader.cc",
    "importers/tiny_obj_loader.h",
    "importers/eson.cc",

@@ -228,11 +228,11 @@ MeshLoader::LoadMagicaVoxel(
     int z = voxelData[4*i+2];
     int col = voxelData[4*i+3]; // @todo
 
-    // vert
+    // vert(Zup -> Yup)
     for (int j = 0; j < 8; j++) {
       mesh.vertices[3*(voffset + j)+0] = x + 0.5f * P[j][0]; 
-      mesh.vertices[3*(voffset + j)+1] = y + 0.5f * P[j][1]; 
-      mesh.vertices[3*(voffset + j)+2] = z + 0.5f * P[j][2]; 
+      mesh.vertices[3*(voffset + j)+2] = -(y + 0.5f * P[j][1]); 
+      mesh.vertices[3*(voffset + j)+1] = z + 0.5f * P[j][2]; 
     }
 
     // face

@@ -17,6 +17,7 @@
 #include "camera.h"
 #include "timerutil.h"
 #include "scene.h"
+#include "prim-plane.h"
 #include "script_engine.h"
 
 #ifdef _OPENMP
@@ -94,6 +95,10 @@ void PtexTest(PtexTexture *r) {
   }
 }
 #endif // ENABLE_PTEX
+
+// Infinite plane
+bool gPlane = false;
+Plane gPlaneObject;
 
 unsigned int gSeed[1024][4];
 
@@ -281,6 +286,9 @@ real3 PathTrace(Scene &scene, const Camera &camera, const RenderConfig &config,
 
   for (;; ++pathLength) {
     bool hit = scene.Trace(isect, ray);
+    if (gPlane) { // @fixme
+      hit |= gPlaneObject.intersect(&isect, ray);
+    }
     if (!hit) {
 
       if (pathLength < kMinPathLength) {
@@ -428,6 +436,15 @@ void Render(Scene &scene, const RenderConfig &config,
   if (initial_pass) {
     init_randomreal();
     initial_pass = false;
+
+    gPlane = config.plane;
+    if (gPlane) {
+      real3 bmin, bmax;
+      scene.BoundingBox(bmin, bmax);
+      float zmin = bmin[1];
+      float zsize = bmax[1] - bmin[1];
+      gPlaneObject.set(0, 1, 0, -(zmin - zsize * 0.0001f));
+    }
   }
 
   mallie::timerutil t;
