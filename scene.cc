@@ -18,6 +18,7 @@ Scene::~Scene() {
 
 bool Scene::Init(const std::string &objFilename,
                  const std::string &esonFilename,
+                 const std::string &magicaVoxelFilename,
                  const std::string &materialFilename, double sceneScale) {
 
   bool ret = false;
@@ -42,6 +43,16 @@ bool Scene::Init(const std::string &objFilename,
     } else {
       printf("Mallie:info\tmsg:Success to load .eson file [ %s ]\n",
              esonFilename.c_str());
+    }
+  } else if (!magicaVoxelFilename.empty()) {
+    ret = MeshLoader::LoadMagicaVoxel(mesh_, magicaVoxelFilename.c_str());
+    if (!ret) {
+      printf("Mallie:err\tmsg:Failed to load .vox file [ %s ]\n",
+             magicaVoxelFilename.c_str());
+      return false;
+    } else {
+      printf("Mallie:info\tmsg:Success to load .vox file [ %s ]\n",
+             magicaVoxelFilename.c_str());
     }
   }
 

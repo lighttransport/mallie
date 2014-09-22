@@ -26,6 +26,7 @@ struct RenderConfig {
 
   std::string obj_filename;
   std::string eson_filename;
+  std::string magicavoxel_filename;
   std::string material_filename;
 
   RenderConfig()

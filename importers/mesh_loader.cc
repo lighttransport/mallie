@@ -5,6 +5,7 @@
 
 #include "common.h"
 #include "tiny_obj_loader.h"
+#include "magicavoxel_loader.h"
 #include "mesh_loader.h"
 #include "eson.h"
 
@@ -170,6 +171,92 @@ MeshLoader::LoadESON(
   mesh.facevarying_uvs = NULL;
   mesh.facevarying_tangents = NULL;
   mesh.facevarying_binormals = NULL;
+
+  return true;
+}
+
+bool
+MeshLoader::LoadMagicaVoxel(
+  Mesh& mesh,
+  const char* filename)
+{
+  MagicaVoxelLoader loader;
+  std::vector<char> voxelData;
+  int size[3];
+  bool ret = loader.Load(filename, voxelData, size[0], size[1], size[2]);
+  
+  if (!ret) {
+    fprintf(stderr, "Failed to load .vox file.\n");
+    return false;
+  }
+
+  // Simple voxel to polygon conversion.
+  float P[8][3] = 
+  {
+      {-1.0,-1.0,1.0},
+      {-1.0,1.0,1.0},
+      {1.0,1.0,1.0},
+      {1.0,-1.0,1.0},
+      {-1.0,-1.0,-1.0},
+      {-1.0,1.0,-1.0},
+      {1.0,1.0,-1.0},
+      {1.0,-1.0,-1.0},
+  };
+
+  int F[6][4] = {
+    {0,3,2,1},
+    {2,3,7,6},
+    {0,4,7,3},
+    {1,2,6,5},
+    {4,5,6,7},
+    {0,1,5,4},
+  };
+
+  int voffset = 0;
+  int foffset = 0;
+  int numVoxels = voxelData.size() / 4;
+
+  mesh.numFaces     = numVoxels * 12;
+  mesh.numVertices  = numVoxels * 8;
+  mesh.vertices = new real[mesh.numVertices * 3];
+  mesh.faces    = new unsigned int[mesh.numFaces * 3];
+  mesh.materialIDs = new unsigned int[mesh.numFaces];
+
+  for (size_t i = 0; i < voxelData.size() / 4; i++) {
+    int x = voxelData[4*i+0];
+    int y = voxelData[4*i+1];
+    int z = voxelData[4*i+2];
+    int col = voxelData[4*i+3]; // @todo
+
+    // vert
+    for (int j = 0; j < 8; j++) {
+      mesh.vertices[3*(voffset + j)+0] = x + 0.5f * P[j][0]; 
+      mesh.vertices[3*(voffset + j)+1] = y + 0.5f * P[j][1]; 
+      mesh.vertices[3*(voffset + j)+2] = z + 0.5f * P[j][2]; 
+    }
+
+    // face
+    for (int f = 0; f < 6; f++) {
+
+      mesh.faces[foffset + 6*f + 0] = voffset + F[f][0];
+      mesh.faces[foffset + 6*f + 1] = voffset + F[f][1];
+      mesh.faces[foffset + 6*f + 2] = voffset + F[f][2];
+
+      mesh.faces[foffset + 6*f + 3] = voffset + F[f][0];
+      mesh.faces[foffset + 6*f + 4] = voffset + F[f][2];
+      mesh.faces[foffset + 6*f + 5] = voffset + F[f][3];
+
+    }
+
+    voffset += 8;
+    foffset += 3*12;
+  
+  }
+
+  for (size_t i = 0; i < mesh.numFaces; i++) {
+    // @fixme
+    mesh.materialIDs[i] = 0;
+  }
 
   return true;
 }

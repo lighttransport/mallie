@@ -18,6 +18,10 @@ MeshLoader
   ///< Implicitly loads material infos whose name is basename(filename) + '.material.json'
   static bool LoadESON(Mesh& mesh, const char* filename);
 
+  ///< Load MagicaVoxel data(as mesh) from a file.
+  ///< Allocated memory for the mesh must be free'ed by the application.
+  static bool LoadMagicaVoxel(Mesh& mesh, const char* filename);
+
 };
 
 #endif  // __MESH_LOADER_H__

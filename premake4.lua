@@ -57,6 +57,8 @@ sources = {
    "importers/tiny_obj_loader.h",
    "importers/eson.cc",
    "importers/eson.h",
+   "importers/magicavoxel_loader.cc",
+   "importers/magicavoxel_loader.h",
    "importers/mesh_loader.cc",
    "importers/mesh_loader.h",
    "importers/mmd_scene.cc",
