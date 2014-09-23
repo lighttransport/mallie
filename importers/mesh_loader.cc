@@ -232,7 +232,7 @@ bool MeshLoader::LoadMagicaVoxel(Mesh &mesh, std::vector<Material> &materials,
     int x = voxelData[4 * i + 0];
     int y = voxelData[4 * i + 1];
     int z = voxelData[4 * i + 2];
-    int col = voxelData[4 * i + 3];
+    int col = voxelData[4 * i + 3] - 1; // index 0 is not used.
 
     // vert(Zup -> Yup)
     for (int j = 0; j < 8; j++) {
