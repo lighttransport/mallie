@@ -45,7 +45,7 @@ bool Scene::Init(const std::string &objFilename,
              esonFilename.c_str());
     }
   } else if (!magicaVoxelFilename.empty()) {
-    ret = MeshLoader::LoadMagicaVoxel(mesh_, magicaVoxelFilename.c_str());
+    ret = MeshLoader::LoadMagicaVoxel(mesh_, materials_, magicaVoxelFilename.c_str());
     if (!ret) {
       printf("Mallie:err\tmsg:Failed to load .vox file [ %s ]\n",
              magicaVoxelFilename.c_str());

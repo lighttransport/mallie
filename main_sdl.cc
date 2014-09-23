@@ -154,7 +154,8 @@ static void ClearCount(std::vector<int> &img) {
 }
 
 inline unsigned char fclamp(float x) {
-  int i = x * 255.5;
+  float gamma = 2.2f;
+  int i = powf(x, 1.0f / gamma) * 255.5;
   if (i < 0)
     return 0;
   if (i > 255)
@@ -383,13 +384,26 @@ void Display(SDL_Surface *surface, const std::vector<float> &image,
       float scale = 1.0f / (float)counts[y * width + x];
 #endif
 
-      unsigned char col[3];
-      col[0] = x % 255;
-      col[1] = y % 255;
-      col[2] = 127;
+//#ifdef __APPLE__
+//      // RGBA
+//      data[4 * (y * width + x) + 0] =
+//          fclamp(scale * image[3 * (y * width + x) + 0]);
+//      data[4 * (y * width + x) + 1] =
+//          fclamp(scale * image[3 * (y * width + x) + 1]);
+//      data[4 * (y * width + x) + 2] =
+//          fclamp(scale * image[3 * (y * width + x) + 2]);
+//      data[4 * (y * width + x) + 3] = 255;
+//#else
+//      // BGRA?
+//      data[4 * (y * width + x) + 2] =
+//          fclamp(scale * image[3 * (y * width + x) + 0]);
+//      data[4 * (y * width + x) + 1] =
+//          fclamp(scale * image[3 * (y * width + x) + 1]);
+//      data[4 * (y * width + x) + 0] =
+//          fclamp(scale * image[3 * (y * width + x) + 2]);
+//      data[4 * (y * width + x) + 3] = 255;
+//#endif
 
-#ifdef __APPLE__
-      // RGBA
       data[4 * (y * width + x) + 0] =
           fclamp(scale * image[3 * (y * width + x) + 0]);
       data[4 * (y * width + x) + 1] =
@@ -397,16 +411,6 @@ void Display(SDL_Surface *surface, const std::vector<float> &image,
       data[4 * (y * width + x) + 2] =
           fclamp(scale * image[3 * (y * width + x) + 2]);
       data[4 * (y * width + x) + 3] = 255;
-#else
-      // BGRA?
-      data[4 * (y * width + x) + 2] =
-          fclamp(scale * image[3 * (y * width + x) + 0]);
-      data[4 * (y * width + x) + 1] =
-          fclamp(scale * image[3 * (y * width + x) + 1]);
-      data[4 * (y * width + x) + 0] =
-          fclamp(scale * image[3 * (y * width + x) + 2]);
-      data[4 * (y * width + x) + 3] = 255;
-#endif
     }
   }
 

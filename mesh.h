@@ -12,6 +12,7 @@ typedef struct {
   real *facevarying_tangents;  /// [xyz] * 3(triangle) * numFaces
   real *facevarying_binormals; /// [xyz] * 3(triangle) * numFaces
   real *facevarying_uvs;       /// [xyz] * 3(triangle) * numFaces
+  real *facevarying_vertex_colors;   /// [xyz] * 3(triangle) * numFaces
   unsigned int *faces;         /// triangle x numFaces
   unsigned int *materialIDs;   /// index x numFaces
 } Mesh;

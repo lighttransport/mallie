@@ -31,7 +31,7 @@ bool Plane::intersect(Intersection *info, const Ray &ray) {
       info->binormal[2] = -1.0;
       info->texcoord[0] = 0.0;
       info->texcoord[1] = 0.0;
-      // info->materialID    = -1; // invalid
+      info->materialID  = (unsigned int)(-1); // invalid
 
       return true;
     }

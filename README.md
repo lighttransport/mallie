@@ -12,8 +12,9 @@ Mallie is written in portable C/C++ and depends on less third party libraries.
 
 * Binned SAH BVH builder(robust and works well up to 10M triangles).
 * wavefront .obj loader(tinyobjloader)
+* MagicaVoxel .vox loader
 * Very simple path tracer example.
-* Portable(at least it should be run on MacOSX/Linux/Windows, x86/ARM)
+* Portable C++(at least it should be compiled with gcc/clang/VisualStudio, and run on MacOSX/Linux/Windows, x86/ARM)
 * JSON configuration and JavaScript script engine(TinyJS)
 * OpenEXR loader(tinyexr)
 * OpenEXR writer(miniexr)

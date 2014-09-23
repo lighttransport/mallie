@@ -8,6 +8,7 @@ typedef struct {
   real u;
   real v;
   unsigned int faceID;
+  unsigned int materialID;
 
   unsigned int f0;
   unsigned int f1;

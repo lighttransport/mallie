@@ -278,7 +278,7 @@ real3 PathTrace(Scene &scene, const Camera &camera, const RenderConfig &config,
   Intersection isect;
   isect.t = kFar;
 
-  real3 throughput;
+  real3 throughput = real3(1.0, 1.0, 1.0);
   real3 radiance = real3(0.0, 0.0, 0.0);
   unsigned int pathLength = 1;
   bool lastSpecular = true;
@@ -298,7 +298,7 @@ real3 PathTrace(Scene &scene, const Camera &camera, const RenderConfig &config,
 
       // Hit background.
       real3 kd = real3(0.5, 0.5, 0.5);
-      radiance += kd / real3(pathLength, pathLength, pathLength);
+      radiance += throughput * kd / real3(pathLength, pathLength, pathLength);
     }
 
     if (pathLength >= kMaxPathLength) {
@@ -323,7 +323,12 @@ real3 PathTrace(Scene &scene, const Camera &camera, const RenderConfig &config,
       }
       double pdf = SampleDiffuseIS(sampledDir, n);
 
-      // throughput *= factor * (cosThetaOut / pdf);
+      if (isect.materialID != (unsigned int)(-1)) {
+        const Material& mat = scene.GetMaterial(isect.materialID);
+        throughput[0] *= mat.diffuse[0]; // @fixme { factor * (cosThetaOut / pdf); }
+        throughput[1] *= mat.diffuse[1]; 
+        throughput[2] *= mat.diffuse[2]; 
+      }
 
       ray.org = hitP + kEPS * sampledDir;
       ray.dir = sampledDir;
