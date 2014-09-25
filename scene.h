@@ -6,6 +6,10 @@
 #include "bvh_accel.h"
 #include "material.h"
 
+#ifdef ENABLE_EMBREE
+#include "embree2/rtcore.h"
+#endif
+
 namespace mallie {
 
 typedef enum {
@@ -37,7 +41,7 @@ private:
 //< Scene class. Usually only one instance of Scene class in rendering.
 class Scene {
 public:
-  Scene() {};
+  Scene();
   ~Scene();
 
   // Fixme.
@@ -57,9 +61,15 @@ public:
   }
 
 protected:
-  BVHAccel accel_;
   Mesh mesh_;
   std::vector<Material> materials_;
+#ifdef ENABLE_EMBREE
+  RTCScene scene_;
+  real3 bmin_;
+  real3 bmax_;
+#else
+  BVHAccel accel_;
+#endif
 };
 }
 
