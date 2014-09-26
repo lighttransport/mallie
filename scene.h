@@ -56,8 +56,12 @@ public:
   real3 GetBackgroundRadiance(real3 &dir);
 
   const Material &GetMaterial(int matID) const {
-    assert(matID < materials_.size());
-    return materials_[matID];
+	static Material s_default_aterial;
+	if (matID < materials_.size()) {
+    	return materials_[matID];
+	} else {
+		return s_default_aterial;
+	}
   }
 
 protected:

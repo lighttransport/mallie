@@ -211,6 +211,13 @@ solution "MallieSolution"
       configuration {"linux", "gmake"}
          defines { '__STDC_CONSTANT_MACROS', '__STDC_LIMIT_MACROS' } -- c99
 
+         if _OPTIONS['with-embree'] then
+            defines { "ENABLE_EMBREE" }
+            includedirs { "./deps/embree-bin-2.3.2_linux/include" }
+            libdirs { "./deps/embree-bin-2.3.2_linux/lib/x64" }
+            links { "embree" }
+         end
+
          -- gcc openmp
          if _OPTIONS['with-openmp'] then
             buildoptions { "-fopenmp" }
