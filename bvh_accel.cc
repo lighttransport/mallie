@@ -728,9 +728,7 @@ void BuildIntersection(Intersection &isect, const Mesh *mesh, Ray &ray) {
 
   isect.geometricNormal = n;
 
-#if 0 // @todo
   if (mesh->facevarying_normals) {
-    assert(0);
     const real* normals = mesh->facevarying_normals;
     real3 n0, n1, n2;
 
@@ -750,11 +748,8 @@ void BuildIntersection(Intersection &isect, const Mesh *mesh, Ray &ray) {
     isect.normal[2] = (1.0 - isect.u - isect.v) * n0[2] + isect.u * n1[2] + isect.v * n2[2];
 
   } else {
-#else
-  {
-#endif
-  isect.normal = n;
-}
+    isect.normal = n;
+  }
 }
 
 } // namespace

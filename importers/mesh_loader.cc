@@ -2,12 +2,26 @@
 #include <iostream>
 #include <cassert>
 #include <cstdio>
+#include <cstring>
 
 #include "common.h"
 #include "tiny_obj_loader.h"
 #include "magicavoxel_loader.h"
 #include "mesh_loader.h"
 #include "eson.h"
+
+namespace {
+
+void calcNormal(real3& N, real3 v0, real3 v1, real3 v2)
+{
+  real3 v10 = v1 - v0;
+  real3 v20 = v2 - v0;
+
+  N = vcross(v20, v10);
+  N.normalize();
+}
+
+}
 
 bool MeshLoader::LoadObj(Mesh &mesh, const char *filename) {
   std::vector<tinyobj::shape_t> shapes;
@@ -30,6 +44,8 @@ bool MeshLoader::LoadObj(Mesh &mesh, const char *filename) {
     assert((shapes[i].mesh.indices.size() % 3) == 0);
     printf("  shape[%ld].vertices: %ld\n", i, shapes[i].mesh.positions.size());
     assert((shapes[i].mesh.positions.size() % 3) == 0);
+    printf("  shape[%ld].normals: %ld\n", i, shapes[i].mesh.normals.size());
+    assert((shapes[i].mesh.normals.size() % 3) == 0);
 
     numVertices += shapes[i].mesh.positions.size() / 3;
     numFaces += shapes[i].mesh.indices.size() / 3;
@@ -41,9 +57,10 @@ bool MeshLoader::LoadObj(Mesh &mesh, const char *filename) {
   mesh.vertices = new real[numVertices * 3];
   mesh.faces = new unsigned int[numFaces * 3];
   mesh.materialIDs = new unsigned int[numFaces];
+  memset(mesh.materialIDs, 0, sizeof(int) * numFaces);
+  mesh.facevarying_normals = new real[numFaces * 3 * 3];
 
   // @todo {}
-  mesh.facevarying_normals = NULL;
   mesh.facevarying_uvs = NULL;
   mesh.facevarying_tangents = NULL;
   mesh.facevarying_binormals = NULL;
@@ -63,6 +80,8 @@ bool MeshLoader::LoadObj(Mesh &mesh, const char *filename) {
       mesh.faces[3 * (faceIdxOffset + f) + 0] += vertexIdxOffset;
       mesh.faces[3 * (faceIdxOffset + f) + 1] += vertexIdxOffset;
       mesh.faces[3 * (faceIdxOffset + f) + 2] += vertexIdxOffset;
+
+      mesh.materialIDs[faceIdxOffset + f] = shapes[i].mesh.material_ids[f];
     }
 
     for (size_t v = 0; v < shapes[i].mesh.positions.size() / 3; v++) {
@@ -72,7 +91,76 @@ bool MeshLoader::LoadObj(Mesh &mesh, const char *filename) {
           shapes[i].mesh.positions[3 * v + 1];
       mesh.vertices[3 * (vertexIdxOffset + v) + 2] =
           shapes[i].mesh.positions[3 * v + 2];
-      mesh.materialIDs[vertexIdxOffset + v] = shapes[i].mesh.material_ids[v];
+    }
+
+    if (shapes[i].mesh.normals.size() > 0) {
+      for (size_t f = 0; f < shapes[i].mesh.indices.size() / 3; f++) {
+        int f0, f1, f2;
+
+        f0 = shapes[i].mesh.indices[3*f+0];
+        f1 = shapes[i].mesh.indices[3*f+1];
+        f2 = shapes[i].mesh.indices[3*f+2];
+
+        real3 n0, n1, n2;
+
+        n0[0] = shapes[i].mesh.normals[3 * f0 + 0];
+        n0[1] = shapes[i].mesh.normals[3 * f0 + 1];
+        n0[2] = shapes[i].mesh.normals[3 * f0 + 2];
+
+        n1[0] = shapes[i].mesh.normals[3 * f1 + 0];
+        n1[1] = shapes[i].mesh.normals[3 * f1 + 1];
+        n1[2] = shapes[i].mesh.normals[3 * f1 + 2];
+
+        n2[0] = shapes[i].mesh.normals[3 * f2 + 0];
+        n2[1] = shapes[i].mesh.normals[3 * f2 + 1];
+        n2[2] = shapes[i].mesh.normals[3 * f2 + 2];
+
+        mesh.facevarying_normals[3 * (3 * (faceIdxOffset + f) + 0) + 0] = n0[0];
+        mesh.facevarying_normals[3 * (3 * (faceIdxOffset + f) + 0) + 1] = n0[1];
+        mesh.facevarying_normals[3 * (3 * (faceIdxOffset + f) + 0) + 2] = n0[2];
+
+        mesh.facevarying_normals[3 * (3 * (faceIdxOffset + f) + 1) + 0] = n1[0];
+        mesh.facevarying_normals[3 * (3 * (faceIdxOffset + f) + 1) + 1] = n1[1];
+        mesh.facevarying_normals[3 * (3 * (faceIdxOffset + f) + 1) + 2] = n1[2];
+
+        mesh.facevarying_normals[3 * (3 * (faceIdxOffset + f) + 2) + 0] = n2[0];
+        mesh.facevarying_normals[3 * (3 * (faceIdxOffset + f) + 2) + 1] = n2[1];
+        mesh.facevarying_normals[3 * (3 * (faceIdxOffset + f) + 2) + 2] = n2[2];
+      }
+    } else {
+      // calc geometric normal
+      for (size_t f = 0; f < shapes[i].mesh.indices.size() / 3; f++) {
+        real3 v0, v1, v2;
+
+        v0[0] = shapes[i].mesh.positions[3 * (3 * f + 0) + 0];
+        v0[1] = shapes[i].mesh.positions[3 * (3 * f + 0) + 1];
+        v0[2] = shapes[i].mesh.positions[3 * (3 * f + 0) + 2];
+
+        v1[0] = shapes[i].mesh.positions[3 * (3 * f + 1) + 0];
+        v1[1] = shapes[i].mesh.positions[3 * (3 * f + 1) + 1];
+        v1[2] = shapes[i].mesh.positions[3 * (3 * f + 1) + 2];
+
+        v2[0] = shapes[i].mesh.positions[3 * (3 * f + 2) + 0];
+        v2[1] = shapes[i].mesh.positions[3 * (3 * f + 2) + 1];
+        v2[2] = shapes[i].mesh.positions[3 * (3 * f + 2) + 2];
+
+        real3 N;
+        calcNormal(N, v0, v1, v2);
+
+        mesh.facevarying_normals[3 * (3 * (faceIdxOffset + f) + 0) + 0] = N[0];
+        mesh.facevarying_normals[3 * (3 * (faceIdxOffset + f) + 0) + 1] = N[1];
+        mesh.facevarying_normals[3 * (3 * (faceIdxOffset + f) + 0) + 2] = N[2];
+
+        mesh.facevarying_normals[3 * (3 * (faceIdxOffset + f) + 1) + 0] = N[0];
+        mesh.facevarying_normals[3 * (3 * (faceIdxOffset + f) + 1) + 1] = N[1];
+        mesh.facevarying_normals[3 * (3 * (faceIdxOffset + f) + 1) + 2] = N[2];
+
+        mesh.facevarying_normals[3 * (3 * (faceIdxOffset + f) + 2) + 0] = N[0];
+        mesh.facevarying_normals[3 * (3 * (faceIdxOffset + f) + 2) + 1] = N[1];
+        mesh.facevarying_normals[3 * (3 * (faceIdxOffset + f) + 2) + 2] = N[2];
+
+      }
+
     }
 
     vertexIdxOffset += shapes[i].mesh.positions.size() / 3;
@@ -222,6 +310,12 @@ bool MeshLoader::LoadMagicaVoxel(Mesh &mesh, std::vector<Material> &materials,
   mesh.vertices = new real[mesh.numVertices * 3];
   mesh.faces = new unsigned int[mesh.numFaces * 3];
   mesh.materialIDs = new unsigned int[mesh.numFaces];
+
+  // not used
+  mesh.facevarying_normals = NULL;
+  mesh.facevarying_uvs = NULL;
+  mesh.facevarying_tangents = NULL;
+  mesh.facevarying_binormals = NULL;
 
   float posOffset[3];
   posOffset[0] = -0.5f * size[0];
