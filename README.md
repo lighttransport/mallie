@@ -18,6 +18,7 @@ Mallie is written in portable C/C++ and depends on less third party libraries.
 * JSON configuration and JavaScript script engine(TinyJS)
 * OpenEXR loader(tinyexr)
 * OpenEXR writer(miniexr)
+* Embree raytracing kernel for faster raytracing.
 
 ## Building
 
@@ -27,8 +28,12 @@ Mallie is written in portable C/C++ and depends on less third party libraries.
 * GCC (If you want OpenMP support)
 * SDL2.0(optional)
 * ptex(optional)
+* Embree raytracing kernel(optional)
+  * http://embree.github.io
 
 #### Setup
+
+Download embree and put it into `deps` directory(optional)
 
 Build ptex(optional)
 
@@ -66,6 +71,7 @@ Tested on VS2013.
 
     --with-sdl        : Enable SDL(GUI)
     --with-openmp     : Enable OpenMP
+    --with-embree     : Enable Embree
 
 ### Usage
 

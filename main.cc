@@ -89,8 +89,9 @@ static int GetNumCPUs() {
 }
 
 bool InitScene(mallie::Scene &scene, mallie::RenderConfig &config) {
-  return scene.Init(config.obj_filename, config.eson_filename, config.magicavoxel_filename,
-                    config.material_filename, config.scene_scale);
+  return scene.Init(config.obj_filename, config.eson_filename,
+                    config.magicavoxel_filename, config.material_filename,
+                    config.scene_scale);
 }
 
 bool LoadJSONConfig(mallie::RenderConfig &config, // [out]
@@ -121,9 +122,10 @@ bool LoadJSONConfig(mallie::RenderConfig &config, // [out]
     config.eson_filename = json_object_dotget_string(object, "eson_filename");
   }
 
-  if (json_value_get_type(json_object_dotget_value(object, "magicavoxel_filename")) ==
-      JSONString) {
-    config.magicavoxel_filename = json_object_dotget_string(object, "magicavoxel_filename");
+  if (json_value_get_type(json_object_dotget_value(
+          object, "magicavoxel_filename")) == JSONString) {
+    config.magicavoxel_filename =
+        json_object_dotget_string(object, "magicavoxel_filename");
   }
 
   if (json_value_get_type(json_object_dotget_value(
@@ -208,7 +210,12 @@ int main(int argc, char **argv) {
   }
 
 #ifdef _OPENMP
-  printf("Mallie:info\tOpenMP Detected. Max # of threads = %d\n",
+  printf("Mallie:info\tmsg:OpenMP Detected. Max # of threads = %d\n",
+         omp_get_max_threads());
+#endif
+
+#ifdef ENABLE_EMBREE
+  printf("Mallie:info\tmsg:Built with Embree raytracing kernel.\n",
          omp_get_max_threads());
 #endif
 

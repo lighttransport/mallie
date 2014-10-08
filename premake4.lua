@@ -4,6 +4,12 @@ newoption {
    description = "Build unit test."
 }
 
+-- Intel Embree
+newoption {
+   trigger     = "with-embree",
+   description = "Use Intel Embree ray tracing kernel."
+}
+
 -- ARM target
 newoption {
    trigger     = "arm",
@@ -144,6 +150,14 @@ solution "MallieSolution"
 
          defines { '_LARGEFILE_SOURCE', '_FILE_OFFSET_BITS=64' }
 
+         if _OPTIONS['with-embree'] then
+            defines { "ENABLE_EMBREE" }
+            includedirs { "./deps/embree-bin-2.3.2_macos/include" }
+            libdirs { "./deps/embree-bin-2.3.2_macos/lib/x64" }
+            links { "embree" }
+         end
+
+
          -- SDL
          if _OPTIONS['with-sdl'] then
             defines { 'ENABLE_SDL' }
@@ -196,6 +210,13 @@ solution "MallieSolution"
       -- Linux specific
       configuration {"linux", "gmake"}
          defines { '__STDC_CONSTANT_MACROS', '__STDC_LIMIT_MACROS' } -- c99
+
+         if _OPTIONS['with-embree'] then
+            defines { "ENABLE_EMBREE" }
+            includedirs { "./deps/embree-bin-2.3.2_linux/include" }
+            libdirs { "./deps/embree-bin-2.3.2_linux/lib/x64" }
+            links { "embree" }
+         end
 
          -- gcc openmp
          if _OPTIONS['with-openmp'] then
