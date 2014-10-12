@@ -11,6 +11,8 @@ Mallie is written in portable C/C++ and depends on less third party libraries.
 ## Features
 
 * Binned SAH BVH builder(robust and works well up to 10M triangles).
+* Intel's Embree support for fast ray tracing.
+  * 2 ~ 3 times faster than reference implementation of mallie's Binned SAH BVH.
 * wavefront .obj loader(tinyobjloader)
 * MagicaVoxel .vox loader
 * Very simple path tracer example.
@@ -27,6 +29,7 @@ Mallie is written in portable C/C++ and depends on less third party libraries.
 * GCC (If you want OpenMP support)
 * SDL2.0(optional)
 * ptex(optional)
+* Embree(optional)
 
 #### Setup
 
@@ -66,6 +69,7 @@ Tested on VS2013.
 
     --with-sdl        : Enable SDL(GUI)
     --with-openmp     : Enable OpenMP
+    --with-embree     : Enable Embree
 
 ### Usage
 
