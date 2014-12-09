@@ -746,10 +746,26 @@ void BuildIntersection(Intersection &isect, const Mesh *mesh, Ray &ray) {
     isect.normal[0] = (1.0 - isect.u - isect.v) * n0[0] + isect.u * n1[0] + isect.v * n2[0];
     isect.normal[1] = (1.0 - isect.u - isect.v) * n0[1] + isect.u * n1[1] + isect.v * n2[1];
     isect.normal[2] = (1.0 - isect.u - isect.v) * n0[2] + isect.u * n1[2] + isect.v * n2[2];
-
   } else {
     isect.normal = n;
   }
+
+  if (mesh->facevarying_uvs) {
+    const real* uvs = mesh->facevarying_uvs;
+    real3 st0, st1, st2;
+
+    st0[0] = uvs[6 * isect.faceID + 0];
+    st0[1] = uvs[6 * isect.faceID + 1];
+    st1[0] = uvs[6 * isect.faceID + 2];
+    st1[1] = uvs[6 * isect.faceID + 3];
+    st2[0] = uvs[6 * isect.faceID + 4];
+    st2[1] = uvs[6 * isect.faceID + 5];
+
+    // lerp
+    isect.texcoord[0] = (1.0 - isect.u - isect.v) * st0[0] + isect.u * st1[0] + isect.v * st2[0];
+    isect.texcoord[1] = (1.0 - isect.u - isect.v) * st0[1] + isect.u * st1[1] + isect.v * st2[1];
+  }
+
 }
 
 } // namespace

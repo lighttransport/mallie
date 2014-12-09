@@ -59,9 +59,10 @@ bool MeshLoader::LoadObj(Mesh &mesh, const char *filename) {
   mesh.materialIDs = new unsigned int[numFaces];
   memset(mesh.materialIDs, 0, sizeof(int) * numFaces);
   mesh.facevarying_normals = new real[numFaces * 3 * 3];
+  mesh.facevarying_uvs = new real[numFaces * 3 * 2];
+  memset(mesh.facevarying_uvs, 0, sizeof(real) * 2 * 3 * numFaces);
 
   // @todo {}
-  mesh.facevarying_uvs = NULL;
   mesh.facevarying_tangents = NULL;
   mesh.facevarying_binormals = NULL;
 
@@ -161,6 +162,36 @@ bool MeshLoader::LoadObj(Mesh &mesh, const char *filename) {
 
       }
 
+    }
+
+    if (shapes[i].mesh.texcoords.size() > 0) {
+      for (size_t f = 0; f < shapes[i].mesh.indices.size() / 3; f++) {
+        int f0, f1, f2;
+
+        f0 = shapes[i].mesh.indices[3*f+0];
+        f1 = shapes[i].mesh.indices[3*f+1];
+        f2 = shapes[i].mesh.indices[3*f+2];
+
+        real3 n0, n1, n2;
+
+        n0[0] = shapes[i].mesh.texcoords[2 * f0 + 0];
+        n0[1] = shapes[i].mesh.texcoords[2 * f0 + 1];
+
+        n1[0] = shapes[i].mesh.texcoords[2 * f1 + 0];
+        n1[1] = shapes[i].mesh.texcoords[2 * f1 + 1];
+
+        n2[0] = shapes[i].mesh.texcoords[2 * f2 + 0];
+        n2[1] = shapes[i].mesh.texcoords[2 * f2 + 1];
+
+        mesh.facevarying_uvs[2 * (3 * (faceIdxOffset + f) + 0) + 0] = n0[0];
+        mesh.facevarying_uvs[2 * (3 * (faceIdxOffset + f) + 0) + 1] = n0[1];
+
+        mesh.facevarying_uvs[2 * (3 * (faceIdxOffset + f) + 1) + 0] = n1[0];
+        mesh.facevarying_uvs[2 * (3 * (faceIdxOffset + f) + 1) + 1] = n1[1];
+
+        mesh.facevarying_uvs[2 * (3 * (faceIdxOffset + f) + 2) + 0] = n2[0];
+        mesh.facevarying_uvs[2 * (3 * (faceIdxOffset + f) + 2) + 1] = n2[1];
+      }
     }
 
     vertexIdxOffset += shapes[i].mesh.positions.size() / 3;
