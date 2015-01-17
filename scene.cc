@@ -66,7 +66,7 @@ Scene::~Scene() {
 bool Scene::Init(const std::string &objFilename,
                  const std::string &esonFilename,
                  const std::string &magicaVoxelFilename,
-                 const std::string &materialFilename, double sceneScale) {
+                 const std::string &materialFilename, double sceneScale, bool sceneFit) {
 
   bool ret = false;
 
@@ -109,10 +109,64 @@ bool Scene::Init(const std::string &objFilename,
     return ret;
   }
 
-  for (size_t i = 0; i < mesh_.numVertices; i++) {
-    mesh_.vertices[3 * i + 0] *= sceneScale;
-    mesh_.vertices[3 * i + 1] *= sceneScale;
-    mesh_.vertices[3 * i + 2] *= sceneScale;
+  if (sceneFit) {
+    real3 bmin = real3(std::numeric_limits<real>::max(),
+                       std::numeric_limits<real>::max(),
+                       std::numeric_limits<real>::max());
+    real3 bmax = real3(-std::numeric_limits<real>::max(),
+                       -std::numeric_limits<real>::max(),
+                       -std::numeric_limits<real>::max());
+
+    for (size_t i = 0; i < mesh_.numVertices; i++) {
+      bmin[0] = std::min(bmin[0], mesh_.vertices[3 * i + 0]);
+      bmin[1] = std::min(bmin[1], mesh_.vertices[3 * i + 1]);
+      bmin[2] = std::min(bmin[2], mesh_.vertices[3 * i + 2]);
+
+      bmax[0] = std::max(bmax[0], mesh_.vertices[3 * i + 0]);
+      bmax[1] = std::max(bmax[1], mesh_.vertices[3 * i + 1]);
+      bmax[2] = std::max(bmax[2], mesh_.vertices[3 * i + 2]);
+    }
+
+    printf("bmin = %f, %f, %f\n", bmin[0], bmin[1], bmin[2]);
+    printf("bmax = %f, %f, %f\n", bmax[0], bmax[1], bmax[2]);
+
+    real3 bextent = (bmax - bmin);
+    real3 invExtent;
+    invExtent[0] = (bextent[0] > 0.000001) ? (1.0 / bextent[0]) : bextent[0];
+    invExtent[1] = (bextent[1] > 0.000001) ? (1.0 / bextent[1]) : bextent[1];
+    invExtent[2] = (bextent[2] > 0.000001) ? (1.0 / bextent[2]) : bextent[2];
+
+    printf("binv = %f, %f, %f\n", invExtent[0], invExtent[1], invExtent[2]);
+
+    
+    // to [-1, 1]^3
+    for (size_t i = 0; i < mesh_.numVertices; i++) {
+      mesh_.vertices[3 * i + 0] -= bmin[0];
+      mesh_.vertices[3 * i + 1] -= bmin[1];
+      mesh_.vertices[3 * i + 2] -= bmin[2];
+
+      mesh_.vertices[3 * i + 0] *= invExtent[0];
+      mesh_.vertices[3 * i + 1] *= invExtent[1];
+      mesh_.vertices[3 * i + 2] *= invExtent[2];
+
+      mesh_.vertices[3 * i + 0] -= 0.5;
+      mesh_.vertices[3 * i + 1] -= 0.5;
+      mesh_.vertices[3 * i + 2] -= 0.5;
+
+      mesh_.vertices[3 * i + 0] *= 2.0;
+      mesh_.vertices[3 * i + 1] *= 2.0;
+      mesh_.vertices[3 * i + 2] *= 2.0;
+
+    }
+
+  } else {
+
+    for (size_t i = 0; i < mesh_.numVertices; i++) {
+      mesh_.vertices[3 * i + 0] *= sceneScale;
+      mesh_.vertices[3 * i + 1] *= sceneScale;
+      mesh_.vertices[3 * i + 2] *= sceneScale;
+    }
+
   }
 
 #ifdef ENABLE_EMBREE

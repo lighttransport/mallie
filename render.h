@@ -18,6 +18,7 @@ struct RenderConfig {
   double quat[4];
 
   double scene_scale;
+  bool scene_fit;
 
   bool plane; // Infinite plane for debugging purpose
 
@@ -43,6 +44,7 @@ struct RenderConfig {
     up[1] = 1.0;
     up[2] = 0.0;
     quat[0] = quat[1] = quat[2] = quat[3] = 0.0;
+    scene_fit = false;
   }
 };
 

@@ -91,7 +91,7 @@ static int GetNumCPUs() {
 bool InitScene(mallie::Scene &scene, mallie::RenderConfig &config) {
   return scene.Init(config.obj_filename, config.eson_filename,
                     config.magicavoxel_filename, config.material_filename,
-                    config.scene_scale);
+                    config.scene_scale, config.scene_fit);
 }
 
 bool LoadJSONConfig(mallie::RenderConfig &config, // [out]
@@ -137,6 +137,11 @@ bool LoadJSONConfig(mallie::RenderConfig &config, // [out]
   if (json_value_get_type(json_object_dotget_value(object, "scene_scale")) ==
       JSONNumber) {
     config.scene_scale = json_object_dotget_number(object, "scene_scale");
+  }
+
+  if (json_value_get_type(json_object_dotget_value(object, "scene_fit")) ==
+      JSONBoolean) {
+    config.scene_fit = json_object_dotget_boolean(object, "scene_fit");
   }
 
   if (json_value_get_type(json_object_dotget_value(object, "eye")) ==

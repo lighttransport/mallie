@@ -340,6 +340,66 @@ real3 PathTrace(Scene &scene, const Camera &camera, const RenderConfig &config,
   return radiance;
 }
 
+real3 ShowNormal(Scene &scene, const Camera &camera, const RenderConfig &config,
+                std::vector<float> &image, // RGB
+                std::vector<int> &count, int px, int py, int step) {
+  //
+  // 1. Sample eye(E0)
+  //
+  float u = randomreal() - 0.5;
+  float v = randomreal() - 0.5;
+
+  // Ray ray = camera.GenerateRay(px + u + step / 2.0f, py + v + step / 2.0f);
+  Ray ray = camera.GenerateRay(px + u, py + v);
+
+  Intersection isect;
+  isect.t = kFar;
+
+  real3 radiance(0.0, 0.0, 0.0);
+
+  bool hit = scene.Trace(isect, ray);
+  if (hit) {
+
+      real3 kd = real3(0.5, 0.5, 0.5);
+      radiance[0] = isect.normal[0] * 0.5 + 0.5;
+      radiance[1] = isect.normal[1] * 0.5 + 0.5;
+      radiance[2] = isect.normal[2] * 0.5 + 0.5;
+  }
+
+  return radiance;
+}
+
+real3 ShowUV(Scene &scene, const Camera &camera, const RenderConfig &config,
+                std::vector<float> &image, // RGB
+                std::vector<int> &count, int px, int py, int step) {
+  //
+  // 1. Sample eye(E0)
+  //
+  float u = randomreal() - 0.5;
+  float v = randomreal() - 0.5;
+
+  // Ray ray = camera.GenerateRay(px + u + step / 2.0f, py + v + step / 2.0f);
+  Ray ray = camera.GenerateRay(px + u, py + v);
+
+  Intersection isect;
+  isect.t = kFar;
+
+  real3 radiance(0.0, 0.0, 0.0);
+
+  bool hit = scene.Trace(isect, ray);
+  if (hit) {
+
+      real3 kd = real3(0.5, 0.5, 0.5);
+      radiance[0] = 0.1*isect.texcoord[0];
+      radiance[1] = 0.0f; //isect.texcoord[0];
+      radiance[2] = 0.0f; //isect.texcoord[0];
+      //radiance[1] = isect.st[1] * 0.5 + 0.5;
+      //radiance[2] = isect.normal[2] * 0.5 + 0.5;
+  }
+
+  return radiance;
+}
+
 real3 PathTraceEnv(Scene &scene, const Camera &camera,
                    const RenderConfig &config,
                    std::vector<float> &image, // RGB
@@ -477,7 +537,7 @@ void Render(Scene &scene, const RenderConfig &config,
       int py = y;
 
       real3 radiance =
-          PathTrace(scene, camera, config, image, count, px, py, 1);
+          ShowUV(scene, camera, config, image, count, px, py, 1);
 
       image[3 * (py * width + px) + 0] = radiance[0];
       image[3 * (py * width + px) + 1] = radiance[1];
