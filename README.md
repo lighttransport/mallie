@@ -42,6 +42,10 @@ Build ptex(optional)
     $ cd deps/ptex-master
     $ make
 
+Build SDL2 on linux(optional)
+
+    $ ./scripts/build_deplibs_linux.sh
+
 #### MacOSX
 
 Edit scripts/setup_macosx.sh, then,

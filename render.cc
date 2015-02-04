@@ -537,7 +537,7 @@ void Render(Scene &scene, const RenderConfig &config,
       int py = y;
 
       real3 radiance =
-          ShowUV(scene, camera, config, image, count, px, py, 1);
+          PathTrace(scene, camera, config, image, count, px, py, 1);
 
       image[3 * (py * width + px) + 0] = radiance[0];
       image[3 * (py * width + px) + 1] = radiance[1];

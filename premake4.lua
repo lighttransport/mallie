@@ -239,8 +239,8 @@ solution "MallieSolution"
 
          if _OPTIONS['with-sdl'] then
             defines { 'ENABLE_SDL' }
-            buildoptions { "`sdl2-config --cflags`" }
-            linkoptions { "`sdl2-config --libs`" }
+            buildoptions { "`./extlibs/linux/SDL2/bin/sdl2-config --cflags`" }
+            linkoptions { "`./extlibs/linux/SDL2/bin/sdl2-config --libs`" }
          end
 
       configuration "Debug"
