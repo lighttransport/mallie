@@ -33,6 +33,7 @@
 #include "timerutil.h"
 #include "main_console.h"
 #include "scene.h"
+#include "filepath_util.h"
 
 #include "script_engine.h"
 
@@ -114,24 +115,24 @@ bool LoadJSONConfig(mallie::RenderConfig &config, // [out]
 
   if (json_value_get_type(json_object_dotget_value(object, "obj_filename")) ==
       JSONString) {
-    config.obj_filename = json_object_dotget_string(object, "obj_filename");
+    config.obj_filename = mallie::ExpandFilePath(json_object_dotget_string(object, "obj_filename"));
   }
 
   if (json_value_get_type(json_object_dotget_value(object, "eson_filename")) ==
       JSONString) {
-    config.eson_filename = json_object_dotget_string(object, "eson_filename");
+    config.eson_filename = mallie::ExpandFilePath(json_object_dotget_string(object, "eson_filename"));
   }
 
   if (json_value_get_type(json_object_dotget_value(
           object, "magicavoxel_filename")) == JSONString) {
     config.magicavoxel_filename =
-        json_object_dotget_string(object, "magicavoxel_filename");
+        mallie::ExpandFilePath(json_object_dotget_string(object, "magicavoxel_filename"));
   }
 
   if (json_value_get_type(json_object_dotget_value(
           object, "material_filename")) == JSONString) {
     config.material_filename =
-        json_object_dotget_string(object, "material_filename");
+        mallie::ExpandFilePath(json_object_dotget_string(object, "material_filename"));
   }
 
   if (json_value_get_type(json_object_dotget_value(object, "scene_scale")) ==

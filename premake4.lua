@@ -94,6 +94,8 @@ sources = {
    "tinyexr.h",
    "happyhttp.cpp",
    "happyhttp.h",
+   "filepath_util.cc",
+   "filepath_util.h",
 }
 
 tinyjs_sources = {
@@ -161,9 +163,9 @@ solution "MallieSolution"
          -- SDL
          if _OPTIONS['with-sdl'] then
             defines { 'ENABLE_SDL' }
-            buildoptions { "`sdl2-config --cflags`" }
+            buildoptions { "`./extlibs/macosx/SDL2/bin/sdl2-config --cflags`" }
             buildoptions { "-msse2" }
-            linkoptions { "`sdl2-config --libs`" }
+            linkoptions { "`./extlibs/macosx/SDL2/bin/sdl2-config --libs`" }
          end
 
          -- gcc openmp

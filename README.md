@@ -42,9 +42,13 @@ Build ptex(optional)
     $ cd deps/ptex-master
     $ make
 
-Build SDL2 on linux(optional)
+Build SDL2(optional)
 
+    # linux
     $ ./scripts/build_deplibs_linux.sh
+
+    # MacOSX
+    $ ./scripts/build_deplibs_macosx.sh
 
 #### MacOSX
 
@@ -92,6 +96,7 @@ GUI mode
 * ctrl(or tab) + mouse left : dolly
 * 'q' : quit.
 * 'c' : Dump camera data to camera.dat (eye, lookat, up, quaternion)
+* 's' : Save framebuffer as .exr image.
 
 ## Quick start to hacking
 

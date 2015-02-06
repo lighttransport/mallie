@@ -18,6 +18,7 @@
 #include "timerutil.h"
 #include "render.h"
 #include "tinythread.h"
+#include "tinyexr.h"
 #include "script_engine.h"
 
 #if defined(_WIN32) && !defined(_USE_MATH_DEFINES)
@@ -163,6 +164,49 @@ inline unsigned char fclamp(float x) {
   return (unsigned char)i;
 }
 
+void SaveFramebuffer(const char* filename) {
+
+  int ret = SDL_LockMutex(gMutex);
+  assert(ret == 0);
+
+
+  float* image_ptr[3];
+  std::vector<float> images[3];
+  images[0].resize(gWidth * gHeight);
+  images[1].resize(gWidth * gHeight);
+  images[2].resize(gWidth * gHeight);
+
+  for (int i = 0; i < gWidth * gHeight; i++) {
+    images[0][i] = gFramebuffer[3*i+0];
+    images[1][i] = gFramebuffer[3*i+1];
+    images[2][i] = gFramebuffer[3*i+2];
+  }
+
+  image_ptr[0] = &(images[0].at(0));
+  image_ptr[1] = &(images[1].at(0));
+  image_ptr[2] = &(images[2].at(0));
+
+  EXRImage image;
+
+  image.num_channels = 3;
+  const char* channel_names[] = {"B", "G", "R"};
+
+  image.channel_names = channel_names;
+  image.images = image_ptr;
+  image.width = gWidth;
+  image.height = gHeight;
+
+  const char* err;
+  int fail = SaveMultiChannelEXR(&image, filename, &err);
+  if (fail) {
+    fprintf(stderr, err);
+  } else {
+    printf("Mallie:info\tmsg:Saved framebuffer to [ %s ]\n", filename);
+  }
+
+  SDL_UnlockMutex(gMutex);
+}
+
 void SaveCamera(const std::string &filename) {
   FILE *fp = fopen(filename.c_str(), "w");
 
@@ -296,10 +340,9 @@ bool HandleKey(SDL_Event e) {
     gShiftPressed = false;
     gCtrlPressed = false;
     gRenderInteractive = false;
-    gRenderPasses = 1;
+    //gRenderPasses = 1;
   } else if (e.type == SDL_KEYDOWN) {
     gRenderInteractive = true;
-    gRenderPasses = 1;
     gRenderPixelStep = PIXELSTEP_COARSE;
     switch (e.key.keysym.sym) {
     case SDLK_ESCAPE:
@@ -353,8 +396,19 @@ bool HandleKey(SDL_Event e) {
     case 'c':
       SaveCamera("camera.dat");
       break;
+    case 's':
+      {
+        char buf[1024];
+        sprintf(buf, "output%06d.exr", gRenderPasses);
+        SaveFramebuffer(buf);
+        break;
+      }
     default:
       break;
+    }
+
+    if (gNeedRedraw) {
+      gRenderPasses = 1;
     }
   }
 
