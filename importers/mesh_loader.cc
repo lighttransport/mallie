@@ -50,6 +50,8 @@ bool MeshLoader::LoadObj(Mesh &mesh, const char *filename) {
     numVertices += shapes[i].mesh.positions.size() / 3;
     numFaces += shapes[i].mesh.indices.size() / 3;
   }
+  std::cout << "[LoadOBJ] # of faces: " << numFaces << std::endl;
+  std::cout << "[LoadOBJ] # of faces: " << numVertices << std::endl;
 
   // Shape -> Mesh
   mesh.numFaces = numFaces;
@@ -131,19 +133,25 @@ bool MeshLoader::LoadObj(Mesh &mesh, const char *filename) {
     } else {
       // calc geometric normal
       for (size_t f = 0; f < shapes[i].mesh.indices.size() / 3; f++) {
+        int f0, f1, f2;
+
+        f0 = shapes[i].mesh.indices[3*f+0];
+        f1 = shapes[i].mesh.indices[3*f+1];
+        f2 = shapes[i].mesh.indices[3*f+2];
+
         real3 v0, v1, v2;
 
-        v0[0] = shapes[i].mesh.positions[3 * (3 * f + 0) + 0];
-        v0[1] = shapes[i].mesh.positions[3 * (3 * f + 0) + 1];
-        v0[2] = shapes[i].mesh.positions[3 * (3 * f + 0) + 2];
+        v0[0] = shapes[i].mesh.positions[3 * f0 + 0];
+        v0[1] = shapes[i].mesh.positions[3 * f0 + 1];
+        v0[2] = shapes[i].mesh.positions[3 * f0 + 2];
 
-        v1[0] = shapes[i].mesh.positions[3 * (3 * f + 1) + 0];
-        v1[1] = shapes[i].mesh.positions[3 * (3 * f + 1) + 1];
-        v1[2] = shapes[i].mesh.positions[3 * (3 * f + 1) + 2];
+        v1[0] = shapes[i].mesh.positions[3 * f1 + 0];
+        v1[1] = shapes[i].mesh.positions[3 * f1 + 1];
+        v1[2] = shapes[i].mesh.positions[3 * f1 + 2];
 
-        v2[0] = shapes[i].mesh.positions[3 * (3 * f + 2) + 0];
-        v2[1] = shapes[i].mesh.positions[3 * (3 * f + 2) + 1];
-        v2[2] = shapes[i].mesh.positions[3 * (3 * f + 2) + 2];
+        v2[0] = shapes[i].mesh.positions[3 * f2 + 0];
+        v2[1] = shapes[i].mesh.positions[3 * f2 + 1];
+        v2[2] = shapes[i].mesh.positions[3 * f2 + 2];
 
         real3 N;
         calcNormal(N, v0, v1, v2);
