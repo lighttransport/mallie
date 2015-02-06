@@ -51,7 +51,7 @@ bool MeshLoader::LoadObj(Mesh &mesh, const char *filename) {
     numFaces += shapes[i].mesh.indices.size() / 3;
   }
   std::cout << "[LoadOBJ] # of faces: " << numFaces << std::endl;
-  std::cout << "[LoadOBJ] # of faces: " << numVertices << std::endl;
+  std::cout << "[LoadOBJ] # of vertices: " << numVertices << std::endl;
 
   // Shape -> Mesh
   mesh.numFaces = numFaces;
