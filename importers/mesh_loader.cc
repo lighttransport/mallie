@@ -213,9 +213,12 @@ bool MeshLoader::LoadESON(Mesh &mesh, const char *filename) {
   // @todo { Use mmap() }
   std::vector<uint8_t> buf;
 
+  std::cout << "[LoadESON] " << filename << std::endl;
+
   FILE *fp = fopen(filename, "rb");
   if (!fp) {
     fprintf(stderr, "Failed to load file: %s\n", filename);
+    return false;
   }
 
   fseek(fp, 0, SEEK_END);
