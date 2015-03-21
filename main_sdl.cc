@@ -177,9 +177,11 @@ void SaveFramebuffer(const char* filename) {
   images[2].resize(gWidth * gHeight);
 
   for (int i = 0; i < gWidth * gHeight; i++) {
-    images[0][i] = gFramebuffer[3*i+0];
-    images[1][i] = gFramebuffer[3*i+1];
-    images[2][i] = gFramebuffer[3*i+2];
+    // per-pixel count
+    float scale = 1.0f / (float)gCount[i];
+    images[0][i] = gFramebuffer[3*i+0] * scale;
+    images[1][i] = gFramebuffer[3*i+1] * scale;
+    images[2][i] = gFramebuffer[3*i+2] * scale;
   }
 
   image_ptr[0] = &(images[0].at(0));
