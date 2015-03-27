@@ -96,12 +96,8 @@ sources = {
    "happyhttp.h",
    "filepath_util.cc",
    "filepath_util.h",
-}
-
-tinyjs_sources = {
-   "deps/tinyjs/TinyJS.cpp",
-   "deps/tinyjs/TinyJS_Functions.cpp",
-   "deps/tinyjs/TinyJS_MathFunctions.cpp",
+   "duktape.c",
+   "duktape.h",
 }
 
 test_sources = {
@@ -138,13 +134,12 @@ solution "MallieSolution"
       kind "ConsoleApp"
       language "C++"
 
-      files { main_sources, sources, tinyjs_sources }
+      files { main_sources, sources }
 
       includedirs {
          "./",
          "deps/parson/",
          "deps/TinyThread++-1.1/source/",
-         "deps/tinyjs/",
       }
 
       -- MacOSX. Guess we use gcc.
