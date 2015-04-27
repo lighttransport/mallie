@@ -17,10 +17,9 @@ Mallie is written in portable C/C++ and depends on less third party libraries.
 * MagicaVoxel .vox loader
 * Very simple path tracer example.
 * Portable C++(at least it should be compiled with gcc/clang/VisualStudio, and run on MacOSX/Linux/Windows, x86/ARM)
-* JSON configuration and JavaScript script engine(TinyJS)
+* JSON configuration and JavaScript script engine(duktape)
 * OpenEXR loader(tinyexr)
 * OpenEXR writer(miniexr)
-* Embree raytracing kernel for faster raytracing.
 
 ## Building
 
