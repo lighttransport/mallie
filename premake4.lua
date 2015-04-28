@@ -219,6 +219,8 @@ solution "MallieSolution"
          if _OPTIONS['with-openmp'] then
             buildoptions { "-fopenmp" }
             linkoptions { "-fopenmp" }
+         else
+            links { "pthread" }
          end
 
          -- gcc mpi

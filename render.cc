@@ -34,6 +34,17 @@
 #define THREAD_TLS __thread
 #endif
 
+// Defined in tasksys.cc
+
+// Signature of 'task' functions
+typedef void (*TaskFuncType)(void *data, int threadIndex, int threadCount,
+                             int taskIndex, int taskCount);
+extern "C" {
+void ISPCLaunch(void **handlePtr, void *f, void *data, int count);
+void *ISPCAlloc(void **handlePtr, int64_t size, int32_t alignment);
+void ISPCSync(void *handle);
+}
+
 namespace mallie {
 
 const double kFar = 1.0e+30;
@@ -56,6 +67,8 @@ struct PathVertex {
 typedef std::vector<PathVertex> Path;
 
 namespace {
+
+typedef real3 (*ShaderFun)(Scene *scene, const Camera *camera, const RenderConfig *config, float *image, int* count, int px, int py, int step);
 
 #ifdef ENABLE_PTEX
 PtexCache *InitPtex() {
@@ -124,6 +137,7 @@ inline void init_randomreal(void) {
 inline double randomreal(void) {
 // xorshift RNG
 #ifdef _OPENMP
+  // @todo { don't use omp_get_thread_num() }
   int tid = omp_get_thread_num();
   unsigned int x = gSeed[tid][0];
   unsigned int y = gSeed[tid][1];
@@ -151,6 +165,107 @@ inline double randomreal(void) {
   w = (w ^ (w >> 19)) ^ (t ^ (t >> 8));
   return w * (1.0 / 4294967296.0);
 #endif
+}
+
+typedef struct {
+	int startX;
+	int startY;
+	int endX;
+	int endY;
+	int width;
+	int height;
+	Scene* scene;
+	const Camera* camera;
+	const RenderConfig* config;
+  int step;
+	float* image;		// [rw]
+	int* count;		// [rw]
+
+  ShaderFun shader;
+	int  taskId;
+} RenderTile;
+
+void RenderTaskFunc(void *data, int threadIndex, int threadCount, int taskIndex, int taskCount) {
+  const RenderTile* tiles = reinterpret_cast<const RenderTile*>(data);
+  const RenderTile* tile = &tiles[taskIndex];
+
+  int step = 1; // @todo { tile->step }
+
+  for (int y = tile->startY; y < tile->endY; y += step) {
+
+    for (int x = tile->startX; x < tile->endX; x += step) {
+
+      int px = x;
+      int py = y;
+
+      real3 radiance =
+          tile->shader(tile->scene, tile->camera, tile->config, tile->image, tile->count, px, py, 1);
+
+      tile->image[3 * (py * tile->width + px) + 0] = radiance[0];
+      tile->image[3 * (py * tile->width + px) + 1] = radiance[1];
+      tile->image[3 * (py * tile->width + px) + 2] = radiance[2];
+
+      if (tile->step == 1) {
+        tile->count[py * tile->width + px]++;
+      }
+
+    }
+
+    // @todo { block fill }
+    //if (tile->step > 1) {
+    //  for (int x = 0; x < tile->width; x += step) {
+    //    for (int v = 0; v < step; v++) {
+    //      for (int u = 0; u < step; u++) {
+    //        for (int k = 0; k < 3; k++) {
+    //          image[((y + v) * width * 3 + (x + u) * 3) + k] =
+    //              image[3 * (y * width + x) + k];
+    //          count[(y + v) * width + (x + u)]++;
+    //        }
+    //      }
+    //    }
+    //  }
+    //}
+
+  }
+
+  //printf("%d, %d, %d, %d\n", tiles[taskIndex].startX, threadCount, taskIndex, taskCount);
+}
+
+void SetupRenderTask(std::vector<RenderTile>& tiles, const Scene& scene, const Camera& camera, const RenderConfig& config, std::vector<float>& image, std::vector<int>& count, int width, int height, int step, int tileSize, ShaderFun shader)
+{
+	int tw = width / tileSize;
+	int th = height / tileSize;
+	if (tw == 0) tw = 1;
+	if (th == 0) th = 1;
+
+	tiles.clear();
+
+	// Create tile
+	for (int y = 0; y < th; y++) {
+		for (int x = 0; x < tw; x++) {
+			RenderTile tile;
+
+			tile.startX = x * tileSize;
+			tile.startY = y * tileSize;
+			tile.endX = (x == (tw-1)) ? width : (x+1) * tileSize;
+			tile.endY = (x == (tw-1)) ? height : (y+1) * tileSize;
+			tile.width = width;
+			tile.height = height;
+      tile.step = step;
+
+			tile.scene = const_cast<Scene*>(&scene);
+			tile.camera = &camera;
+			tile.config = &config;
+			tile.image = &image.at(0);
+			tile.count = &count.at(0);
+
+      tile.shader = shader;
+			tile.taskId = y * tw + x;
+
+			tiles.push_back(tile);
+		}
+	}
+
 }
 
 static void GenerateBasis(real3 &tangent, real3 &binormal,
@@ -263,9 +378,9 @@ void GenLightPath(Scene &scene, int numPhotons) {
   }
 }
 
-real3 PathTrace(Scene &scene, const Camera &camera, const RenderConfig &config,
-                std::vector<float> &image, // RGB
-                std::vector<int> &count, int px, int py, int step) {
+real3 PathTrace(Scene *scene, const Camera *camera, const RenderConfig *config,
+                float* image, // RGB
+                int* count, int px, int py, int step) {
   //
   // 1. Sample eye(E0)
   //
@@ -273,7 +388,7 @@ real3 PathTrace(Scene &scene, const Camera &camera, const RenderConfig &config,
   float v = randomreal() - 0.5;
 
   // Ray ray = camera.GenerateRay(px + u + step / 2.0f, py + v + step / 2.0f);
-  Ray ray = camera.GenerateRay(px + u, py + v);
+  Ray ray = camera->GenerateRay(px + u, py + v);
 
   Intersection isect;
   isect.t = kFar;
@@ -285,7 +400,7 @@ real3 PathTrace(Scene &scene, const Camera &camera, const RenderConfig &config,
   double lastPdfW = 1.0;
 
   for (;; ++pathLength) {
-    bool hit = scene.Trace(isect, ray);
+    bool hit = scene->Trace(isect, ray);
     if (gPlane) { // @fixme
       hit |= gPlaneObject.intersect(&isect, ray);
     }
@@ -324,7 +439,7 @@ real3 PathTrace(Scene &scene, const Camera &camera, const RenderConfig &config,
       double pdf = SampleDiffuseIS(sampledDir, n);
 
       if (isect.materialID != (unsigned int)(-1)) {
-        const Material& mat = scene.GetMaterial(isect.materialID);
+        const Material& mat = scene->GetMaterial(isect.materialID);
         throughput[0] *= mat.diffuse[0]; // @fixme { factor * (cosThetaOut / pdf); }
         throughput[1] *= mat.diffuse[1]; 
         throughput[2] *= mat.diffuse[2]; 
@@ -523,6 +638,22 @@ void Render(Scene &scene, const RenderConfig &config,
   //
   memset(&image[0], 0, sizeof(float) * width * height * 3);
 
+
+#if !defined(_OPENMP) // Tasksys version
+
+  std::vector<RenderTile> tiles;
+  SetupRenderTask(tiles, scene, camera, config, image, count, width, height, step, 32, PathTrace);
+
+  void* handle = NULL;
+  // @note { No need to alloc memory with ISPCAlloc. }
+  void* memPtr = ISPCAlloc(&handle, 0, /* align */16);
+
+  int ntasks = (int)tiles.size();
+  ISPCLaunch(&handle, reinterpret_cast<void*>(RenderTaskFunc), &tiles.at(0), ntasks);
+  ISPCSync(handle);
+
+#else // OMP version
+
 #pragma omp parallel for schedule(dynamic, 1)
   for (int y = 0; y < height; y += step) {
 
@@ -537,7 +668,7 @@ void Render(Scene &scene, const RenderConfig &config,
       int py = y;
 
       real3 radiance =
-          PathTrace(scene, camera, config, image, count, px, py, 1);
+          PathTrace(&scene, &camera, &config, &image.at(0), &count.at(0), px, py, 1);
 
       image[3 * (py * width + px) + 0] = radiance[0];
       image[3 * (py * width + px) + 1] = radiance[1];
@@ -565,6 +696,8 @@ void Render(Scene &scene, const RenderConfig &config,
     }
 
   }
+
+#endif // !OMP version
 
   t.end();
 
