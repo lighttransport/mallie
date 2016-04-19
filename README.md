@@ -71,7 +71,7 @@ Edit scripts/setup_linux.sh, then,
 
 Edit vcbuild.bat, then,
 
-    > vcbuid.bat
+    > vcbuild.bat
 
 Solition file will be generated.
 Tested on VS2013.
@@ -84,7 +84,7 @@ Tested on VS2013.
 
 ### Usage
 
-Edit config.josn, then
+Edit config.json, then
 
     $ ./bin/mallie
 
